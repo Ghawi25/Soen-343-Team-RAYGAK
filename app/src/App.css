@@ -1,0 +1,243 @@
+.App {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+.header {
+  padding: 1rem;
+  background: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+}
+
+.simulation-panel, .control-panel, .house-view, .console-panel {
+  border: 1px solid #ddd;
+  margin: 0.5rem;
+}
+
+.app-header {
+  background-color: #f0f0f0;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.sidebar{
+  width: 20%;
+  height:100%;
+  flex: 5;
+  border: 1px solid black;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px; 
+  height: 40%;
+  text-align: center;
+  align-items: center;
+  margin: 40px;
+  margin-bottom: -60px;
+}
+
+.avatar {
+  width: 60px; 
+  height: 60px;
+  background-image: url(avatar.jpg); 
+  background-size: cover; 
+  border: 3px solid #fff; 
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.profile-text p {
+  margin: 0;
+  color: #333; 
+  font-weight: bold; 
+  margin: 40px;
+}
+
+.temperature {
+  justify-content: space-between;
+  margin: 10px;
+  height:10%;
+  padding: 1px;
+  text-align: center;
+}
+
+.temperature p {
+  margin: 0;
+  color: #333;
+  font-weight: bold;
+  font-size: medium;
+}
+
+.datetime-picker {
+  margin-top: 10px; 
+  height:10%;
+  text-align: center;
+  cursor: pointer;
+}
+
+.time-speed {
+  display: flex;
+  flex-direction: column; 
+  margin: 20px 0; 
+  height:10%;
+}
+
+.time-speed p {
+  margin-bottom: 5px; 
+  text-align: center;
+  font-weight: bold;
+}
+
+.time-speed input[type=range] {
+  cursor: pointer; 
+}
+.control-panel {
+  flex: 2;
+  padding: 10px;
+}
+
+.item-list {
+  margin-bottom: 10px;
+  border: 1px solid black;
+}
+
+.item-list input {
+  width: 100%; 
+  background-color: transparent; 
+  border:1px solid #ccc;
+  padding: 5px ;
+  cursor: pointer; 
+  text-align: left; /* Align the text inside the button to the left */
+}
+
+.item-list input:focus {
+  outline: none; /* Remove the focus outline */
+}
+
+.item-list .selected {
+  background-color: lightblue; /* Light blue background for selected item */
+}
+
+.house-view {
+  flex: 3;
+
+  padding: 10px;
+}
+
+.houseBox{
+  border : 1px solid black;
+  height : 90%;
+}
+
+.output-console {
+  flex: 1;
+  height : 15%;
+  padding: 10px;
+}
+
+.outputBox{
+  border : 1px solid black;
+  height : 120px;
+  overflow-y: auto;
+  
+}
+
+.console-line {
+  white-space: pre;
+  font-family: monospace;
+}
+
+.container {
+  flex-grow:1;
+  display : flex;
+  width:80%;
+  height:100%;
+  
+}
+
+.time-speed {
+  margin: 10px 0;
+}
+
+.time-speed input[type=range] {
+  width: 100%;
+}
+
+.feature-nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background: lightblue;
+  border-bottom: 1px solid #ddd;
+}
+
+.feature-nav button {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.panel-container {
+  display: flex;
+  flex-direction: column; 
+  flex-grow: 1; 
+  border: 1px blue;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px; 
+  height: 34px; 
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0; 
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;  
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: rgb(58, 143, 172);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 20px;  
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
