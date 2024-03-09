@@ -20,10 +20,10 @@ public class LayoutReader {
         return parsedLayout;
     }
 
-    public void readAndParseFile(String fileLocation) {
+    public void readFile() {
         JSONParser parser = new JSONParser();
         try {
-            Object parsedFile = parser.parse(new FileReader(fileLocation));
+            Object parsedFile = parser.parse(new FileReader("src/main/resources/jsonTest.json"));
             parsedLayout = (JSONObject) parsedFile;
         } catch (Exception e) {
             e.printStackTrace();
