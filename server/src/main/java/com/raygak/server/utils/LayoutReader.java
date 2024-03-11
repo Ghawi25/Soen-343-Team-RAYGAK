@@ -9,7 +9,7 @@ import java.io.FileReader;
  * LayoutReader
  */
 public class LayoutReader {
-    
+
     public JSONObject readFile() {
         JSONParser parser = new JSONParser();
         JSONObject parsedLayout = new JSONObject();
