@@ -1,3 +1,8 @@
+package com.raygak.server.smarthome.heating;
+
+import lombok.Getter;
+
+@Getter
 public class Window {
 	private String windowID;
 	private boolean isOpen;
@@ -9,24 +14,12 @@ public class Window {
 		this.isObstructed = isObstructed;
 	}
 	
-	public String getWindowID() {
-		return this.windowID;
-	}
-	
-	public boolean getIsOpen() {
-		return this.isOpen;
-	}
-	
-	public boolean getIsObstructed() {
-		return this.isObstructed;
-	}
-	
 	public void open() {
 		if (this.isObstructed) {
 			System.out.println("Error: Cannot open window " + this.windowID + " as it is obstructed.");
 			return;
 		}
-		if (!(this.isOpen)) {
+		if (this.isOpen) {
 			System.out.println("Error: Cannot open window " + this.windowID + " as it is already open.");
 			return;
 		}

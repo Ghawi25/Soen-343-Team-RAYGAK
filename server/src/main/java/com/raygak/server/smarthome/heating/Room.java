@@ -1,3 +1,5 @@
+package com.raygak.server.smarthome.heating;
+
 import java.util.ArrayList;
 import java.text.DecimalFormat;
 import java.time.LocalTime;

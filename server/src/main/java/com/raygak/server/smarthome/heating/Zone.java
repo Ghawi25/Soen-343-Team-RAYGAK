@@ -1,3 +1,5 @@
+package com.raygak.server.smarthome.heating;
+
 import java.util.ArrayList;
 
 public class Zone {

@@ -1,3 +1,5 @@
+package com.raygak.server.smarthome.heating;
+
 import java.time.LocalTime;
 
 public class TemperatureSetting {

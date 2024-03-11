@@ -1,3 +1,5 @@
+package com.raygak.server.smarthome.heating;
+
 public class Person {
 	private String personID;
 	private String name;
