@@ -1,7 +1,33 @@
 {
-  "employees": [
-    { "firstName": "John", "lastName": "Doe" },
-    { "firstName": "Anna", "lastName": "Smith" },
-    { "firstName": "Peter", "lastName": "Jones" }
+  "_id": "id",
+  "name": "HouseA",
+  "rooms": [
+    {
+      "_id": "id",
+      "name": "RoomA",
+      "dimension": {
+        "width": 2,
+        "height": 2
+      },
+      "adjacentTo": {
+        "north": "RoomB",
+        "south": "RoomC",
+        "east": "",
+        "west": ""
+      },
+      "windows": {
+        "north": [],
+        "south": [],
+        "east": ["WindowA", "WindowB"],
+        "west": ["WindowC"]
+      },
+      "doors": {
+        "north": "DoorA",
+        "south": "DoorB",
+        "east": "",
+        "west": ""
+      },
+      "lightInRoom": true
+    }
   ]
 }

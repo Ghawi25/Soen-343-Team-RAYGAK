@@ -10,23 +10,15 @@ import java.io.FileReader;
  */
 public class LayoutReader {
 
-    private JSONObject parsedLayout;
-
-    public LayoutReader() {
-        parsedLayout = null;
-    }
-
-    public JSONObject getParsedLayout() {
-        return parsedLayout;
-    }
-
-    public void readFile() {
+    public JSONObject readFile() {
         JSONParser parser = new JSONParser();
+        JSONObject parsedLayout = new JSONObject();
         try {
             Object parsedFile = parser.parse(new FileReader("src/main/resources/jsonTest.json"));
             parsedLayout = (JSONObject) parsedFile;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return parsedLayout;
     }
 }
