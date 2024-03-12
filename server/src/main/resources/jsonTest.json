@@ -3,12 +3,10 @@
   "name": "HouseA",
   "rooms": [
     {
-      "_id": "id",
+      "_id": "id1",
       "name": "RoomA",
-      "dimension": {
-        "width": 2,
-        "height": 2
-      },
+      "width": 2,
+      "height": 2,
       "adjacentTo": {
         "north": "RoomB",
         "south": "RoomC",
@@ -18,8 +16,13 @@
       "windows": {
         "north": [],
         "south": [],
-        "east": ["WindowA", "WindowB"],
-        "west": ["WindowC"]
+        "east": [
+          "WindowA",
+          "WindowB"
+        ],
+        "west": [
+          "WindowC"
+        ]
       },
       "doors": {
         "north": "DoorA",
@@ -28,6 +31,46 @@
         "west": ""
       },
       "lightInRoom": true
+    },
+    {
+      "_id": "id2",
+      "name": "RoomB",
+      "width": 2,
+      "height": 2,
+      "adjacentTo": {
+        "north": "",
+        "south": "RoomA",
+        "east": "",
+        "west": ""
+      },
+      "windows": {
+        "north": [],
+        "south": [],
+        "east": [
+          "WindowD",
+          "WindowE"
+        ],
+        "west": [
+          "WindowF"
+        ]
+      },
+      "doors": {
+        "north": "",
+        "south": "DoorA",
+        "east": "",
+        "west": ""
+      },
+      "lightInRoom": true
+    }
+  ],
+  "zones": [
+    {
+      "_id": "id3",
+      "name": "ZoneA",
+      "rooms": [
+        "RoomA",
+        "RoomB"
+      ]
     }
   ]
 }
