@@ -6,18 +6,18 @@ import OutputConsole from "./OutputConsole";
 function Dashboard() {
   return (
     <>
-      <div className="module">
+      <section id="simulation" className="module">
         <Simulation />
-      </div>
-      <div className="module">
+      </section>
+      <section id="SH" className="module">
         <SH />
-      </div>
-      <div className="module">
+      </section>
+      <section id="house-view" className="module">
         <HouseView />
-      </div>
-      <div className="module">
+      </section>
+      <section id="output-console" className="module">
         <OutputConsole />
-      </div>
+      </section>
     </>
   );
 }

@@ -1,6 +1,15 @@
+html {
+  overflow: hidden;
+}
+
+h5 {
+  margin-top: 0;
+}
+
 #dashboard {
   display: grid;
-  grid-template-rows: min-content 1fr;
+  height: 98vh;
+  grid-template-rows: 2fr 1fr;
   grid-template-columns: 1fr 1fr 1fr;
 }
 
@@ -10,6 +19,22 @@
   border-radius: 1rem;
   border: 3px solid grey;
   margin: 0.3rem;
+}
+
+#simulation {
+  grid-area: 1 / 1 / span 2 / span 1;
+}
+
+#SH {
+  grid-area: 1 / 2 / span 1 / span 1;
+}
+
+#house-view {
+  grid-area: 1 / 3 / span 1 / span 1;
+}
+
+#output-console {
+  grid-area: 2 / 2 / span 1 / span 2;
 }
 
 .toggle-switch {
@@ -73,7 +98,7 @@ input:checked + .slider:before {
 .avatar {
   width: 100px;
   height: 100px;
-  background-image: url(../public/blank-avatar.webp);
+  background-image: url(blank-avatar.webp);
   background-size: cover;
   border: 3px solid #fff;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
