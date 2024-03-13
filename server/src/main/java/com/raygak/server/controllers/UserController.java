@@ -51,41 +51,4 @@ public class UserController {
     public ResponseEntity<Optional<User>> updateUserById(@PathVariable ObjectId id, @RequestBody Map<String, String> payload) {
         return new ResponseEntity<Optional<User>>(userService.updateUserById(id, payload.get("email"), payload.get("password"), payload.get("userType")), HttpStatus.OK);
     }
-
-//    private final UserService userService;
-//    private final UserRepository userRepository;
-//    // constructor
-//    @Autowired
-//    public UserController(UserService userService) {
-//        this.userService = userService;
-//    }
-//    // return a list of all users
-//    @GetMapping
-//    public List<User> getAllUserProfiles() {
-//        return userService.getAllUserProfiles();
-//    }
-//    // get a user by Id
-//    @GetMapping("/{id}")
-//    public ResponseEntity<User> getUserProfileById(@PathVariable(value = "id") String id) {
-//        User user = userService.getUserProfileById(id)
-//                .orElseThrow(() -> new RuntimeException("User profile not found for this id :: " + id));
-//        return ResponseEntity.ok().body(user);
-//    }
-//    // create a user
-//    @PostMapping
-//    public User createUserProfile(@RequestBody User user) {
-//        return userService.createUserProfile(user);
-//    }
-//    // update a user
-//    @PutMapping("/{id}")
-//    public ResponseEntity<User> updateUserProfile(@PathVariable(value = "id") String id, @RequestBody User userDetails) {
-//        User updatedUserProfile = userService.updateUserProfile(id, userDetails);
-//        return ResponseEntity.ok(updatedUserProfile);
-//    }
-//    // delete a user
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteUserProfile(@PathVariable(value = "id") String id) {
-//        userService.deleteUserProfile(id);
-//        return ResponseEntity.ok().build();
-//    }
 }

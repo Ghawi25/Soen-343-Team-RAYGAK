@@ -52,40 +52,4 @@ public class UserService {
         user.setUserType(userType);
         return Optional.of(userRepository.save(user));
     }
-//    private final UserRepository userRepository;
-//
-//    @Autowired
-//    public UserService(UserRepository userRepository) {
-//        this.userRepository = userRepository;
-//    }
-//
-//    public List<User> getAllUserProfiles() {
-//        return userRepository.findAll();
-//    }
-//
-//    public Optional<User> getUserProfileById(String id) {
-//        return userRepository.findById(id);
-//    }
-//
-//    public Optional<User> getUserProfileByEmail(String email) {
-//        return userRepository.findByEmail(email);
-//    }
-//
-//    public User createUserProfile(User user) {
-//        // Additional validation and logic before saving
-//        return userRepository.save(user);
-//    }
-//
-//    public User updateUserProfile(String id, User userDetails) {
-//        User user = userRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("User profile not found for this id :: " + id));
-//        user.setEmail(userDetails.getEmail());
-//        user.setPassword(userDetails.getPassword());
-//        user.setUserType(userDetails.getUserType());
-//        return userRepository.save(user);
-//    }
-//
-//    public void deleteUserProfile(String id) {
-//        userRepository.deleteById(id);
-//    }
 }
