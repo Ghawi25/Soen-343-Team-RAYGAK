@@ -142,15 +142,10 @@ input:checked + .slider:before {
   height: 90%;
 }
 
-.output-console {
-  flex: 1;
-  height: 15%;
-  padding: 10px;
-}
-
 .outputBox {
   border: 1px solid black;
   height: 120px;
+  width:300px;
   overflow-y: auto;
 }
 
