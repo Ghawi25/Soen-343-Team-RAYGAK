@@ -1,12 +1,12 @@
-
+import HouseBox from "./HouseBox";
 
 function HouseView(){
-    return (<div className="house-view">
-    <div className="houseBox">
-      {}
-    </div>
+    return (<>
     <h5 style={{textAlign:'center'}}>House View</h5>
-  </div>);
+    <div className="houseBox">
+      <HouseBox/>
+    </div></>      
+);
 };
 
 export default HouseView;
