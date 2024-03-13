@@ -4,12 +4,22 @@ import SH from "./SH";
 import OutputConsole from "./OutputConsole";
 
 function Dashboard() {
-    return (<>
-    <div><Simulation/></div>
-    <div><SH/></div>
-    <div><HouseView/></div>
-    <div><OutputConsole/></div>
-    </>);
+  return (
+    <>
+      <div className="module">
+        <Simulation />
+      </div>
+      <div className="module">
+        <SH />
+      </div>
+      <div className="module">
+        <HouseView />
+      </div>
+      <div className="module">
+        <OutputConsole />
+      </div>
+    </>
+  );
 }
 
 export default Dashboard;

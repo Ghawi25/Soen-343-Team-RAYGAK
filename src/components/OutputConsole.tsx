@@ -1,5 +1,5 @@
-function OutputConsole(){
-    return(<div>marhaba</div>);
+function OutputConsole() {
+  return <div id="console">marhaba</div>;
 }
 
 export default OutputConsole;
