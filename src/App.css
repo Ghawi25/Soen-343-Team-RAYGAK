@@ -1,7 +1,7 @@
 #dashboard {
   display: grid;
   grid-template-rows: min-content 1fr;
-  grid-template-columns: min-content min-content 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .module {
@@ -142,21 +142,10 @@ input:checked + .slider:before {
   height: 90%;
 }
 
-.output-console {
-  flex: 1;
-  height: 15%;
-  padding: 10px;
-}
-
 .outputBox {
   border: 1px solid black;
   height: 120px;
   overflow-y: auto;
-}
-
-.console-line {
-  white-space: pre;
-  font-family: monospace;
 }
 
 .feature-nav {
@@ -171,5 +160,3 @@ input:checked + .slider:before {
   padding: 5px 10px;
   cursor: pointer;
 }
-
-
