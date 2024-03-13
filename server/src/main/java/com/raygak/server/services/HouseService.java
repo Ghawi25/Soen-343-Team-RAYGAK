@@ -75,4 +75,8 @@ public class HouseService {
         return zone;
     }
 
+    public House getHouse() {
+        return house;
+    }
+
 }
