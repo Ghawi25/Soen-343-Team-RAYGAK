@@ -4,7 +4,7 @@ function HouseView() {
   return (
     <>
       <h5 style={{ textAlign: "center" }}>House View</h5>
-      <div className="houseBox">
+      <div className="houseBox bubble">
         <HouseBox />
       </div>
     </>
