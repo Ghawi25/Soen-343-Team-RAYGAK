@@ -12,7 +12,7 @@ function Simulation() {
   // };
 
   return (
-    <section id="simulation">
+    <>
       <div className="toggle-switch">
         <label>
           <input type="checkbox" />
@@ -55,7 +55,7 @@ function Simulation() {
           //onChange={handleTimeSpeedChange}
         />
       </div>
-    </section>
+    </>
   );
 }
 
