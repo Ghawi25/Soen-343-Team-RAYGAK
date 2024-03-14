@@ -2,17 +2,15 @@ package com.raygak.server.smarthome;
 
 import com.raygak.server.smarthome.heating.House;
 import com.raygak.server.smarthome.heating.Room;
-import lombok.Getter;
+import com.raygak.server.smarthome.heating.Window;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public final class HouseView {
     private static HouseView home;
     public House house;
-    ArrayList<Room> rooms = new ArrayList<>();
 
     private HouseView() {
         // Init our home instance here
@@ -20,15 +18,58 @@ public final class HouseView {
         Layout layout = new Layout();
         JSONObject houseObj = layout.getLayoutJSON();
         JSONArray roomsArr = (JSONArray) houseObj.get("rooms");
-        Iterator<JSONObject> iterator = roomsArr.iterator();
-        while (iterator.hasNext()) {
-            JSONObject room = iterator.next();
+        ArrayList<Room> rooms = new ArrayList<>();
+        for (JSONObject room : (Iterable<JSONObject>) roomsArr) {
+            ArrayList<Window> windows = new ArrayList<>();
+            ArrayList<String> adjacencies = new ArrayList<>();
             String id = (String) room.get("_id");
             String name = (String) room.get("name");
             int width = Integer.parseInt(room.get("width").toString());
             int height = Integer.parseInt(room.get("height").toString());
             Boolean light = (Boolean) room.get("lightInRoom");
+            JSONObject windowsOBJ = (JSONObject) room.get("windows");
+            JSONObject adjacencyOBJ = (JSONObject) room.get("adjacentTo");
+
             Room newRoom = new Room(id, name, width, height, light);
+
+            JSONArray windowsArr = (JSONArray) windowsOBJ.get("north");
+            for(Object dir : windowsArr) {
+                String wId = (String) dir;
+                windows.add(new Window(wId, false, false));
+            }
+
+            windowsArr = (JSONArray) windowsOBJ.get("south");
+            for(Object dir : windowsArr) {
+                String wId = (String) dir;
+                windows.add(new Window(wId, false, false));
+            }
+
+            windowsArr = (JSONArray) windowsOBJ.get("east");
+            for(Object dir : windowsArr) {
+                String wId = (String) dir;
+                windows.add(new Window(wId, false, false));
+            }
+
+            windowsArr = (JSONArray) windowsOBJ.get("west");
+            for(Object dir : windowsArr) {
+                String wId = (String) dir;
+                windows.add(new Window(wId, false, false));
+            }
+
+            newRoom.setWindows(windows);
+
+            String adjacentToString = (String) adjacencyOBJ.get("north");
+            newRoom.setTopAdjacentRoom(adjacentToString);
+
+            adjacentToString = (String) adjacencyOBJ.get("south");
+            newRoom.setBottomAdjacentRoom(adjacentToString);
+
+            adjacentToString = (String) adjacencyOBJ.get("east");
+            newRoom.setRightAdjacentRoom(adjacentToString);
+
+            adjacentToString = (String) adjacencyOBJ.get("west");
+            newRoom.setLeftAdjacentRoom(adjacentToString);
+
             rooms.add(newRoom);
         }
         house = new House(rooms);
