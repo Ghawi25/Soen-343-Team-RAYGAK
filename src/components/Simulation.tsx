@@ -48,6 +48,7 @@ function Simulation() {
               /> */}
         </div>
         <div className="time-speed">
+          {/* Use case 9 - Time speed */}
           <p>Time speed</p>
           <input
             type="range"
