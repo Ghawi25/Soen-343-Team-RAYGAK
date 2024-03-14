@@ -105,7 +105,8 @@ public class Room {
         }
         throw new IllegalArgumentException("Error: The window with the provided ID does not exist.");
     }
-
+    
+    // Use case 12 and 13 - move/add user to different room
     public void addInhabitant(User newInhabitant) {
         this.inhabitants.add(newInhabitant);
         //The room's temperature should be updated from its desired unoccupied temperature when somebody enters it.
