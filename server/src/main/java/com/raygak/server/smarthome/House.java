@@ -202,6 +202,7 @@ public class House {
 
     //Due to how we want to add a User object to a room of the house, a room ID is passed as an argument rather than a Room object
     //to allow for searching of the "rooms" ArrayList.
+    // Use case 6 - add user to room
     public void addInhabitantToRoom(User newInhabitant, String inhabitedRoomID) {
         //The old status needs to be logged.
         boolean oldIsInWinterAndEmptyHouseProtocol = this.isInWinterAndEmptyHouseProtocol;
