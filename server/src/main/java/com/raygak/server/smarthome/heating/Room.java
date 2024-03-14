@@ -1,12 +1,12 @@
 package com.raygak.server.smarthome.heating;
 
-import lombok.Getter;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.text.DecimalFormat;
 import java.time.LocalTime;
 
-@Getter
+@Data
 public class Room {
     private String roomID;
     private String name;
