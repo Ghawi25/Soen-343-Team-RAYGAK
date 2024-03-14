@@ -38,6 +38,7 @@ public class Window {
 		this.isOpen = false;
 	}
 	
+	// Use 15 - Obstruct window
 	public void obstruct() {
 		if (this.isObstructed) {
 			System.out.println("Error: Cannot obstruct window " + this.windowID + " as it is already obstructed.");
