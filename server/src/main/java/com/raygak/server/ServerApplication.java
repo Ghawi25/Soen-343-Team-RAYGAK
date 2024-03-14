@@ -1,12 +1,9 @@
 package com.raygak.server;
 
 import com.raygak.server.smarthome.HouseView;
-import com.raygak.server.smarthome.heating.Room;
 import com.raygak.server.smarthome.heating.Season;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.util.ArrayList;
 
 @SpringBootApplication
 public class ServerApplication {
