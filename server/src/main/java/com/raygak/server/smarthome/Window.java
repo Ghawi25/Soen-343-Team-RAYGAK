@@ -14,6 +14,7 @@ public class Window {
 		this.isObstructed = isObstructed;
 	}
 	
+	// Use case 17 - open close windows
 	public void open() {
 		if (this.isObstructed) {
 			System.out.println("Error: Cannot open window " + this.windowID + " as it is obstructed.");
