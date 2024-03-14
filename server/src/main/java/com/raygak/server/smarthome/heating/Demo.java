@@ -4,7 +4,7 @@ import com.raygak.server.model.User;
 import com.raygak.server.smarthome.*;
 
 import java.util.ArrayList;
-
+// Test case 
 public class Demo {
 
 	public static void main(String[] args) {
