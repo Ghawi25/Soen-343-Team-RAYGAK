@@ -12,6 +12,7 @@ public class Door {
         this.position = position;
     }
 
+    // Use case 16 - open close door
     public void openDoor() {
         this.isOpen = false;
     }
