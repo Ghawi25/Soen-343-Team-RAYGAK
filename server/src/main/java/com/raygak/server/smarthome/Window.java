@@ -1,4 +1,4 @@
-package com.raygak.server.smarthome.heating;
+package com.raygak.server.smarthome;
 
 import lombok.Getter;
 

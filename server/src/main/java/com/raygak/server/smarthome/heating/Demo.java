@@ -1,19 +1,22 @@
 package com.raygak.server.smarthome.heating;
 
+import com.raygak.server.model.User;
+import com.raygak.server.smarthome.*;
+
 import java.util.ArrayList;
 
 public class Demo {
 
 	public static void main(String[] args) {
-		Person p1 = new Person("1", "Mike", 28);
-		Person p2 = new Person("2", "Leanne", 30);
-		Person p3 = new Person("3", "Chuck", 48);
+		User p1 = new User("james@gmail.com", "james123", "Adult");
+		User p2 = new User("quinn@gmail.com", "quinn456", "Child");
+		User p3 = new User("dennis@gmail.com", "dennis789", "Guest");
 		
-		ArrayList<Person> personList1 = new ArrayList<Person>();
-		personList1.add(p1);
-		personList1.add(p2);
+		ArrayList<User> userList1 = new ArrayList<User>();
+		userList1.add(p1);
+		userList1.add(p2);
 		
-		ArrayList<Person> personList2 = new ArrayList<Person>();
+		ArrayList<User> userList2 = new ArrayList<User>();
 		
 		Window w1 = new Window("1", false, false);
 		Window w2 = new Window("2", true, false);
@@ -27,9 +30,21 @@ public class Demo {
 		ArrayList<Window> windowList2 = new ArrayList<Window>();
 		windowList2.add(w3);
 		windowList2.add(w4);
+
+		Light l1 = new Light("Room 1 Light", "Centre");
+		Light l2 = new Light("Room 2 Light", "Centre");
+
+		Door d1 = new Door("Room 1 Light", "Bottom Centre");
+		Door d2 = new Door("Room 2 Light", "Bottom Centre");
+
+		ArrayList<Door> doorList1 = new ArrayList<Door>();
+		doorList1.add(d1);
+
+		ArrayList<Door> doorList2 = new ArrayList<Door>();
+		doorList2.add(d2);
 		
-		Room r1 = new Room("1", 1, 1, 45.0, false, windowList1, personList1, null, null, null, null);
-		Room r2 = new Room("2", 1, 1, 41.0, true, windowList2, personList2, r1, null, null, null);
+		Room r1 = new Room("1", "Room 1", 1, 1, l1, 45.0, true, windowList1, doorList1, userList1, null, null, null, null);
+		Room r2 = new Room("2", "Room 2", 1, 1, l2, 42.0, false, windowList2, doorList1, userList2, r1, null, null, null);
 		
 		ArrayList<Room> roomList1 = new ArrayList<Room>();
 		roomList1.add(r1);
