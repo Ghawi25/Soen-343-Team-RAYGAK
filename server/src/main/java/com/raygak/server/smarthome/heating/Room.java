@@ -18,10 +18,10 @@ public class Room {
     private boolean hasLight;
     private ArrayList<Window> windows = new ArrayList<Window>();
     private ArrayList<Person> inhabitants = new ArrayList<Person>();
-    private Room topAdjacentRoom;
-    private Room bottomAdjacentRoom;
-    private Room leftAdjacentRoom;
-    private Room rightAdjacentRoom;
+    private String topAdjacentRoom;
+    private String bottomAdjacentRoom;
+    private String leftAdjacentRoom;
+    private String rightAdjacentRoom;
     private Zone zone = null;
     private DecimalFormat temperatureFormat = new DecimalFormat("0.00");
     private double lastGeneralTempChange = 0.00;
@@ -34,7 +34,7 @@ public class Room {
         this.hasLight = light;
     }
 
-    public Room(String idInput, int sizeX, int sizeY, double desTempInput, boolean isAirConditioningOn, Room topAdjacent, Room bottomAdjacent, Room leftAdjacent, Room rightAdjacent) {
+    public Room(String idInput, int sizeX, int sizeY, double desTempInput, boolean isAirConditioningOn, String topAdjacent, String bottomAdjacent, String leftAdjacent, String rightAdjacent) {
         this.roomID = idInput;
         this.size_X = sizeX;
         this.size_Y = sizeY;
@@ -47,7 +47,7 @@ public class Room {
         this.rightAdjacentRoom = rightAdjacent;
     }
 
-    public Room(String idInput, int sizeX, int sizeY, double desTempInput, boolean isAirConditioningOn, ArrayList<Window> windowListInput, ArrayList<Person> inhabitantListInput, Room topAdjacent, Room bottomAdjacent, Room leftAdjacent, Room rightAdjacent) {
+    public Room(String idInput, int sizeX, int sizeY, double desTempInput, boolean isAirConditioningOn, ArrayList<Window> windowListInput, ArrayList<Person> inhabitantListInput, String topAdjacent, String bottomAdjacent, String leftAdjacent, String rightAdjacent) {
         this.roomID = idInput;
         this.size_X = sizeX;
         this.size_Y = sizeY;

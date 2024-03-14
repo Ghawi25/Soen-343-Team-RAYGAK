@@ -29,7 +29,7 @@ public class Demo {
 		windowList2.add(w4);
 		
 		Room r1 = new Room("1", 1, 1, 45.0, false, windowList1, personList1, null, null, null, null);
-		Room r2 = new Room("2", 1, 1, 41.0, true, windowList2, personList2, r1, null, null, null);
+		Room r2 = new Room("2", 1, 1, 41.0, true, windowList2, personList2, "r1", null, null, null);
 		
 		ArrayList<Room> roomList1 = new ArrayList<Room>();
 		roomList1.add(r1);
