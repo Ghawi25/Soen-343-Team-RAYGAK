@@ -252,7 +252,7 @@ public class House {
         this.indoorTemperature = temperatureInput;
         checkForDangerousTemperature();
     }
-
+    // Use case 14 - set outside temp
     public void setOutdoorTemperature(double temperatureInput) {
         this.outdoorTemperature = temperatureInput;
         //Per the requirements listed in the project description.
