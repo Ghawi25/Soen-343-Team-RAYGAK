@@ -1,7 +1,7 @@
 package com.raygak.server.smarthome;
 
 import lombok.Data;
-import com.raygak.server.model.User;
+import com.raygak.server.models.User;
 import com.raygak.server.smarthome.heating.*;
 
 import java.util.ArrayList;

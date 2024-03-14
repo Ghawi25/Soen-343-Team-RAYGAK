@@ -1,6 +1,6 @@
 package com.raygak.server.smarthome.heating;
 
-import com.raygak.server.model.User;
+import com.raygak.server.models.User;
 import com.raygak.server.smarthome.*;
 
 import java.util.ArrayList;
@@ -43,8 +43,8 @@ public class Demo {
 		ArrayList<Door> doorList2 = new ArrayList<Door>();
 		doorList2.add(d2);
 
-		Room r1 = new Room("1", 1, 1, 45.0, false, windowList1, personList1, null, null, null, null);
-		Room r2 = new Room("2", 1, 1, 41.0, true, windowList2, personList2, "r1", null, null, null);
+		Room r1 = new Room("1", "room1", 1, 1, l1, 45.0, false, windowList1, doorList1, userList1, "", "room2", "", "");
+		Room r2 = new Room("2", "room2", 1, 1, l2, 45.0, false, windowList2, doorList2, userList2, "room1", "", "", "");
 		
 		ArrayList<Room> roomList1 = new ArrayList<Room>();
 		roomList1.add(r1);

@@ -1,8 +1,5 @@
 package com.raygak.server.smarthome;
 
-import com.raygak.server.smarthome.heating.House;
-import com.raygak.server.smarthome.heating.Room;
-import com.raygak.server.smarthome.heating.Window;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 

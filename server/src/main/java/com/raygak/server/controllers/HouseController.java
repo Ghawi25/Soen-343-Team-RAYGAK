@@ -1,7 +1,7 @@
 package com.raygak.server.controllers;
 
+import com.raygak.server.smarthome.House;
 import com.raygak.server.smarthome.HouseView;
-import com.raygak.server.smarthome.heating.House;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
