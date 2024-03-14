@@ -16,6 +16,7 @@ function Simulation() {
     <>
       <header className="sim-header">
         <h2>DASHBOARD</h2>
+        {/* Use case 10 */}
         <div className="power"></div>
         <div className="toggle-switch">
           <label>
@@ -35,6 +36,7 @@ function Simulation() {
         <div className="temperature">
           <p>Outside Temp: 15°C</p>
         </div>
+        {/* Use case 11 */}
         <div className="datetime-picker">
           <p>datetime-picker: {today}</p>
           {/* <DatePicker
