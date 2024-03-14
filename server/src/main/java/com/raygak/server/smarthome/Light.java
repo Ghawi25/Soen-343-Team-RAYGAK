@@ -13,6 +13,7 @@ public class Light {
         this.position = position;
     }
 
+    // Use case 18 - turn on off light
     public void turnOff() {
         this.isOn = false;
     }
