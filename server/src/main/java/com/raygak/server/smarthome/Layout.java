@@ -6,6 +6,7 @@ import lombok.Getter;
 import org.json.simple.JSONObject;
 import com.raygak.server.utils.LayoutReader;
 
+// Use case 1 - Read and load house layout
 public class Layout {
     @Getter
     JSONObject layoutJSON;
