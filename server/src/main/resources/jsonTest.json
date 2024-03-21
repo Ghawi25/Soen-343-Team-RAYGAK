@@ -9,7 +9,7 @@
       "height": 2,
       "adjacentTo": {
         "north": "RoomB",
-        "south": "RoomC",
+        "south": "",
         "east": "",
         "west": ""
       },
@@ -17,8 +17,7 @@
         "north": [],
         "south": [],
         "east": [
-          "WindowA",
-          "WindowB"
+          "WindowA"
         ],
         "west": [
           "WindowC"
@@ -26,7 +25,7 @@
       },
       "doors": {
         "north": "DoorA",
-        "south": "DoorB",
+        "south": "",
         "east": "",
         "west": ""
       },
@@ -47,8 +46,7 @@
         "north": [],
         "south": [],
         "east": [
-          "WindowD",
-          "WindowE"
+          "WindowD"
         ],
         "west": [
           "WindowF"

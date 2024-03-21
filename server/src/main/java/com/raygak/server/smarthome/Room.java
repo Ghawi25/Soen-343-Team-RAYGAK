@@ -1,14 +1,14 @@
 package com.raygak.server.smarthome;
 
-import com.raygak.server.model.User;
+import lombok.Data;
+import com.raygak.server.models.User;
 import com.raygak.server.smarthome.heating.*;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.text.DecimalFormat;
 import java.time.LocalTime;
 
-@Getter
+@Data
 public class Room {
     private String roomID;
     private String name;
@@ -21,10 +21,10 @@ public class Room {
     private ArrayList<Window> windows = new ArrayList<Window>();
     private ArrayList<Door> doors = new ArrayList<Door>();
     private ArrayList<User> inhabitants = new ArrayList<User>();
-    private Room topAdjacentRoom;
-    private Room bottomAdjacentRoom;
-    private Room leftAdjacentRoom;
-    private Room rightAdjacentRoom;
+    private String topAdjacentRoom;
+    private String bottomAdjacentRoom;
+    private String leftAdjacentRoom;
+    private String rightAdjacentRoom;
     private Zone zone = null;
     private DecimalFormat temperatureFormat = new DecimalFormat("0.00");
     private double lastGeneralTempChange = 0.00;
@@ -45,7 +45,7 @@ public class Room {
         this.light = light;
     }
 
-    public Room(String idInput, String name, int width, int height, Light light, double desTempInput, boolean isAirConditioningOn, Room topAdjacent, Room bottomAdjacent, Room leftAdjacent, Room rightAdjacent) {
+    public Room(String idInput, String name, int width, int height, Light light, double desTempInput, boolean isAirConditioningOn, String topAdjacent, String bottomAdjacent, String leftAdjacent, String rightAdjacent) {
         this.roomID = idInput;
         this.name = name;
         this.width = width;
@@ -60,7 +60,7 @@ public class Room {
         this.rightAdjacentRoom = rightAdjacent;
     }
 
-    public Room(String idInput, String name, int width, int height, Light light, double desTempInput, boolean isAirConditioningOn, ArrayList<Window> windowListInput, ArrayList<Door> doorListInput, ArrayList<User> inhabitantListInput, Room topAdjacent, Room bottomAdjacent, Room leftAdjacent, Room rightAdjacent) {
+    public Room(String idInput, String name, int width, int height, Light light, double desTempInput, boolean isAirConditioningOn, ArrayList<Window> windowListInput, ArrayList<Door> doorListInput, ArrayList<User> inhabitantListInput, String topAdjacent, String bottomAdjacent, String leftAdjacent, String rightAdjacent) {
         this.roomID = idInput;
         this.name = name;
         this.width = width;
