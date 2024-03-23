@@ -26,19 +26,11 @@ public class WindowOpenCommand extends Command {
 
     @Override
     public void execute() {
-        ArrayList<Window> windows = this.house.getWindows();
-        for (int i = 0;i < windows.size();i++) {
-            if (windows.get(i).getWindowID().equals(windowID)) {
-                Window w = windows.get(i);
-                if (w.isOpen()) {
-                    w.close();
-                } else {
-                    w.open();
-                }
-                windows.set(i, w);
-                house.setWindows(windows);
-                break;
-            }
+        Window w = this.house.getWindowByID(this.windowID);
+        if (w.isOpen()) {
+            this.house.closeWindowWithID(this.windowID);
+        } else {
+            this.house.openWindowWithID(this.windowID);
         }
     }
 }

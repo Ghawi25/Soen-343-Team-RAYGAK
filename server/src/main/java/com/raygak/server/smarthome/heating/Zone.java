@@ -2,6 +2,7 @@ package com.raygak.server.smarthome.heating;
 
 import com.raygak.server.smarthome.Room;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Zone {
@@ -49,6 +50,19 @@ public class Zone {
 	
 	public ArrayList<Room> getRoomList() {
 		return this.roomList;
+	}
+
+	public double getCurrentZoneSetting() {
+		LocalTime currentTime = LocalTime.now();
+		//Check each of the room's temperature settings for the one whose start-end time range contains the current time.
+		for (TemperatureSetting setting : this.settingList) {
+			LocalTime startTime = setting.getStart();
+			LocalTime endTime = setting.getEnd();
+			if ((currentTime.isAfter(startTime) && currentTime.isBefore(endTime))) {
+				return setting.getDesiredTemperature();
+			}
+		}
+		throw new IllegalStateException("Error: There must be a temperature setting corresponding to the current time.");
 	}
 	
 	public void setType(ZoneType newType) {
@@ -108,6 +122,20 @@ public class Zone {
 		for (int i = 0;i < this.settingList.size();i++) {
 			if (this.settingList.get(i).getSettingID().equals(settingID)) {
 				this.settingList.set(i, new TemperatureSetting(settingID, newTemp, newStartHours, newStartMinutes, newEndHours, newEndMinutes));
+			}
+		}
+	}
+
+	//For when only the desired temperature of a certain setting (for the currently ongoing time period) of the zone needs to be changed.
+	public void setSettingTemperature(String settingID, double newTemp) {
+		for (int i = 0;i < this.settingList.size();i++) {
+			if (this.settingList.get(i).getSettingID().equals(settingID)) {
+				TemperatureSetting currentSetting = this.settingList.get(i);
+				int startHours = currentSetting.getStart().getHour();
+				int startMinutes = currentSetting.getStart().getMinute();
+				int endHours = currentSetting.getEnd().getHour();
+				int endMinutes = currentSetting.getEnd().getMinute();
+				this.settingList.set(i, new TemperatureSetting(settingID, newTemp, startHours, startMinutes, endHours, endMinutes));
 			}
 		}
 	}

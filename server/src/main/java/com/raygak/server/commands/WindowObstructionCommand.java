@@ -27,19 +27,11 @@ public class WindowObstructionCommand extends Command {
 
     @Override
     public void execute() {
-        ArrayList<Window> windows = this.house.getWindows();
-        for (int i = 0;i < windows.size();i++) {
-            if (windows.get(i).getWindowID().equals(windowID)) {
-                Window w = windows.get(i);
-                if (w.isObstructed()) {
-                    w.unobstruct();
-                } else {
-                    w.obstruct();
-                }
-                windows.set(i, w);
-                house.setWindows(windows);
-                break;
-            }
+        Window w = this.house.getWindowByID(this.windowID);
+        if (w.isObstructed()) {
+            this.house.unobstructWindowWithID(this.windowID);
+        } else {
+            this.house.obstructWindowWithID(this.windowID);
         }
     }
 }
