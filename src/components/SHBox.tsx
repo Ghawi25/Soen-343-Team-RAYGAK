@@ -1,9 +1,7 @@
-// SHBox.tsx
 import SHC from "./SHC";
 import SHS from "./SHS";
 import SHP from "./SHP";
 import SHH from "./SHH";
-import React from "react";
 
 function SHBox({ selectedSH }: { selectedSH: string }) {
   const renderSH = () => {

@@ -1,5 +1,4 @@
-// SH.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import TabExplorer from "./TabExplorer";
 import SHBox from "./SHBox";
 
