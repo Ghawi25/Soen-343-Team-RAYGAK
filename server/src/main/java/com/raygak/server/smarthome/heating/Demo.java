@@ -1,18 +1,15 @@
 package com.raygak.server.smarthome.heating;
 
-import com.raygak.server.model.User;
 import com.raygak.server.smarthome.*;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Demo {
 
 	public static void main(String[] args) {
-		User p1 = new User("james@gmail.com", "james123", "Adult");
-		User p2 = new User("quinn@gmail.com", "quinn456", "Child");
-		User p3 = new User("dennis@gmail.com", "dennis789", "Guest");
+		User p1 = new User("james@gmail.com", "james123", UserType.PARENT);
+		User p2 = new User("quinn@gmail.com", "quinn456", UserType.CHILD);
+		User p3 = new User("dennis@gmail.com", "dennis789", UserType.GUEST);
 
 		ArrayList<User> userList1 = new ArrayList<User>();
 		userList1.add(p1);
@@ -79,6 +76,7 @@ public class Demo {
 		zoneList.add(z2);
 
 		House h1 = new House(allRooms, zoneList, 40.0, Season.WINTER);
+		h1.turnOnSHH();
 		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
 		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
 		System.out.println("House temperature: " + h1.getIndoorTemperature());
@@ -105,6 +103,8 @@ public class Demo {
 		while (limit1 <= 100) {
 			try {
 				h1.updateAllRoomTemperatures();
+				System.out.println("Indoor temperature: " + h1.getIndoorTemperature());
+				System.out.println("Outdoor temperature: " + h1.getOutdoorTemperature());
 				limit1++;
 				Thread.sleep(1000);
 			}
@@ -112,6 +112,7 @@ public class Demo {
 				System.out.println("Thread interrupted.");
 			}
 		}
+		h1.turnOffSHH();
 		h1.setOutdoorTemperature(10.0);
 		h1.setCurrentSeason(Season.SUMMER);
 		h1.removeInhabitant("quinn@gmail.com");

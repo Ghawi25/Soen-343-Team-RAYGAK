@@ -139,4 +139,13 @@ public class Zone {
 			}
 		}
 	}
+
+	public boolean doesSettingWithIDExist(String settingID) {
+		for (TemperatureSetting ts : this.settingList) {
+			if (ts.getSettingID().equals(settingID)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

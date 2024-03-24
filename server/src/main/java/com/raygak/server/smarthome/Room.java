@@ -1,6 +1,6 @@
 package com.raygak.server.smarthome;
 
-import com.raygak.server.model.User;
+import com.raygak.server.smarthome.User;
 import com.raygak.server.smarthome.heating.*;
 import lombok.Getter;
 
@@ -81,6 +81,10 @@ public class Room {
         this.rightAdjacentRoom = rightAdjacent;
     }
 
+    public void displayTemperature() {
+        System.out.println(this.currentTemperature + (this.isOverridden ? " (overridden)" : ""));
+    }
+
     public void addWindow(Window newWindow) {
         this.windows.add(newWindow);
     }
@@ -110,6 +114,7 @@ public class Room {
     }
 
     public void addInhabitant(User newInhabitant) {
+        newInhabitant.setCurrentRoom(this);
         this.inhabitants.add(newInhabitant);
         //The room's temperature should be updated from its desired unoccupied temperature when somebody enters it.
         if (this.inhabitants.size() == 1) {
@@ -182,7 +187,7 @@ public class Room {
         this.windows = newWindowList;
     }
 
-    public void changeOutsideTemperature(double outsideTemperature) {
+    public void changeCurrentTemperature(double outsideTemperature) {
         if (this.isHVACOn == true) {
             if (this.currentTemperature == this.desiredZoneSpecificTemperature) {
                 System.out.println("Turning HVAC off for room " + this.roomID);
@@ -197,7 +202,7 @@ public class Room {
             if (this.currentTemperature <= (this.desiredZoneSpecificTemperature - 0.25) || this.currentTemperature >= (this.desiredZoneSpecificTemperature + 0.25)) {
                 System.out.println("Turning HVAC on for room " + this.roomID);
                 this.isHVACOn = true;
-                changeOutsideTemperature(outsideTemperature);
+                changeCurrentTemperature(outsideTemperature);
             }
             if (this.currentTemperature < outsideTemperature) {
                 this.currentTemperature = Math.round((this.currentTemperature + 0.05) * 100.0) /100.0;

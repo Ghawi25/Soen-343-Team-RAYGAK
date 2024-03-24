@@ -4,9 +4,22 @@ import com.raygak.server.smarthome.House;
 
 public class SHH {
     private House house;
+    private boolean isOn = false;
 
     public SHH(House house) {
         this.house = house;
+    }
+
+    public boolean getIsOn() {
+        return this.isOn;
+    }
+
+    public void turnOn() {
+        this.isOn = true;
+    }
+
+    public void turnOff() {
+        this.isOn = false;
     }
 
     public void dangerousTemperatureUpdate(String status) {
