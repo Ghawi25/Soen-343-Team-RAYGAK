@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class User {
 
     private String id;
-    private String email;
+    private String username;
     private String password;
     private UserType userType; // adult, child, guest
     private Room currentRoom = null;
@@ -20,8 +20,8 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(String email, String password, UserType userType) {
-        this.email = email;
+    public User(String username, String password, UserType userType) {
+        this.username = username;
         this.password = password;
         this.userType = userType;
     }
@@ -34,12 +34,12 @@ public class User {
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

@@ -1,5 +1,6 @@
 package com.raygak.server.smarthome.heating;
 
+import com.raygak.server.commands.*;
 import com.raygak.server.smarthome.*;
 
 import java.util.ArrayList;
@@ -33,8 +34,8 @@ public class Demo {
 		Light l1 = new Light("Room 1 Light", "Centre");
 		Light l2 = new Light("Room 2 Light", "Centre");
 
-		Door d1 = new Door("Room 1 Light", "Bottom Centre");
-		Door d2 = new Door("Room 2 Light", "Bottom Centre");
+		Door d1 = new Door("Room 1 Door", "Bottom Centre");
+		Door d2 = new Door("Room 2 Door", "Bottom Centre");
 
 		ArrayList<Door> doorList1 = new ArrayList<Door>();
 		doorList1.add(d1);
@@ -76,56 +77,58 @@ public class Demo {
 		zoneList.add(z2);
 
 		House h1 = new House(allRooms, zoneList, 40.0, Season.WINTER);
-		h1.turnOnSHH();
-		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
-		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
-		System.out.println("House temperature: " + h1.getIndoorTemperature());
-		h1.removeInhabitant("james@gmail.com");
-		h1.removeInhabitant("quinn@gmail.com");
-		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
-		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
-		System.out.println("House temperature: " + h1.getIndoorTemperature());
-		h1.addInhabitantToRoom(p3, "1");
-		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
-		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
-		System.out.println("House temperature: " + h1.getIndoorTemperature());
-		h1.addInhabitantToRoom(p2, "2");
-		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
-		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
-		System.out.println("House temperature: " + h1.getIndoorTemperature());
-		h1.removeInhabitant("dennis@gmail.com");
-		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
-		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
-		System.out.println("House temperature: " + h1.getIndoorTemperature());
-		h1.setOutdoorTemperature(10.0);
-		h1.setOutdoorTemperature(50.0);
-		int limit1 = 0;
-		while (limit1 <= 100) {
-			try {
-				h1.updateAllRoomTemperatures();
-				System.out.println("Indoor temperature: " + h1.getIndoorTemperature());
-				System.out.println("Outdoor temperature: " + h1.getOutdoorTemperature());
-				limit1++;
-				Thread.sleep(1000);
-			}
-			catch(InterruptedException ie) {
-				System.out.println("Thread interrupted.");
-			}
-		}
-		h1.turnOffSHH();
-		h1.setOutdoorTemperature(10.0);
-		h1.setCurrentSeason(Season.SUMMER);
-		h1.removeInhabitant("quinn@gmail.com");
-		int limit2 = 0;
-		while (limit2 <= 100) {
-			try {
-				h1.updateAllRoomTemperatures();
-				limit2++;
-				Thread.sleep(1000);
-			}
-			catch(InterruptedException ie) {
-				System.out.println("Thread interrupted.");
-			}
-		}
+		System.out.println(h1.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
+		h1.openDoorWithName("Room 1 Door");
+		System.out.println(h1.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
+//		h1.turnOnSHH();
+//		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
+//		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
+//		System.out.println("House temperature: " + h1.getIndoorTemperature());
+//		h1.removeInhabitant("james@gmail.com");
+//		h1.removeInhabitant("quinn@gmail.com");
+//		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
+//		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
+//		System.out.println("House temperature: " + h1.getIndoorTemperature());
+//		h1.addInhabitantToRoom(p3, "1");
+//		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
+//		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
+//		System.out.println("House temperature: " + h1.getIndoorTemperature());
+//		h1.addInhabitantToRoom(p2, "2");
+//		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
+//		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
+//		System.out.println("House temperature: " + h1.getIndoorTemperature());
+//		h1.removeInhabitant("dennis@gmail.com");
+//		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
+//		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
+//		System.out.println("House temperature: " + h1.getIndoorTemperature());
+//		h1.setOutdoorTemperature(10.0);
+//		h1.setOutdoorTemperature(50.0);
+//		int limit1 = 0;
+//		while (limit1 <= 10) {
+//			try {
+//				h1.updateAllRoomTemperatures();
+//				System.out.println("Indoor temperature: " + h1.getIndoorTemperature());
+//				System.out.println("Outdoor temperature: " + h1.getOutdoorTemperature());
+//				limit1++;
+//				Thread.sleep(1000);
+//			}
+//			catch(InterruptedException ie) {
+//				System.out.println("Thread interrupted.");
+//			}
+//		}
+//		h1.setOutdoorTemperature(10.0);
+//		h1.setCurrentSeason(Season.WINTER);
+//		h1.removeInhabitant("quinn@gmail.com");
+//		int limit2 = 0;
+//		while (limit2 <= 10) {
+//			try {
+//				h1.updateAllRoomTemperatures();
+//				limit2++;
+//				Thread.sleep(1000);
+//			}
+//			catch(InterruptedException ie) {
+//				System.out.println("Thread interrupted.");
+//			}
+//		}
 	}
 }

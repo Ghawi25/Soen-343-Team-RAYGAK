@@ -123,13 +123,13 @@ public class Room {
         }
     }
 
-    public void removeInhabitant(String email) {
+    public void removeInhabitant(String username) {
         if (this.inhabitants.isEmpty()) {
             throw new RuntimeException("Error: Cannot remove any inhabitants, as none are present.");
         }
-        System.out.println("REMOVING INHABITANT WITH EMAIL ADDRESS " + email);
+        System.out.println("REMOVING INHABITANT WITH USERNAME " + username);
         for (int i = 0; i < this.inhabitants.size(); i++) {
-            if (this.inhabitants.get(i).getEmail().equals(email)) {
+            if (this.inhabitants.get(i).getUsername().equals(username)) {
                 this.inhabitants.remove(i);
                 if (this.inhabitants.isEmpty()) {
                     this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredUnoccupiedTemperature));
@@ -185,6 +185,14 @@ public class Room {
 
     public void setWindows(ArrayList<Window> newWindowList) {
         this.windows = newWindowList;
+    }
+
+    public void setDoors(ArrayList<Door> newDoorList) {
+        this.doors = newDoorList;
+    }
+
+    public void setLight(Light newLight) {
+        this.light = newLight;
     }
 
     public void changeCurrentTemperature(double outsideTemperature) {

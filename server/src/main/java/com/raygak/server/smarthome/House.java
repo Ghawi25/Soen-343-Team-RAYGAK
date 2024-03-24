@@ -1,5 +1,6 @@
 package com.raygak.server.smarthome;
 
+import com.raygak.server.commands.*;
 import com.raygak.server.smarthome.User;
 import com.raygak.server.smarthome.heating.*;
 import lombok.Getter;
@@ -20,6 +21,7 @@ public class House {
     private double outdoorTemperature;
     private Season currentSeason;
     private SHH shh;
+    private HouseControl houseControl = new HouseControl();
 
     //Boolean to check if the house is currently empty during winter.
     private boolean isInWinterAndEmptyHouseProtocol = false;
@@ -225,7 +227,7 @@ public class House {
                 this.rooms.remove(i);
                 for (User p : this.rooms.get(i).getInhabitants()) {
                     for (int j = 0; j < this.inhabitants.size(); j++) {
-                        if (p.getEmail().equals(this.inhabitants.get(j).getEmail())) {
+                        if (p.getUsername().equals(this.inhabitants.get(j).getUsername())) {
                             this.inhabitants.remove(j);
                         }
                     }
@@ -281,17 +283,17 @@ public class House {
         }
     }
 
-    public void removeInhabitant(String inhabitantEmail) {
+    public void removeInhabitant(String inhabitantUsername) {
         for (int i = 0; i < this.inhabitants.size(); i++) {
-            if (this.inhabitants.get(i).getEmail().equals(inhabitantEmail)) {
+            if (this.inhabitants.get(i).getUsername().equals(inhabitantUsername)) {
                 this.inhabitants.remove(i);
                 for (int j = 0; j < this.rooms.size(); j++) {
-                    for (int k = 0; k < this.rooms.get(j).getInhabitants().size(); k++) {
-                        if (this.rooms.get(j).getInhabitants().get(k).getEmail().equals(inhabitantEmail)) {
-                            //A temporary Room object is created in order to properly replace the to-be-modified Room object in the rooms list.
-                            Room tempRoom = this.rooms.get(j);
-                            tempRoom.removeInhabitant(inhabitantEmail);
-                            this.rooms.set(j, tempRoom);
+                    Room r = this.rooms.get(j);
+                    ArrayList<User> inhabitantList = r.getInhabitants();
+                    for (int k = 0; k < inhabitantList.size(); k++) {
+                        if (inhabitantList.get(k).getUsername().equals(inhabitantUsername)) {
+                            r.removeInhabitant(inhabitantUsername);
+                            this.rooms.set(j, r);
                             if (this.shh.getIsOn()) {
                                 winterAndEmptyHouseProtocol();
                                 if (this.inhabitants.size() == 0 && isInSummerProtocol) {
@@ -383,6 +385,10 @@ public class House {
         this.windows = newWindowList;
     }
 
+    public void setLights(ArrayList<Light> newLightList) {
+        this.lights = newLightList;
+    }
+
     public void updateAllRoomTemperatures() {
         if (this.shh.getIsOn()) {
             for (Room r : this.rooms) {
@@ -392,124 +398,66 @@ public class House {
         }
     }
 
+    public void openDoorWithName(String doorName) {
+        DoorOpenCommand command = new DoorOpenCommand(this, doorName);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((DoorOpenCommand)this.houseControl.getCommand()).getHouse().getRooms();
+        this.doors = ((DoorOpenCommand)this.houseControl.getCommand()).getHouse().getDoors();
+    }
+
+    public void closeDoorWithName(String doorName) {
+        DoorCloseCommand command = new DoorCloseCommand(this, doorName);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((DoorCloseCommand)this.houseControl.getCommand()).getHouse().getRooms();
+        this.doors = ((DoorCloseCommand)this.houseControl.getCommand()).getHouse().getDoors();
+    }
+
     public void openWindowWithID(String windowID) {
-        for (int i = 0;i < this.rooms.size();i++) {
-            Room r = this.rooms.get(i);
-            ArrayList<Window> currentRoomWindows = r.getWindows();
-            for (int j = 0; j < currentRoomWindows.size(); j++) {
-                Window w = currentRoomWindows.get(j);
-                if (w.getWindowID().equals(windowID)) {
-                    if (w.isOpen()) {
-                        this.shh.windowErrorUpdate(windowID, "Already Open");
-                    }
-                    else if (w.isObstructed()) {
-                        this.shh.windowErrorUpdate(windowID, "Obstructed, Cannot Open");
-                    }
-                    else {
-                        w.open();
-                        currentRoomWindows.set(j, w);
-                        r.setWindows(currentRoomWindows);
-                        this.rooms.set(i, r);
-                    }
-                }
-            }
-        }
+        WindowOpenCommand command = new WindowOpenCommand(this, windowID);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getRooms();
+        this.windows = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getWindows();
     }
 
     public void closeWindowWithID(String windowID) {
-        for (int i = 0;i < this.rooms.size();i++) {
-            Room r = this.rooms.get(i);
-            ArrayList<Window> currentRoomWindows = r.getWindows();
-            for (int j = 0; j < currentRoomWindows.size(); j++) {
-                Window w = currentRoomWindows.get(j);
-                if (w.getWindowID().equals(windowID)) {
-                    if (w.isOpen() == false) {
-                        this.shh.windowErrorUpdate(windowID, "Already Closed");
-                    }
-                    else if (w.isObstructed()) {
-                        this.shh.windowErrorUpdate(windowID, "Obstructed, Cannot Close");
-                    }
-                    else {
-                        w.close();
-                        currentRoomWindows.set(j, w);
-                        r.setWindows(currentRoomWindows);
-                        this.rooms.set(i, r);
-                    }
-                }
-            }
-        }
+        WindowCloseCommand command = new WindowCloseCommand(this, windowID);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((WindowCloseCommand)this.houseControl.getCommand()).getHouse().getRooms();
+        this.windows = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getWindows();
     }
 
     public void obstructWindowWithID(String windowID) {
-        for (int i = 0;i < this.rooms.size();i++) {
-            Room r = this.rooms.get(i);
-            ArrayList<Window> currentRoomWindows = r.getWindows();
-            for (int j = 0; j < currentRoomWindows.size(); j++) {
-                Window w = currentRoomWindows.get(j);
-                if (w.getWindowID().equals(windowID)) {
-                    if (w.isObstructed()) {
-                        this.shh.windowErrorUpdate(windowID, "Already Obstructed");
-                    }
-                    else {
-                        w.obstruct();
-                        currentRoomWindows.set(j, w);
-                        r.setWindows(currentRoomWindows);
-                        this.rooms.set(i, r);
-                    }
-                }
-            }
-        }
+        WindowObstructionCommand command = new WindowObstructionCommand(this, windowID);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((WindowObstructionCommand)this.houseControl.getCommand()).getHouse().getRooms();
+        this.windows = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getWindows();
     }
 
     public void unobstructWindowWithID(String windowID) {
-        for (int i = 0;i < this.rooms.size();i++) {
-            Room r = this.rooms.get(i);
-            ArrayList<Window> currentRoomWindows = r.getWindows();
-            for (int j = 0; j < currentRoomWindows.size(); j++) {
-                Window w = currentRoomWindows.get(j);
-                if (w.getWindowID().equals(windowID)) {
-                    if (w.isObstructed() == false) {
-                        this.shh.windowErrorUpdate(windowID, "Already Unbstructed");
-                    }
-                    else {
-                        w.unobstruct();
-                        currentRoomWindows.set(j, w);
-                        r.setWindows(currentRoomWindows);
-                        this.rooms.set(i, r);
-                    }
-                }
-            }
-        }
+        WindowUnobstructionCommand command = new WindowUnobstructionCommand(this, windowID);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((WindowUnobstructionCommand)this.houseControl.getCommand()).getHouse().getRooms();
+        this.windows = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getWindows();
     }
 
     public void turnOnHVACInRoomWithID(String roomID) {
-        for (int i = 0;i < this.rooms.size();i++) {
-            Room r = this.rooms.get(i);
-            if (r.getRoomID().equals(roomID)) {
-                if (r.isHVACOn()) {
-                    this.shh.HVACErrorUpdate(r.getRoomID(), "Already On");
-                } else {
-                    r.turnOnHVAC();
-                }
-                this.rooms.set(i, r);
-                return;
-            }
-        }
+        TurnOnHVACCommand command = new TurnOnHVACCommand(this, roomID);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((TurnOnHVACCommand)this.houseControl.getCommand()).getHouse().getRooms();
     }
 
     public void turnOffHVACInRoomWithID(String roomID) {
-        for (int i = 0;i < this.rooms.size();i++) {
-            Room r = this.rooms.get(i);
-            if (r.getRoomID().equals(roomID)) {
-                if (r.isHVACOn() == false) {
-                    this.shh.HVACErrorUpdate(r.getRoomID(), "Already Off");
-                } else {
-                    r.turnOffHVAC();
-                }
-                this.rooms.set(i, r);
-                return;
-            }
-        }
+        TurnOffHVACCommand command = new TurnOffHVACCommand(this, roomID);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((TurnOffHVACCommand)this.houseControl.getCommand()).getHouse().getRooms();
     }
 
     public void turnOnSHH() {

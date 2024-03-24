@@ -37,7 +37,7 @@ public class UserService {
     public User updateUserProfile(String id, User userDetails) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User profile not found for this id :: " + id));
-        user.setEmail(userDetails.getEmail());
+        user.setUsername(userDetails.getUsername());
         user.setPassword(userDetails.getPassword());
         user.setUserType(userDetails.getUserType());
         return userRepository.save(user);
