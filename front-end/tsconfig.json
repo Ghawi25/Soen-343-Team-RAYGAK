@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src", "tests/components/SHS.test.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
