@@ -9,10 +9,10 @@ function SH() {
   return (
     <>
       <div>
-        <TabExplorer setSelectedSH={setSelectedSH} />
+        <TabExplorer />
       </div>
       <div>
-        <SHBox selectedSH={selectedSH} />
+        <SHBox />
       </div>
     </>
   );
