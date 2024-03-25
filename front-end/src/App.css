@@ -1,0 +1,241 @@
+html {
+  overflow: hidden;
+  box-sizing: border-box;
+  font-size: 1.3rem;
+  background-color: rgb(199, 242, 252);
+}
+
+/* Typography */
+
+h5 {
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+button {
+  font-size: 1.2rem;
+}
+
+input[type="datetime-local"] {
+  font-size: 0.8rem;
+}
+
+/* Dashboard modules */
+
+#dashboard {
+  display: grid;
+  height: 98vh;
+  grid-template-rows: 2fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.module {
+  background-color: #f6f4eb;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 3px solid grey;
+  margin: 0.3rem;
+  margin-bottom: 0;
+  box-shadow: 8px 16px 16px hsl(0deg 0% 0% / 0.25);
+}
+
+#simulation {
+  grid-area: 1 / 1 / span 2 / span 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#SH {
+  grid-area: 1 / 2 / span 1 / span 1;
+}
+
+#house-view {
+  grid-area: 1 / 3 / span 1 / span 1;
+}
+
+#output-console {
+  grid-area: 2 / 2 / span 1 / span 2;
+}
+
+#house-view,
+#output-console {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.bubble {
+  border: 1px solid #222;
+  border-radius: 1rem;
+  background-color: whitesmoke;
+  box-shadow: 2px 4px 4px hsla(0, 0%, 35%, 0.38);
+}
+
+/* Simulation */
+
+.sim-header {
+  margin-bottom: 1rem;
+}
+
+.power {
+  display: inline-block;
+  transform: translateY(0.4rem);
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+  background-size: cover;
+  background-image: url("power.png");
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  margin-bottom: 1rem;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: rgb(58, 143, 172);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 20px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1rem;
+  align-items: center;
+}
+
+.avatar {
+  width: 15rem;
+  height: 15rem;
+  background-image: url(blank-avatar.webp);
+  background-size: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.simulation-details {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px;
+  align-items: center;
+}
+
+.datetime-picker {
+  cursor: pointer;
+}
+
+#btn--date-time {
+  margin-left: 1rem;
+  transform: translateY(4px);
+}
+
+.time-speed {
+  width: 100%;
+}
+
+.time-speed p {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.time-speed input[type="range"] {
+  cursor: pointer;
+  width: 50%;
+}
+
+/* SH */
+
+.feature-nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px;
+  background: lightblue;
+  border: 1px solid grey;
+  border-radius: 0.5rem;
+}
+
+.feature-nav button {
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+#login {
+  text-align: center;
+  padding: 1rem;
+  margin: 1rem;
+}
+
+.field {
+  margin: 1rem;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="datetime-local"] {
+  margin-left: 1rem;
+  padding: 0.3rem;
+}
+
+/* HouseView */
+
+.houseBox {
+  height: 100%;
+  width: 100%;
+  padding: 1rem;
+}
+
+/* Console */
+
+.outputBox {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  padding: 1rem;
+}
