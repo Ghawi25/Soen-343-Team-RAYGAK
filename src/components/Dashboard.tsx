@@ -1,7 +1,7 @@
-import HouseView from "./HouseView/HouseView";
-import Simulation from "./Simulation/Simulation";
-import SH from "./SH/SH";
-import OutputConsole from "./OutputConsole/OutputConsole";
+import HouseView from "./HouseView";
+import Simulation from "./Simulation";
+import SH from "./SH";
+import OutputConsole from "./OutputConsole";
 
 function Dashboard() {
   return (

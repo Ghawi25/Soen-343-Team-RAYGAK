@@ -17,10 +17,6 @@ button {
   font-size: 1.2rem;
 }
 
-input[type="datetime-local"] {
-  font-size: 0.8rem;
-}
-
 /* Dashboard modules */
 
 #dashboard {
@@ -170,11 +166,6 @@ input:checked + .slider:before {
   cursor: pointer;
 }
 
-#btn--date-time {
-  margin-left: 1rem;
-  transform: translateY(4px);
-}
-
 .time-speed {
   width: 100%;
 }
@@ -217,8 +208,7 @@ input:checked + .slider:before {
 }
 
 input[type="text"],
-input[type="password"],
-input[type="datetime-local"] {
+input[type="password"] {
   margin-left: 1rem;
   padding: 0.3rem;
 }
