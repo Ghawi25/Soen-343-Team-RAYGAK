@@ -54,8 +54,8 @@ public class WindowOpenCommand extends Command {
                             break;
                         }
                         this.house.setWindows(houseWindows);
-                        return;
                     }
+                    return;
                 }
             }
         }

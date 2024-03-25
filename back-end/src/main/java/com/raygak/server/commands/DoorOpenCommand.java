@@ -35,9 +35,7 @@ public class DoorOpenCommand extends Command {
             for (int j = 0; j < currentRoomDoors.size(); j++) {
                 Door d = currentRoomDoors.get(j);
                 if (d.getName().equals(doorName)) {
-                    System.out.println(d.isOpen() ? "D1 Open" : "D1 Closed");
                     d.openDoor();
-                    System.out.println(d.isOpen() ? "D1 Open" : "D1 Closed");
                     currentRoomDoors.set(j, d);
                     r.setDoors(currentRoomDoors);
                     rooms.set(i, r);

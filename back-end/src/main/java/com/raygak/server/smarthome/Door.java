@@ -13,8 +13,8 @@ public class Door {
     }
 
     public void openDoor() {
-        this.isOpen = false;
+        this.isOpen = true;
     }
 
-    public void closeDoor() {this.isOpen = true;}
+    public void closeDoor() {this.isOpen = false;}
 }

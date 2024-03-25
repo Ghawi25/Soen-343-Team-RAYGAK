@@ -59,7 +59,7 @@ public class House {
         this.zones = zoneListInput;
 
         for (Room r : this.rooms) {
-            r.setCurrentTemperature(outdoorTempInput);
+            r.setCurrentTemperature(outdoorTempInput, false);
         }
         this.indoorTemperature = outdoorTempInput;
         this.outdoorTemperature = outdoorTempInput;
@@ -269,6 +269,7 @@ public class House {
         for (Room r : this.rooms) {
             if (r.getRoomID().equals(inhabitedRoomID)) {
                 r.addInhabitant(newInhabitant);
+                newInhabitant.setCurrentRoom(r);
                 //Due to how the indoor temperature is computed in the "reverseWinterAndEmptyHouseProtocol" method, it needs
                 //to be computed via an explicit function call if the aforementioned method is not called.
                 if (this.shh.getIsOn()) {
@@ -306,6 +307,40 @@ public class House {
             }
         }
         throw new IllegalArgumentException("Error: The inhabitant with the provided ID does not exist.");
+    }
+
+    public void moveInhabitantToRoom(User inhabitant, String newRoomID) {
+        int inhabitantPosition = 0;
+        for (int i = 0;i < this.inhabitants.size();i++) {
+            if (this.inhabitants.get(i).getUsername().equals(inhabitant.getUsername())) {
+                inhabitantPosition = i;
+                break;
+            }
+        }
+        int oldRoomPosition = 0;
+        for (int i = 0;i < this.rooms.size();i++) {
+            Room r = this.rooms.get(i);
+            if (r.getRoomID().equals(inhabitant.getCurrentRoom().getRoomID())) {
+                oldRoomPosition = i;
+                break;
+            }
+        }
+        int newRoomPosition = 0;
+        for (int i = 0;i < this.rooms.size();i++) {
+            Room r = this.rooms.get(i);
+            if (r.getRoomID().equals(newRoomID)) {
+                newRoomPosition = i;
+                break;
+            }
+        }
+        Room oldRoom = this.rooms.get(oldRoomPosition);
+        oldRoom.removeInhabitant(inhabitant.getUsername());
+        this.rooms.set(oldRoomPosition, oldRoom);
+        Room roomToBeMovedTo = this.rooms.get(newRoomPosition);
+        roomToBeMovedTo.addInhabitant(inhabitant);
+        this.rooms.set(newRoomPosition, roomToBeMovedTo);
+        inhabitant.setCurrentRoom(roomToBeMovedTo);
+        this.inhabitants.set(inhabitantPosition, inhabitant);
     }
 
     public void setIndoorTemperature(double temperatureInput) {
@@ -426,7 +461,7 @@ public class House {
         this.houseControl.setCommand(command);
         this.houseControl.execute();
         this.rooms = ((WindowCloseCommand)this.houseControl.getCommand()).getHouse().getRooms();
-        this.windows = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getWindows();
+        this.windows = ((WindowCloseCommand)this.houseControl.getCommand()).getHouse().getWindows();
     }
 
     public void obstructWindowWithID(String windowID) {
@@ -434,7 +469,7 @@ public class House {
         this.houseControl.setCommand(command);
         this.houseControl.execute();
         this.rooms = ((WindowObstructionCommand)this.houseControl.getCommand()).getHouse().getRooms();
-        this.windows = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getWindows();
+        this.windows = ((WindowObstructionCommand)this.houseControl.getCommand()).getHouse().getWindows();
     }
 
     public void unobstructWindowWithID(String windowID) {
@@ -442,7 +477,7 @@ public class House {
         this.houseControl.setCommand(command);
         this.houseControl.execute();
         this.rooms = ((WindowUnobstructionCommand)this.houseControl.getCommand()).getHouse().getRooms();
-        this.windows = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getWindows();
+        this.windows = ((WindowUnobstructionCommand)this.houseControl.getCommand()).getHouse().getWindows();
     }
 
     public void turnOnHVACInRoomWithID(String roomID) {
@@ -457,6 +492,22 @@ public class House {
         this.houseControl.setCommand(command);
         this.houseControl.execute();
         this.rooms = ((TurnOffHVACCommand)this.houseControl.getCommand()).getHouse().getRooms();
+    }
+
+    public void turnOnLightWithName(String lightName) {
+        LightOnCommand command = new LightOnCommand(this, lightName);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((LightOnCommand)this.houseControl.getCommand()).getHouse().getRooms();
+        this.lights = ((LightOnCommand)this.houseControl.getCommand()).getHouse().getLights();
+    }
+
+    public void turnOffLightWithName(String lightName) {
+        LightOffCommand command = new LightOffCommand(this, lightName);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((LightOffCommand)this.houseControl.getCommand()).getHouse().getRooms();
+        this.lights = ((LightOffCommand)this.houseControl.getCommand()).getHouse().getLights();
     }
 
     public void turnOnSHH() {

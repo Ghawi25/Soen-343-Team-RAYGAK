@@ -51,8 +51,8 @@ public class WindowUnobstructionCommand extends Command {
                             break;
                         }
                         this.house.setWindows(houseWindows);
-                        return;
                     }
+                    return;
                 }
             }
         }
