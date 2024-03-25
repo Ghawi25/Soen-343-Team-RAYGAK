@@ -1,6 +1,9 @@
 # Front-End Client
+## Installation Guide
 
-## Running the frontend
+- Node.js
+
+## Running the Front-End
 
 1. Install node modules
 
