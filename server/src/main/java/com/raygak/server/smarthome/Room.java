@@ -164,12 +164,14 @@ public class Room {
         this.light.turnOff();
     }
 
-    public void setCurrentTemperature(double temperatureInput) {
+    public void setCurrentTemperature(double temperatureInput, boolean isManualChange) {
         double oldTemperature = this.currentTemperature;
         this.currentTemperature = temperatureInput;
         this.lastGeneralTempChange = Math.abs(this.currentTemperature - oldTemperature);
         this.desiredZoneSpecificTemperature = temperatureInput;
-        this.isOverridden = true;
+        if (isManualChange) {
+            this.isOverridden = true;
+        }
     }
 
     public void setDesiredUnoccupiedTemperature(double temperatureInput) {

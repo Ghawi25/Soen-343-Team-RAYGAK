@@ -54,8 +54,8 @@ public class WindowCloseCommand extends Command {
                             break;
                         }
                         this.house.setWindows(houseWindows);
-                        return;
                     }
+                    return;
                 }
             }
         }

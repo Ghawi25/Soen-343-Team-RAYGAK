@@ -52,8 +52,8 @@ public class WindowObstructionCommand extends Command {
                             break;
                         }
                         this.house.setWindows(houseWindows);
-                        return;
                     }
+                    return;
                 }
             }
         }
