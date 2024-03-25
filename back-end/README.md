@@ -1,12 +1,13 @@
-# Running the Back-End Code
+# Back-End Server
 
-## Requirements
+## Installation Guide
 
+Requirements:
 - Java 21
 - Node 20.11.1 LTS
 - MongoDB Compass
 
-## Running the backend
+## Running the Back-End
 
 1. Create a database in Compass called "soen343" with a "users" document
 2. CD into the server folder
