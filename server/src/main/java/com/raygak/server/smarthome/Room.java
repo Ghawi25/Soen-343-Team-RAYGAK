@@ -30,7 +30,7 @@ public class Room {
     private Zone zone = null;
     private DecimalFormat temperatureFormat = new DecimalFormat("0.00");
     private double lastGeneralTempChange = 0.00;
-    
+
     public Room(String idInput, String name, int width, int height, boolean hasLight) {
         this.roomID = idInput;
         this.name = name;
@@ -164,12 +164,14 @@ public class Room {
         this.light.turnOff();
     }
 
-    public void setCurrentTemperature(double temperatureInput) {
+    public void setCurrentTemperature(double temperatureInput, boolean isManualChange) {
         double oldTemperature = this.currentTemperature;
         this.currentTemperature = temperatureInput;
         this.lastGeneralTempChange = Math.abs(this.currentTemperature - oldTemperature);
         this.desiredZoneSpecificTemperature = temperatureInput;
-        this.isOverridden = true;
+        if (isManualChange) {
+            this.isOverridden = true;
+        }
     }
 
     public void setDesiredUnoccupiedTemperature(double temperatureInput) {
