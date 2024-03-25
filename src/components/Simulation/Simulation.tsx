@@ -1,16 +1,8 @@
-import React, { useState } from "react";
-// import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
+import { useState } from "react";
+import DateTimePicker from "./DateTimePicker";
 
 function Simulation() {
   const today = new Date().toJSON().slice(0, 10);
-  const [startDate, setStartDate] = useState(new Date());
-
-  const [timeSpeed, setTimeSpeed] = useState(1);
-
-  // const handleTimeSpeedChange = (timeValue) => {
-  //   setTimeSpeed(timeValue.target.value);
-  // };
 
   return (
     <>
@@ -32,20 +24,11 @@ function Simulation() {
         </div>
       </div>
       <div className="simulation-details">
+        <DateTimePicker />
         <div className="temperature">
-          <p>Outside Temp: 15°C</p>
-        </div>
-        <div className="datetime-picker">
-          <p>datetime-picker: {today}</p>
-          {/* <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
-                showTimeSelect
-                timeFormat="HH:mm"
-                timeIntervals={15}
-                timeCaption="time"
-                dateFormat="MMMM d, yyyy h:mm aa"
-              /> */}
+          <p>
+            Temperature fetched: <span id="temp-fetched">-- °C</span>
+          </p>
         </div>
         <div className="time-speed">
           <p>Time speed</p>
@@ -56,8 +39,6 @@ function Simulation() {
             min="1"
             max="2"
             step="0.1"
-            // value={timeSpeed}
-            //onChange={handleTimeSpeedChange}
           />
         </div>
       </div>
