@@ -1,7 +1,5 @@
-import House from "./House";
-
 function HouseBox() {
-  return <House/>;
+  return <div>HouseBox</div>;
 }
 
 export default HouseBox;
