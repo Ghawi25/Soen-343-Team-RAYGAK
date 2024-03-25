@@ -1,12 +1,12 @@
 package com.raygak.server.smarthome;
 
 import lombok.Data;
+import com.raygak.server.models.User;
 import com.raygak.server.smarthome.heating.*;
 
 import java.util.ArrayList;
 import java.text.DecimalFormat;
 import java.time.LocalTime;
-import java.util.Timer;
 
 @Data
 public class Room {
@@ -16,21 +16,19 @@ public class Room {
     private int height;
     private double currentTemperature;
     private double desiredUnoccupiedTemperature;
-    private double desiredZoneSpecificTemperature = 0.0;
-    private boolean isOverridden = false;
-    private boolean isHVACOn;
+    private boolean isAirConditioningOn;
     private Light light;
     private ArrayList<Window> windows = new ArrayList<Window>();
     private ArrayList<Door> doors = new ArrayList<Door>();
     private ArrayList<User> inhabitants = new ArrayList<User>();
-    private Room topAdjacentRoom;
-    private Room bottomAdjacentRoom;
-    private Room leftAdjacentRoom;
-    private Room rightAdjacentRoom;
+    private String topAdjacentRoom;
+    private String bottomAdjacentRoom;
+    private String leftAdjacentRoom;
+    private String rightAdjacentRoom;
     private Zone zone = null;
     private DecimalFormat temperatureFormat = new DecimalFormat("0.00");
     private double lastGeneralTempChange = 0.00;
-    
+
     public Room(String idInput, String name, int width, int height, boolean hasLight) {
         this.roomID = idInput;
         this.name = name;
@@ -47,7 +45,7 @@ public class Room {
         this.light = light;
     }
 
-    public Room(String idInput, String name, int width, int height, Light light, double desTempInput, boolean isHVACOn, Room topAdjacent, Room bottomAdjacent, Room leftAdjacent, Room rightAdjacent) {
+    public Room(String idInput, String name, int width, int height, Light light, double desTempInput, boolean isAirConditioningOn, String topAdjacent, String bottomAdjacent, String leftAdjacent, String rightAdjacent) {
         this.roomID = idInput;
         this.name = name;
         this.width = width;
@@ -55,14 +53,14 @@ public class Room {
         this.light = light;
         this.desiredUnoccupiedTemperature = desTempInput;
         this.currentTemperature = desTempInput;
-        this.isHVACOn = isHVACOn;
+        this.isAirConditioningOn = isAirConditioningOn;
         this.topAdjacentRoom = topAdjacent;
         this.bottomAdjacentRoom = bottomAdjacent;
         this.leftAdjacentRoom = leftAdjacent;
         this.rightAdjacentRoom = rightAdjacent;
     }
 
-    public Room(String idInput, String name, int width, int height, Light light, double desTempInput, boolean isHVACOn, ArrayList<Window> windowListInput, ArrayList<Door> doorListInput, ArrayList<User> inhabitantListInput, Room topAdjacent, Room bottomAdjacent, Room leftAdjacent, Room rightAdjacent) {
+    public Room(String idInput, String name, int width, int height, Light light, double desTempInput, boolean isAirConditioningOn, ArrayList<Window> windowListInput, ArrayList<Door> doorListInput, ArrayList<User> inhabitantListInput, String topAdjacent, String bottomAdjacent, String leftAdjacent, String rightAdjacent) {
         this.roomID = idInput;
         this.name = name;
         this.width = width;
@@ -70,7 +68,7 @@ public class Room {
         this.light = light;
         this.desiredUnoccupiedTemperature = desTempInput;
         this.currentTemperature = desTempInput;
-        this.isHVACOn = isHVACOn;
+        this.isAirConditioningOn = isAirConditioningOn;
         this.windows = windowListInput;
         this.doors = doorListInput;
         this.inhabitants = inhabitantListInput;
@@ -78,10 +76,6 @@ public class Room {
         this.bottomAdjacentRoom = bottomAdjacent;
         this.leftAdjacentRoom = leftAdjacent;
         this.rightAdjacentRoom = rightAdjacent;
-    }
-
-    public void displayTemperature() {
-        System.out.println(this.currentTemperature + (this.isOverridden ? " (overridden)" : ""));
     }
 
     public void addWindow(Window newWindow) {
@@ -113,7 +107,6 @@ public class Room {
     }
 
     public void addInhabitant(User newInhabitant) {
-        newInhabitant.setCurrentRoom(this);
         this.inhabitants.add(newInhabitant);
         //The room's temperature should be updated from its desired unoccupied temperature when somebody enters it.
         if (this.inhabitants.size() == 1) {
@@ -122,13 +115,13 @@ public class Room {
         }
     }
 
-    public void removeInhabitant(String username) {
+    public void removeInhabitant(String email) {
         if (this.inhabitants.isEmpty()) {
             throw new RuntimeException("Error: Cannot remove any inhabitants, as none are present.");
         }
-        System.out.println("REMOVING INHABITANT WITH USERNAME " + username);
+        System.out.println("REMOVING INHABITANT WITH EMAIL ADDRESS " + email);
         for (int i = 0; i < this.inhabitants.size(); i++) {
-            if (this.inhabitants.get(i).getUsername().equals(username)) {
+            if (this.inhabitants.get(i).getEmail().equals(email)) {
                 this.inhabitants.remove(i);
                 if (this.inhabitants.isEmpty()) {
                     this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredUnoccupiedTemperature));
@@ -140,12 +133,20 @@ public class Room {
         throw new IllegalArgumentException("Error: The inhabitant (User) with the provided ID does not exist.");
     }
 
-    public void turnOnHVAC() {
-        this.isHVACOn = true;
+    public void turnOnAC() {
+        if (this.isAirConditioningOn) {
+            System.out.println("Error: Room with ID " + this.roomID + " already has the AC turned on.");
+            return;
+        }
+        this.isAirConditioningOn = true;
     }
 
-    public void turnOffHVAC() {
-        this.isHVACOn = false;
+    public void turnOffAC() {
+        if (!(this.isAirConditioningOn)) {
+            System.out.println("Error: Room with ID " + this.roomID + " already has the AC turned off.");
+            return;
+        }
+        this.isAirConditioningOn = false;
     }
 
     public void turnOnLight() {
@@ -168,73 +169,83 @@ public class Room {
         double oldTemperature = this.currentTemperature;
         this.currentTemperature = temperatureInput;
         this.lastGeneralTempChange = Math.abs(this.currentTemperature - oldTemperature);
-        this.desiredZoneSpecificTemperature = temperatureInput;
-        this.isOverridden = true;
     }
 
     public void setDesiredUnoccupiedTemperature(double temperatureInput) {
         this.desiredUnoccupiedTemperature = temperatureInput;
     }
 
+    public void openWindowWithID(String windowID) {
+        for (int i = 0; i < windows.size(); i++) {
+            if (windows.get(i).getWindowID().equals(windowID)) {
+                Window tempWindow = windows.get(i);
+                tempWindow.open();
+                windows.set(i, tempWindow);
+            }
+        }
+    }
+
+    public void closeWindowWithID(String windowID) {
+        for (int i = 0; i < windows.size(); i++) {
+            if (windows.get(i).getWindowID().equals(windowID)) {
+                Window tempWindow = windows.get(i);
+                tempWindow.close();
+                windows.set(i, tempWindow);
+            }
+        }
+    }
+
+    public void obstructWindowWithID(String windowID) {
+        for (int i = 0; i < windows.size(); i++) {
+            if (windows.get(i).getWindowID().equals(windowID)) {
+                Window tempWindow = windows.get(i);
+                tempWindow.obstruct();
+                windows.set(i, tempWindow);
+            }
+        }
+    }
+
+    public void unobstructWindowWithID(String windowID) {
+        for (int i = 0; i < windows.size(); i++) {
+            if (windows.get(i).getWindowID().equals(windowID)) {
+                Window tempWindow = windows.get(i);
+                tempWindow.unobstruct();
+                windows.set(i, tempWindow);
+            }
+        }
+    }
+
     public void setZone(Zone newZone) {
         this.zone = newZone;
-        this.desiredZoneSpecificTemperature = this.zone.getCurrentZoneSetting();
         updateTemperature();
     }
 
-    public void setWindows(ArrayList<Window> newWindowList) {
-        this.windows = newWindowList;
-    }
-
-    public void setDoors(ArrayList<Door> newDoorList) {
-        this.doors = newDoorList;
-    }
-
-    public void setLight(Light newLight) {
-        this.light = newLight;
-    }
-
-    public void changeCurrentTemperature(double outsideTemperature) {
-        if (this.isHVACOn == true) {
-            if (this.currentTemperature == this.desiredZoneSpecificTemperature) {
-                System.out.println("Turning HVAC off for room " + this.roomID);
-                this.isHVACOn = false;
-            }
-            if (this.currentTemperature < this.desiredZoneSpecificTemperature) {
-                this.currentTemperature = Math.round((this.currentTemperature + 0.1) * 100.0) / 100.0;
-            } else {
-                this.currentTemperature = Math.round((this.currentTemperature - 0.1) * 100.0) / 100.0;
-            }
-        } else {
-            if (this.currentTemperature <= (this.desiredZoneSpecificTemperature - 0.25) || this.currentTemperature >= (this.desiredZoneSpecificTemperature + 0.25)) {
-                System.out.println("Turning HVAC on for room " + this.roomID);
-                this.isHVACOn = true;
-                changeCurrentTemperature(outsideTemperature);
-            }
-            if (this.currentTemperature < outsideTemperature) {
-                this.currentTemperature = Math.round((this.currentTemperature + 0.05) * 100.0) / 100.0;
-            } else if (this.currentTemperature > outsideTemperature) {
-                this.currentTemperature = Math.round((this.currentTemperature - 0.05) * 100.0) / 100.0;
-            } else {
-                System.out.println("The temperature remains unchanged.");
-            }
-        }
-        System.out.println("Room " + this.roomID);
-        System.out.println("HVAC (" + (this.zone.getType() == ZoneType.HEATING ? "Heating" : "Cooling") + ") is " + (this.isHVACOn ? "on." : "off"));
-        System.out.println("Temperature of room is: " + this.currentTemperature);
-    }
 
     public void updateTemperature() {
-        System.out.println("UPDATING TEMPERATURE OF ROOM " + this.getRoomID());
-        if (this.inhabitants.size() >= 1) {
-            if (this.zone.getType() == ZoneType.HEATING) {
-                this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredZoneSpecificTemperature * 1.2));
-            }
-            if (this.zone.getType() == ZoneType.COOLING) {
-                this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredZoneSpecificTemperature * 0.8));
-            }
-        } else {
-            this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredUnoccupiedTemperature));
+        if (this.zone == null) {
+            return;
         }
+        System.out.println("UPDATING TEMPERATURE OF ROOM " + this.getRoomID());
+        LocalTime currentTime = LocalTime.now();
+        //Check each of the room's temperature settings for the one whose start-end time range contains the current time.
+        for (TemperatureSetting setting : this.zone.getSettingList()) {
+            LocalTime startTime = setting.getStart();
+            LocalTime endTime = setting.getEnd();
+            if ((currentTime.isAfter(startTime) && currentTime.isBefore(endTime))) {
+                //If at least one User is in the room, make use of the setting's preferred temperature.
+                //Otherwise, make use of the room's desired unoccupied temperature.
+                if (this.inhabitants.size() >= 1) {
+                    if (this.zone.getType() == ZoneType.HEATING) {
+                        this.currentTemperature = Double.parseDouble(temperatureFormat.format(setting.getDesiredTemperature() * 1.2));
+                    }
+                    if (this.zone.getType() == ZoneType.COOLING) {
+                        this.currentTemperature = Double.parseDouble(temperatureFormat.format(setting.getDesiredTemperature() * 0.8));
+                    }
+                } else {
+                    this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredUnoccupiedTemperature));
+                }
+            }
+        }
+        return;
     }
 }
