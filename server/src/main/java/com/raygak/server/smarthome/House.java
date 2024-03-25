@@ -1,6 +1,6 @@
 package com.raygak.server.smarthome;
 
-import com.raygak.server.models.User;
+import com.raygak.server.commands.*;
 import com.raygak.server.smarthome.heating.*;
 import lombok.Getter;
 
@@ -19,19 +19,26 @@ public class House {
     private double indoorTemperature;
     private double outdoorTemperature;
     private Season currentSeason;
+    private SHH shh;
+    private HouseControl houseControl = new HouseControl();
 
     //Boolean to check if the house is currently empty during winter.
     private boolean isInWinterAndEmptyHouseProtocol = false;
 
-    public House(double indoorTempInput, double outdoorTempInput, Season seasonInput) {
-        this.indoorTemperature = indoorTempInput;
+    //Boolean to check if the house is currently in its summer-related temperature protocol.
+    private boolean isInSummerProtocol = false;
+
+    public House(double outdoorTempInput, Season seasonInput) {
         this.outdoorTemperature = outdoorTempInput;
+        this.indoorTemperature = outdoorTempInput;
         this.currentSeason = seasonInput;
         this.isInWinterAndEmptyHouseProtocol = true;
+        this.shh = new SHH(this);
     }
 
     public House(ArrayList<Room> roomListInput) {
         this.rooms = roomListInput;
+        this.shh = new SHH(this);
     }
 
     public House(ArrayList<Room> roomListInput, ArrayList<Zone> zoneListInput, double outdoorTempInput, Season seasonInput) {
@@ -51,18 +58,16 @@ public class House {
         }
         this.zones = zoneListInput;
 
-        //The indoor temperature is calculated as the average of the temperatures of the rooms in the input room list.
-        double averageIndoorTemp = 0;
-        for (Room r : roomListInput) {
-            averageIndoorTemp += r.getCurrentTemperature();
+        for (Room r : this.rooms) {
+            r.setCurrentTemperature(outdoorTempInput);
         }
-        this.indoorTemperature = Double.parseDouble(temperatureFormat.format(averageIndoorTemp / roomListInput.size()));
-
+        this.indoorTemperature = outdoorTempInput;
         this.outdoorTemperature = outdoorTempInput;
         this.currentSeason = seasonInput;
         if (this.inhabitants.isEmpty() && this.currentSeason == Season.WINTER) {
             isInWinterAndEmptyHouseProtocol = true;
         }
+        this.shh = new SHH(this);
     }
 
 
@@ -74,6 +79,36 @@ public class House {
         }
         this.indoorTemperature = Double.parseDouble(temperatureFormat.format(averageIndoorTemp / this.rooms.size()));
         checkForDangerousTemperature();
+    }
+
+    public void summerProtocol() {
+        if (this.shh.getIsOn()) {
+            if (this.outdoorTemperature < this.indoorTemperature && this.currentSeason == Season.SUMMER) {
+                isInSummerProtocol = true;
+                System.out.println("SUMMER PROTOCOL.");
+                for (Room r : this.rooms) {
+                    turnOffHVACInRoomWithID(r.getRoomID());
+                    if (this.inhabitants.size() > 0) {
+                        for (Window w : r.getWindows()) {
+                            openWindowWithID(w.getWindowID());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void reverseSummerProtocol() {
+        if (this.shh.getIsOn()) {
+            System.out.println("REVERSE SUMMER PROTOCOL.");
+            isInSummerProtocol = false;
+            for (Room r : this.rooms) {
+                turnOnHVACInRoomWithID(r.getRoomID());
+                for (Window w : r.getWindows()) {
+                    closeWindowWithID(w.getWindowID());
+                }
+            }
+        }
     }
 
     public Light getLightByName(String lightName) {
@@ -114,44 +149,64 @@ public class House {
 
     //Dangerous temperature levels need to be checked for in order for emergency notifications to be sent as needed.
     public void checkForDangerousTemperature() {
-        //Source of potential temperature at which there could be a house fire present: https://www.quora.com/How-hot-does-a-house-fire-get
-        if (this.indoorTemperature > 900) {
-            System.out.println("DANGER: Possible fire!");
-        }
-        //Source of potential temperature at which pipes are susceptible to bursting: https://www.freezemiser.com/blogs/blog/at-what-temperature-do-pipes-burst
-        if (this.indoorTemperature < 20) {
-            System.out.println("DANGER: Pipes at possible risk of bursting!");
+        if (this.shh.getIsOn()) {
+            //Source of potential temperature at which there could be a house fire present: https://www.ready.gov/home-fires
+            //Temperature units used: Celsius
+            if (this.indoorTemperature > 40) {
+                this.shh.dangerousTemperatureUpdate("Too Hot");
+            }
+            //Source of potential temperature at which pipes are susceptible to bursting: https://www.freezemiser.com/blogs/blog/at-what-temperature-do-pipes-burst
+            if (this.indoorTemperature < 0) {
+                this.shh.dangerousTemperatureUpdate("Too Cold");
+            }
         }
     }
 
     //Lowers the temperature of the house (all of its rooms) in winter if the house is empty. Done for energy-saving reasons.
     public void winterAndEmptyHouseProtocol() {
-        if (this.currentSeason == Season.WINTER && this.inhabitants.size() == 0) {
-            this.isInWinterAndEmptyHouseProtocol = true;
-            System.out.println("WINTER AND EMPTY HOUSE PROTOCOL.");
-            for (Room r : this.rooms) {
-                System.out.println("Room: " + r.getRoomID());
-                System.out.println("Before: " + r.getCurrentTemperature());
-                //The room temperature is reduced by 30%, which seems like it would be reasonable for ensuring considerable
-                //energy-related cost savings without decreasing the temperature too much.
-                r.setCurrentTemperature(Double.parseDouble(temperatureFormat.format(r.getCurrentTemperature() * 0.7)));
-                System.out.println("After: " + r.getCurrentTemperature());
+        if (this.shh.getIsOn()) {
+            if (this.currentSeason == Season.WINTER && this.inhabitants.size() == 0) {
+                this.isInWinterAndEmptyHouseProtocol = true;
+                System.out.println("WINTER AND EMPTY HOUSE PROTOCOL.");
+                for (int i = 0; i < this.rooms.size(); i++) {
+                    Room r = this.rooms.get(i);
+                    Zone z = r.getZone();
+                    ArrayList<TemperatureSetting> settingList = z.getSettingList();
+                    for (int j = 0; j < settingList.size(); j++) {
+                        TemperatureSetting ts = settingList.get(j);
+                        ts.setDesiredTemperature(17.0);
+                        settingList.set(j, ts);
+                    }
+                    z.setSettingList(settingList);
+                    r.setZone(z);
+                    this.rooms.set(i, r);
+                }
             }
+            computeIndoorTemperature();
         }
-        computeIndoorTemperature();
     }
 
     //When the season transitions from Winter to Spring or somebody enters the house
     //during the "winter and empty house protocol", reverse the changes made to the room temperatures via that protocol.
     public void reverseWinterAndEmptyHouseProtocol() {
-        System.out.println("REVERSE WINTER AND EMPTY HOUSE PROTOCOL.");
-        for (Room r : this.rooms) {
-            System.out.println("Room: " + r.getRoomID());
-            System.out.println("Before: " + r.getCurrentTemperature());
-            r.setCurrentTemperature(Double.parseDouble(temperatureFormat.format(r.getCurrentTemperature() + r.getLastGeneralTempChange())));
-            System.out.println("After: " + r.getCurrentTemperature());
+        if (this.shh.getIsOn()) {
+            this.isInWinterAndEmptyHouseProtocol = false;
+            System.out.println("REVERSE WINTER AND EMPTY HOUSE PROTOCOL.");
+            for (int i = 0; i < this.rooms.size(); i++) {
+                Room r = this.rooms.get(i);
+                Zone z = r.getZone();
+                ArrayList<TemperatureSetting> settingList = z.getSettingList();
+                for (int j = 0; j < settingList.size(); j++) {
+                    TemperatureSetting ts = settingList.get(j);
+                    ts.setDesiredTemperature(ts.getOriginalDesiredTemperature());
+                    settingList.set(j, ts);
+                }
+                z.setSettingList(settingList);
+                r.setZone(z);
+                this.rooms.set(i, r);
+            }
+            computeIndoorTemperature();
         }
-        computeIndoorTemperature();
     }
 
 
@@ -171,7 +226,7 @@ public class House {
                 this.rooms.remove(i);
                 for (User p : this.rooms.get(i).getInhabitants()) {
                     for (int j = 0; j < this.inhabitants.size(); j++) {
-                        if (p.getEmail().equals(this.inhabitants.get(j).getEmail())) {
+                        if (p.getUsername().equals(this.inhabitants.get(j).getUsername())) {
                             this.inhabitants.remove(j);
                         }
                     }
@@ -207,8 +262,7 @@ public class House {
         boolean oldIsInWinterAndEmptyHouseProtocol = this.isInWinterAndEmptyHouseProtocol;
         //Due to how the commencement of this protocol occurred after the removal of the last final inhabitant from the house,
         //the steps need to be reversed in order to restore the temperature to its proper
-        if (this.isInWinterAndEmptyHouseProtocol == true) {
-            this.isInWinterAndEmptyHouseProtocol = false;
+        if (this.shh.getIsOn() && this.isInWinterAndEmptyHouseProtocol == true) {
             reverseWinterAndEmptyHouseProtocol();
         }
         this.inhabitants.add(newInhabitant);
@@ -217,27 +271,34 @@ public class House {
                 r.addInhabitant(newInhabitant);
                 //Due to how the indoor temperature is computed in the "reverseWinterAndEmptyHouseProtocol" method, it needs
                 //to be computed via an explicit function call if the aforementioned method is not called.
-                if (oldIsInWinterAndEmptyHouseProtocol == false) {
-                    computeIndoorTemperature();
+                if (this.shh.getIsOn()) {
+                    if (oldIsInWinterAndEmptyHouseProtocol == false) {
+                        computeIndoorTemperature();
+                    }
+                    summerProtocol();
                 }
                 return;
             }
         }
     }
 
-    public void removeInhabitant(String inhabitantEmail) {
+    public void removeInhabitant(String inhabitantUsername) {
         for (int i = 0; i < this.inhabitants.size(); i++) {
-            if (this.inhabitants.get(i).getEmail().equals(inhabitantEmail)) {
+            if (this.inhabitants.get(i).getUsername().equals(inhabitantUsername)) {
                 this.inhabitants.remove(i);
                 for (int j = 0; j < this.rooms.size(); j++) {
-                    for (int k = 0; k < this.rooms.get(j).getInhabitants().size(); k++) {
-                        if (this.rooms.get(j).getInhabitants().get(k).getEmail().equals(inhabitantEmail)) {
-                            //A temporary Room object is created in order to properly replace the to-be-modified Room object in the rooms list.
-                            Room tempRoom = this.rooms.get(j);
-                            tempRoom.removeInhabitant(inhabitantEmail);
-                            this.rooms.set(j, tempRoom);
-                            //In the event where the removed inhabitant was the last to be removed.
-                            winterAndEmptyHouseProtocol();
+                    Room r = this.rooms.get(j);
+                    ArrayList<User> inhabitantList = r.getInhabitants();
+                    for (int k = 0; k < inhabitantList.size(); k++) {
+                        if (inhabitantList.get(k).getUsername().equals(inhabitantUsername)) {
+                            r.removeInhabitant(inhabitantUsername);
+                            this.rooms.set(j, r);
+                            if (this.shh.getIsOn()) {
+                                winterAndEmptyHouseProtocol();
+                                if (this.inhabitants.size() == 0 && isInSummerProtocol) {
+                                    reverseSummerProtocol();
+                                }
+                            }
                             return;
                         }
                     }
@@ -255,18 +316,24 @@ public class House {
     public void setOutdoorTemperature(double temperatureInput) {
         this.outdoorTemperature = temperatureInput;
         //Per the requirements listed in the project description.
-        if (this.outdoorTemperature < this.indoorTemperature) {
-            for (Room r : this.rooms) {
-                r.turnOffAC();
-                for (Window w : r.getWindows()) {
-                    r.openWindowWithID(w.getWindowID());
+        if (this.shh.getIsOn()) {
+            if (this.outdoorTemperature < this.indoorTemperature) {
+                for (Room r : this.rooms) {
+                    turnOffHVACInRoomWithID(r.getRoomID());
+                    ArrayList<Window> currentRoomWindows = r.getWindows();
+                    for (Window w : currentRoomWindows) {
+                        openWindowWithID(w.getWindowID());
+                    }
+                    r.setWindows(currentRoomWindows);
                 }
-            }
-        } else {
-            for (Room r : this.rooms) {
-                r.turnOnAC();
-                for (Window w : r.getWindows()) {
-                    r.closeWindowWithID(w.getWindowID());
+            } else {
+                for (Room r : this.rooms) {
+                    turnOnHVACInRoomWithID(r.getRoomID());
+                    ArrayList<Window> currentRoomWindows = r.getWindows();
+                    for (Window w : currentRoomWindows) {
+                        closeWindowWithID(w.getWindowID());
+                    }
+                    r.setWindows(currentRoomWindows);
                 }
             }
         }
@@ -274,7 +341,12 @@ public class House {
 
     public void setCurrentSeason(Season newSeason) {
         this.currentSeason = newSeason;
-        winterAndEmptyHouseProtocol();
+        if (this.shh.getIsOn()) {
+            winterAndEmptyHouseProtocol();
+            if (this.currentSeason != Season.SUMMER && isInSummerProtocol) {
+                reverseSummerProtocol();
+            }
+        }
     }
 
     public void setRooms(ArrayList<Room> newRoomList) {
@@ -285,11 +357,113 @@ public class House {
         this.zones = newZoneList;
     }
 
+    public boolean doesZoneWithIDExist(String zoneID) {
+        for (Zone z : this.zones) {
+            if (z.getZoneID().equals(zoneID)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void changeZone(String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList) {
+        for (int i = 0;i < this.zones.size();i++) {
+            if (this.zones.get(i).getZoneID().equals(zoneID)) {
+                this.zones.set(i, new Zone(zoneID, type, settingList, roomList));
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Error: No zone with the provided ID " + zoneID + " exists.");
+    }
+
     public void setDoors(ArrayList<Door> newDoorList) {
         this.doors = newDoorList;
     }
 
     public void setWindows(ArrayList<Window> newWindowList) {
         this.windows = newWindowList;
+    }
+
+    public void setLights(ArrayList<Light> newLightList) {
+        this.lights = newLightList;
+    }
+
+    public void updateAllRoomTemperatures() {
+        if (this.shh.getIsOn()) {
+            for (Room r : this.rooms) {
+                r.changeCurrentTemperature(this.outdoorTemperature);
+            }
+            computeIndoorTemperature();
+        }
+    }
+
+    public void openDoorWithName(String doorName) {
+        DoorOpenCommand command = new DoorOpenCommand(this, doorName);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((DoorOpenCommand)this.houseControl.getCommand()).getHouse().getRooms();
+        this.doors = ((DoorOpenCommand)this.houseControl.getCommand()).getHouse().getDoors();
+    }
+
+    public void closeDoorWithName(String doorName) {
+        DoorCloseCommand command = new DoorCloseCommand(this, doorName);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((DoorCloseCommand)this.houseControl.getCommand()).getHouse().getRooms();
+        this.doors = ((DoorCloseCommand)this.houseControl.getCommand()).getHouse().getDoors();
+    }
+
+    public void openWindowWithID(String windowID) {
+        WindowOpenCommand command = new WindowOpenCommand(this, windowID);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getRooms();
+        this.windows = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getWindows();
+    }
+
+    public void closeWindowWithID(String windowID) {
+        WindowCloseCommand command = new WindowCloseCommand(this, windowID);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((WindowCloseCommand)this.houseControl.getCommand()).getHouse().getRooms();
+        this.windows = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getWindows();
+    }
+
+    public void obstructWindowWithID(String windowID) {
+        WindowObstructionCommand command = new WindowObstructionCommand(this, windowID);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((WindowObstructionCommand)this.houseControl.getCommand()).getHouse().getRooms();
+        this.windows = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getWindows();
+    }
+
+    public void unobstructWindowWithID(String windowID) {
+        WindowUnobstructionCommand command = new WindowUnobstructionCommand(this, windowID);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((WindowUnobstructionCommand)this.houseControl.getCommand()).getHouse().getRooms();
+        this.windows = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getWindows();
+    }
+
+    public void turnOnHVACInRoomWithID(String roomID) {
+        TurnOnHVACCommand command = new TurnOnHVACCommand(this, roomID);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((TurnOnHVACCommand)this.houseControl.getCommand()).getHouse().getRooms();
+    }
+
+    public void turnOffHVACInRoomWithID(String roomID) {
+        TurnOffHVACCommand command = new TurnOffHVACCommand(this, roomID);
+        this.houseControl.setCommand(command);
+        this.houseControl.execute();
+        this.rooms = ((TurnOffHVACCommand)this.houseControl.getCommand()).getHouse().getRooms();
+    }
+
+    public void turnOnSHH() {
+        this.shh.turnOn();
+    }
+
+    public void turnOffSHH() {
+        this.shh.turnOff();
     }
 }

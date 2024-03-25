@@ -1,6 +1,7 @@
 package com.raygak.server.commands;
 
 import com.raygak.server.smarthome.House;
+import com.raygak.server.smarthome.Room;
 import com.raygak.server.smarthome.Window;
 import lombok.Getter;
 
@@ -26,19 +27,38 @@ public class WindowOpenCommand extends Command {
 
     @Override
     public void execute() {
-        ArrayList<Window> windows = this.house.getWindows();
-        for (int i = 0;i < windows.size();i++) {
-            if (windows.get(i).getWindowID().equals(windowID)) {
-                Window w = windows.get(i);
-                if (w.isOpen()) {
-                    w.close();
-                } else {
-                    w.open();
+        ArrayList<Room> rooms = this.house.getRooms();
+        for (int i = 0;i < rooms.size();i++) {
+            Room r = rooms.get(i);
+            ArrayList<Window> currentRoomWindows = r.getWindows();
+            for (int j = 0; j < currentRoomWindows.size(); j++) {
+                Window w = currentRoomWindows.get(j);
+                if (w.getWindowID().equals(windowID)) {
+                    if (w.isOpen()) {
+                        this.house.getShh().windowErrorUpdate(windowID, "Already Open");
+                    }
+                    else if (w.isObstructed()) {
+                        this.house.getShh().windowErrorUpdate(windowID, "Obstructed, Cannot Open");
+                    }
+                    else {
+                        w.open();
+                        currentRoomWindows.set(j, w);
+                        r.setWindows(currentRoomWindows);
+                        rooms.set(i, r);
+                        this.house.setRooms(rooms);
+                        ArrayList<Window> houseWindows = this.house.getWindows();
+                        for (int k = 0;k < houseWindows.size();k++) {
+                            if (houseWindows.get(k).getWindowID().equals(windowID)) {
+                                houseWindows.set(k, w);
+                            }
+                            break;
+                        }
+                        this.house.setWindows(houseWindows);
+                        return;
+                    }
                 }
-                windows.set(i, w);
-                house.setWindows(windows);
-                break;
             }
         }
+        throw new IllegalArgumentException("Error: No window with the ID " + windowID + " exists.");
     }
 }

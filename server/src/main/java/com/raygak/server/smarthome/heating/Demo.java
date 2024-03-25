@@ -1,29 +1,29 @@
 package com.raygak.server.smarthome.heating;
 
-import com.raygak.server.models.User;
+import com.raygak.server.commands.*;
 import com.raygak.server.smarthome.*;
 
 import java.util.ArrayList;
 
 public class Demo {
 
-    public static void main(String[] args) {
-        User p1 = new User("james@gmail.com", "james123", "Adult");
-        User p2 = new User("quinn@gmail.com", "quinn456", "Child");
-        User p3 = new User("dennis@gmail.com", "dennis789", "Guest");
+	public static void main(String[] args) {
+		User p1 = new User("james@gmail.com", "james123", UserType.PARENT);
+		User p2 = new User("quinn@gmail.com", "quinn456", UserType.CHILD);
+		User p3 = new User("dennis@gmail.com", "dennis789", UserType.GUEST);
 
-        ArrayList<User> userList1 = new ArrayList<User>();
-        userList1.add(p1);
-        userList1.add(p2);
+		ArrayList<User> userList1 = new ArrayList<User>();
+		userList1.add(p1);
+		userList1.add(p2);
 
-        ArrayList<User> userList2 = new ArrayList<User>();
+		ArrayList<User> userList2 = new ArrayList<User>();
 
-        Window w1 = new Window("1", false, false);
-        Window w2 = new Window("2", true, false);
-        Window w3 = new Window("3", false, true);
-        Window w4 = new Window("4", true, true);
+		Window w1 = new Window("1", false, false);
+		Window w2 = new Window("2", true, false);
+		Window w3 = new Window("3", false, true);
+		Window w4 = new Window("4", true, true);
 
-        ArrayList<Window> windowList1 = new ArrayList<Window>();
+		ArrayList<Window> windowList1 = new ArrayList<Window>();
         windowList1.add(w1);
         windowList1.add(w2);
 
@@ -43,8 +43,9 @@ public class Demo {
         ArrayList<Door> doorList2 = new ArrayList<Door>();
         doorList2.add(d2);
 
-        Room r1 = new Room("1", "room1", 1, 1, l1, 45.0, false, windowList1, doorList1, userList1, "", "room2", "", "");
-        Room r2 = new Room("2", "room2", 1, 1, l2, 45.0, false, windowList2, doorList2, userList2, "room1", "", "", "");
+        Room r1 = new Room("1", "room1", 1, 1, l1, 45.0, false, windowList1, doorList1, userList1, null, null, null, null);
+        Room r2 = new Room("2", "room2", 1, 1, l2, 45.0, false, windowList2, doorList2, userList2, r1, null, null, null);
+        r1.setBottomAdjacentRoom(r2);
 
         ArrayList<Room> roomList1 = new ArrayList<Room>();
         roomList1.add(r1);
@@ -99,6 +100,59 @@ public class Demo {
         System.out.println("House temperature: " + h1.getIndoorTemperature());
         h1.setOutdoorTemperature(10.0);
         h1.setOutdoorTemperature(50.0);
-    }
 
+		System.out.println(h1.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
+		h1.openDoorWithName("Room 1 Door");
+		System.out.println(h1.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
+//		h1.turnOnSHH();
+//		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
+//		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
+//		System.out.println("House temperature: " + h1.getIndoorTemperature());
+//		h1.removeInhabitant("james@gmail.com");
+//		h1.removeInhabitant("quinn@gmail.com");
+//		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
+//		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
+//		System.out.println("House temperature: " + h1.getIndoorTemperature());
+//		h1.addInhabitantToRoom(p3, "1");
+//		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
+//		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
+//		System.out.println("House temperature: " + h1.getIndoorTemperature());
+//		h1.addInhabitantToRoom(p2, "2");
+//		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
+//		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
+//		System.out.println("House temperature: " + h1.getIndoorTemperature());
+//		h1.removeInhabitant("dennis@gmail.com");
+//		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
+//		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
+//		System.out.println("House temperature: " + h1.getIndoorTemperature());
+//		h1.setOutdoorTemperature(10.0);
+//		h1.setOutdoorTemperature(50.0);
+//		int limit1 = 0;
+//		while (limit1 <= 10) {
+//			try {
+//				h1.updateAllRoomTemperatures();
+//				System.out.println("Indoor temperature: " + h1.getIndoorTemperature());
+//				System.out.println("Outdoor temperature: " + h1.getOutdoorTemperature());
+//				limit1++;
+//				Thread.sleep(1000);
+//			}
+//			catch(InterruptedException ie) {
+//				System.out.println("Thread interrupted.");
+//			}
+//		}
+//		h1.setOutdoorTemperature(10.0);
+//		h1.setCurrentSeason(Season.WINTER);
+//		h1.removeInhabitant("quinn@gmail.com");
+//		int limit2 = 0;
+//		while (limit2 <= 10) {
+//			try {
+//				h1.updateAllRoomTemperatures();
+//				limit2++;
+//				Thread.sleep(1000);
+//			}
+//			catch(InterruptedException ie) {
+//				System.out.println("Thread interrupted.");
+//			}
+//		}
+	}
 }

@@ -1,6 +1,5 @@
 package com.raygak.server.commands;
 
-import com.raygak.server.smarthome.Door;
 import com.raygak.server.smarthome.House;
 import com.raygak.server.smarthome.Room;
 import lombok.Getter;
@@ -8,11 +7,11 @@ import lombok.Getter;
 import java.util.ArrayList;
 
 @Getter
-public class ACCommand extends Command {
+public class TurnOnHVACCommand extends Command {
     private House house;
     private String roomID;
 
-    public ACCommand(House house, String roomID) {
+    public TurnOnHVACCommand(House house, String roomID) {
         this.house = house;
         this.roomID = roomID;
     }
@@ -29,16 +28,16 @@ public class ACCommand extends Command {
     public void execute() {
         ArrayList<Room> rooms = this.house.getRooms();
         for (int i = 0;i < rooms.size();i++) {
-            if (rooms.get(i).getRoomID().equals(this.roomID)) {
-                Room r = rooms.get(i);
-                if (r.isAirConditioningOn()) {
-                    r.turnOffAC();
+            Room r = rooms.get(i);
+            if (r.getRoomID().equals(roomID)) {
+                if (r.isHVACOn()) {
+                    this.house.getShh().HVACErrorUpdate(r.getRoomID(), "Already On");
                 } else {
-                    r.turnOnAC();
+                    r.turnOnHVAC();
                 }
                 rooms.set(i, r);
-                house.setRooms(rooms);
-                break;
+                this.house.setRooms(rooms);
+                return;
             }
         }
     }

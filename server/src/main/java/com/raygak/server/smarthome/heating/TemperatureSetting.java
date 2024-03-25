@@ -6,6 +6,8 @@ public class TemperatureSetting {
 	//A setting ID is present for ease of access.
 	private String settingID;
 	private double desiredTemperature;
+
+	private double originalDesiredTemperature;
 	private LocalTime start;
 	private LocalTime end;
 	
@@ -19,6 +21,7 @@ public class TemperatureSetting {
 		}
 		this.settingID = idInput;
 		this.desiredTemperature = tempInput;
+		this.originalDesiredTemperature = tempInput;
 		this.start = LocalTime.of(hours1, minutes1, 0);
 		this.end = LocalTime.of(hours2, minutes2, 0);
 	}
@@ -29,6 +32,10 @@ public class TemperatureSetting {
 	
 	public double getDesiredTemperature() {
 		return this.desiredTemperature;
+	}
+
+	public double getOriginalDesiredTemperature() {
+		return this.originalDesiredTemperature;
 	}
 	
 	public LocalTime getStart() {
