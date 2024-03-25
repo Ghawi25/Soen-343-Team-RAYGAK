@@ -1,15 +1,14 @@
 package com.raygak.server.smarthome;
 
-import com.raygak.server.smarthome.User;
+import lombok.Data;
 import com.raygak.server.smarthome.heating.*;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.text.DecimalFormat;
 import java.time.LocalTime;
 import java.util.Timer;
 
-@Getter
+@Data
 public class Room {
     private String roomID;
     private String name;
@@ -47,7 +46,6 @@ public class Room {
         this.height = height;
         this.light = light;
     }
-
     public Room(String idInput, String name, int width, int height, Light light, double desTempInput, boolean isHVACOn, Room topAdjacent, Room bottomAdjacent, Room leftAdjacent, Room rightAdjacent) {
         this.roomID = idInput;
         this.name = name;
@@ -62,7 +60,6 @@ public class Room {
         this.leftAdjacentRoom = leftAdjacent;
         this.rightAdjacentRoom = rightAdjacent;
     }
-
     public Room(String idInput, String name, int width, int height, Light light, double desTempInput, boolean isHVACOn, ArrayList<Window> windowListInput, ArrayList<Door> doorListInput, ArrayList<User> inhabitantListInput, Room topAdjacent, Room bottomAdjacent, Room leftAdjacent, Room rightAdjacent) {
         this.roomID = idInput;
         this.name = name;

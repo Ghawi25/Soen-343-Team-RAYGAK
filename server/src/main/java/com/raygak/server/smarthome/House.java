@@ -1,7 +1,6 @@
 package com.raygak.server.smarthome;
 
 import com.raygak.server.commands.*;
-import com.raygak.server.smarthome.User;
 import com.raygak.server.smarthome.heating.*;
 import lombok.Getter;
 
