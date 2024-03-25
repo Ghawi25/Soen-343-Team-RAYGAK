@@ -7,12 +7,18 @@ function HouseBox() {
   // Get house information
   useEffect(() => {
     axios
-      .get("localhost:8080/ap/house")
-      .then((res) => console.log(res))
+      .get("http://localhost:8080/api/house")
+      .then((res) => setHouse(res.data))
       .catch((err) => console.log(err));
   }, []);
 
-  return <div>HouseBox</div>;
+  if(!house) {
+    return <div>Loading...</div>
+  } else {
+    console.log(house);
+    
+    return <div>HouseBox</div>
+  }
 }
 
 export default HouseBox;
