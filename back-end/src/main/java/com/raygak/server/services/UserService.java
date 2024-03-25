@@ -30,11 +30,10 @@ public class UserService {
     public User createUser(String username, String password, String userType) {
         User user = new User(username, password, userType);
         if(userRepository.existsByUsername(username)) {
-            userRepository.insert(user);
-            return user;
+            return null;
         }
-
-        return null;
+        userRepository.insert(user);
+        return user;
     }
 
     public void deleteUserById(ObjectId id) {
