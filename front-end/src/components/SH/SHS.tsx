@@ -2,7 +2,7 @@ import { useState } from "react";
 import { userAuth } from "../../contexts/AuthProvider";
 
 function SHS() {
-  const auth = userAuth();
+  const auth = userAuth(); // Add this if you want to access user info once logged in
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -16,6 +16,7 @@ function SHS() {
   };
 
   if (auth.user) {
+    // Add what the user should see in the shs tab once logged in
     return <div>Logged in as {auth.user.username}</div>;
   } else {
     return (
