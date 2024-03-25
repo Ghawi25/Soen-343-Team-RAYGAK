@@ -1,0 +1,74 @@
+{
+  "_id": "id",
+  "name": "HouseA",
+  "rooms": [
+    {
+      "_id": "id1",
+      "name": "RoomA",
+      "width": 2,
+      "height": 2,
+      "adjacentTo": {
+        "north": "RoomB",
+        "south": "",
+        "east": "",
+        "west": ""
+      },
+      "windows": {
+        "north": [],
+        "south": [],
+        "east": [
+          "WindowA"
+        ],
+        "west": [
+          "WindowC"
+        ]
+      },
+      "doors": {
+        "north": "DoorA",
+        "south": "",
+        "east": "",
+        "west": ""
+      },
+      "lightInRoom": true
+    },
+    {
+      "_id": "id2",
+      "name": "RoomB",
+      "width": 2,
+      "height": 2,
+      "adjacentTo": {
+        "north": "",
+        "south": "RoomA",
+        "east": "",
+        "west": ""
+      },
+      "windows": {
+        "north": [],
+        "south": [],
+        "east": [
+          "WindowD"
+        ],
+        "west": [
+          "WindowF"
+        ]
+      },
+      "doors": {
+        "north": "",
+        "south": "DoorA",
+        "east": "",
+        "west": ""
+      },
+      "lightInRoom": true
+    }
+  ],
+  "zones": [
+    {
+      "_id": "id3",
+      "name": "ZoneA",
+      "rooms": [
+        "RoomA",
+        "RoomB"
+      ]
+    }
+  ]
+}
