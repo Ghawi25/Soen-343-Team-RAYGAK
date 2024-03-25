@@ -13,7 +13,8 @@ public class LayoutReader {
         JSONParser parser = new JSONParser();
         JSONObject parsedLayout = new JSONObject();
         try {
-            Object parsedFile = parser.parse(new FileReader("./server/src/main/resources/jsonTest.json"));
+            // Change path to ./server/src/main/resources/jsonTest.json if you are on intellij
+            Object parsedFile = parser.parse(new FileReader("./src/main/resources/jsonTest.json"));
             parsedLayout = (JSONObject) parsedFile;
         } catch (Exception e) {
             e.printStackTrace();
