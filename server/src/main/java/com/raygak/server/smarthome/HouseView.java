@@ -18,7 +18,7 @@ public final class HouseView {
         ArrayList<Room> rooms = new ArrayList<>();
         for (JSONObject room : (Iterable<JSONObject>) roomsArr) {
             ArrayList<Window> windows = new ArrayList<>();
-            ArrayList<String> adjacencies = new ArrayList<>();
+            ArrayList<Door> doors = new ArrayList<>();
             String id = (String) room.get("_id");
             String name = (String) room.get("name");
             int width = Integer.parseInt(room.get("width").toString());
@@ -26,52 +26,70 @@ public final class HouseView {
             Boolean light = (Boolean) room.get("lightInRoom");
             JSONObject windowsOBJ = (JSONObject) room.get("windows");
             JSONObject adjacencyOBJ = (JSONObject) room.get("adjacentTo");
+            JSONObject doorsOBJ = (JSONObject) room.get("doors");
 
             Room newRoom = new Room(id, name, width, height, light);
 
             JSONArray windowsArr = (JSONArray) windowsOBJ.get("north");
-            for (Object dir : windowsArr) {
+            for(Object dir : windowsArr) {
                 String wId = (String) dir;
                 windows.add(new Window(wId, false, false));
             }
 
             windowsArr = (JSONArray) windowsOBJ.get("south");
-            for (Object dir : windowsArr) {
+            for(Object dir : windowsArr) {
                 String wId = (String) dir;
                 windows.add(new Window(wId, false, false));
             }
 
             windowsArr = (JSONArray) windowsOBJ.get("east");
-            for (Object dir : windowsArr) {
+            for(Object dir : windowsArr) {
                 String wId = (String) dir;
                 windows.add(new Window(wId, false, false));
             }
 
             windowsArr = (JSONArray) windowsOBJ.get("west");
-            for (Object dir : windowsArr) {
+            for(Object dir : windowsArr) {
                 String wId = (String) dir;
                 windows.add(new Window(wId, false, false));
             }
 
             newRoom.setWindows(windows);
 
-//            String adjacentToString = (String) adjacencyOBJ.get("north");
-//            adjacentToString = (String) adjacencyOBJ.get("south");
-//            adjacentToString = (String) adjacencyOBJ.get("east");
-//            adjacentToString = (String) adjacencyOBJ.get("west");
+            String adjacentToString = (String) adjacencyOBJ.get("north");
+            newRoom.setTopAdjacentRoom(adjacentToString);
 
-            // Quick fix because setTopAdjacentRoom takes in a Room type not String
-            Room newRoom1 = new Room(id, name, width, height, light);
-            newRoom.setTopAdjacentRoom(newRoom1);
+            adjacentToString = (String) adjacencyOBJ.get("south");
+            newRoom.setBottomAdjacentRoom(adjacentToString);
 
+            adjacentToString = (String) adjacencyOBJ.get("east");
+            newRoom.setRightAdjacentRoom(adjacentToString);
 
-            newRoom.setBottomAdjacentRoom(newRoom1);
+            adjacentToString = (String) adjacencyOBJ.get("west");
+            newRoom.setLeftAdjacentRoom(adjacentToString);
 
-            newRoom.setRightAdjacentRoom(newRoom1);
+            String doorName = (String) doorsOBJ.get("north");
+            if(!doorName.equals("")) {
+                doors.add(new Door(doorName, "north"));
+            }
 
+            doorName = (String) doorsOBJ.get("south");
+            if(!doorName.equals("")) {
+                doors.add(new Door(doorName, "south"));
+            }
 
-            newRoom.setLeftAdjacentRoom(newRoom1);
+            doorName = (String) doorsOBJ.get("east");
+            if(!doorName.equals("")) {
+                doors.add(new Door(doorName, "east"));
+            }
 
+            doorName = (String) doorsOBJ.get("west");
+            if(!doorName.equals("")) {
+                doors.add(new Door(doorName, "west"));
+            }
+
+            newRoom.setDoors(doors);
+            
             rooms.add(newRoom);
         }
         house = new House(rooms);
