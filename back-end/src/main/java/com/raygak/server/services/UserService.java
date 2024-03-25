@@ -19,17 +19,17 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     public Optional<User> getUserById(ObjectId id) {
         return userRepository.findById(id);
     }
 
-    public User createUser(String email, String password, String userType) {
-        User user = new User(email, password, userType);
-        if(userRepository.existsByEmail(email)) {
+    public User createUser(String username, String password, String userType) {
+        User user = new User(username, password, userType);
+        if(userRepository.existsByUsername(username)) {
             userRepository.insert(user);
             return user;
         }
@@ -41,13 +41,13 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public Optional<User> updateUserById(ObjectId id, String email, String password, String userType) {
+    public Optional<User> updateUserById(ObjectId id, String username, String password, String userType) {
         Optional<User> optionalUser = userRepository.findById(id);
         if(optionalUser.isEmpty()) {
             return Optional.empty();
         }
         User user = optionalUser.get();
-        user.setEmail(email);
+        user.setUsername(username);
         user.setPassword(password);
         user.setUserType(userType);
         return Optional.of(userRepository.save(user));

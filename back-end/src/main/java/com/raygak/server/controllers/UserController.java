@@ -28,18 +28,18 @@ public class UserController {
         return new ResponseEntity<Optional<User>>(userService.getUserById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<Optional<User>> getUserByEmail(@PathVariable String email) {
-        return new ResponseEntity<Optional<User>>(userService.getUserByEmail(email), HttpStatus.OK);
+    @GetMapping("/username/{username}")
+    public ResponseEntity<Optional<User>> getUserByUsername(@PathVariable String username) {
+        return new ResponseEntity<Optional<User>>(userService.getUserByUsername(username), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody Map<String, String> payload) {
-        User user = userService.createUser(payload.get("email"), payload.get("password"), payload.get("userType"));
+        User user = userService.createUser(payload.get("username"), payload.get("password"), payload.get("userType"));
         if(user == null) {
             return new ResponseEntity<User>(user, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<User>(userService.createUser(payload.get("email"), payload.get("password"), payload.get("userType")), HttpStatus.OK);
+        return new ResponseEntity<User>(userService.createUser(payload.get("username"), payload.get("password"), payload.get("userType")), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -50,6 +50,6 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Optional<User>> updateUserById(@PathVariable ObjectId id, @RequestBody Map<String, String> payload) {
-        return new ResponseEntity<Optional<User>>(userService.updateUserById(id, payload.get("email"), payload.get("password"), payload.get("userType")), HttpStatus.OK);
+        return new ResponseEntity<Optional<User>>(userService.updateUserById(id, payload.get("username"), payload.get("password"), payload.get("userType")), HttpStatus.OK);
     }
 }

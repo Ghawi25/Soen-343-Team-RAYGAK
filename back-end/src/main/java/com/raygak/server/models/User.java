@@ -14,12 +14,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
     @Id
     private ObjectId id;
-    private String email;
+    private String username;
     private String password;
     private String userType; // adult, child, guest
 
-    public User(String email, String password, String userType) {
-        this.email = email;
+    public User(String username, String password, String userType) {
+        this.username = username;
         this.password = password;
         this.userType = userType;
     }
