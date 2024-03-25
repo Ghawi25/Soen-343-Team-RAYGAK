@@ -30,7 +30,7 @@ public class Room {
     private Zone zone = null;
     private DecimalFormat temperatureFormat = new DecimalFormat("0.00");
     private double lastGeneralTempChange = 0.00;
-
+    
     public Room(String idInput, String name, int width, int height, boolean hasLight) {
         this.roomID = idInput;
         this.name = name;

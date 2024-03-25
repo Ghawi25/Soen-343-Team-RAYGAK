@@ -1,6 +1,7 @@
 package com.raygak.server.smarthome.heating;
 
 import com.raygak.server.smarthome.House;
+import com.raygak.server.smarthome.User;
 
 public class SHH {
     private House house;
@@ -59,5 +60,9 @@ public class SHH {
         if (status.equals("Already Off")) {
             System.out.println("[SHH] ERROR: The room with ID " + roomID + " already has the HVAC off! Cancelling command.");
         }
+    }
+
+    public void newInhabitantUpdate(User newInhabitant, String roomID) {
+        System.out.println("An inhabitant with user account username " + newInhabitant.getUsername() + "has entered room" + roomID);
     }
 }

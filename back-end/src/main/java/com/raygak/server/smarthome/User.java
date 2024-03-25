@@ -66,23 +66,26 @@ public class User {
         this.currentRoom = newCurrentRoom;
     }
 
-    public void changeTemperatureInCurrentRoom_Remote(double newTemperature) throws IllegalAccessException {
+    public void changeTemperatureInCurrentRoom_Remote(double newTemperature) {
         if (this.userType != UserType.PARENT) {
-            throw new IllegalAccessException("Error: Only a parent can remotely change a room's temperature.");
+            System.out.println("Error: Only a parent can remotely change a room's temperature.");
+            return;
         }
-        this.currentRoom.setCurrentTemperature(newTemperature);
+        this.currentRoom.setCurrentTemperature(newTemperature, true);
     }
 
-    public void changeTemperatureInCurrentRoom_Local(double newTemperature) throws IllegalAccessException {
+    public void changeTemperatureInCurrentRoom_Local(double newTemperature) {
         if (this.userType == UserType.STRANGER) {
-            throw new IllegalAccessException("Error: Only a parent, child and guest can change the temperature of a room which they are in.");
+            System.out.println("Error: Only a parent, child or guest can change the temperature of a room which they are in.");
+            return;
         }
-        this.currentRoom.setCurrentTemperature(newTemperature);
+        this.currentRoom.setCurrentTemperature(newTemperature, true);
     }
 
-    public void setUpZone(House house, String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList) throws IllegalAccessException {
+    public void setUpZone(House house, String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList) {
         if (this.userType != UserType.PARENT) {
-            throw new IllegalAccessException("Error: Only a parent can set up a heating/cooling zone within the home.");
+            System.out.println("Error: Only a parent can set up a heating/cooling zone within the home.");
+            return;
         }
         if (house.doesZoneWithIDExist(zoneID)) {
             house.changeZone(zoneID, type, settingList, roomList);
@@ -91,23 +94,26 @@ public class User {
         }
     }
 
-    public void turnOnSHH(House house) throws IllegalAccessException {
+    public void turnOnSHH(House house) {
         if (this.userType != UserType.PARENT) {
-            throw new IllegalAccessException("Error: Only a parent can turn on the SHH system within a house.");
+            System.out.println("Error: Only a parent can turn on the SHH system within a house.");
+            return;
         }
         house.turnOnSHH();
     }
 
-    public void turnOffSHH(House house) throws IllegalAccessException {
+    public void turnOffSHH(House house) {
         if (this.userType != UserType.PARENT) {
-            throw new IllegalAccessException("Error: Only a parent can turn off the SHH system within a house.");
+            System.out.println("Error: Only a parent can turn off the SHH system within a house.");
+            return;
         }
         house.turnOnSHH();
     }
 
-    public void setUpTemperatureSettingWithinZone(Zone zone, String settingID, double tempInput, int hours1, int minutes1, int hours2, int minutes2) throws IllegalAccessException {
+    public void setUpTemperatureSettingWithinZone(Zone zone, String settingID, double tempInput, int hours1, int minutes1, int hours2, int minutes2) {
         if (this.userType != UserType.PARENT) {
-            throw new IllegalAccessException("Error: Only a parent can create or modify temperature settings for zones.");
+            System.out.println("Error: Only a parent can create or modify temperature settings for zones.");
+            return;
         }
         if (zone.doesSettingWithIDExist(settingID)) {
             zone.setSetting(settingID, tempInput, hours1, minutes1, hours2, minutes2);

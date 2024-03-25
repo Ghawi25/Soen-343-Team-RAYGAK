@@ -37,8 +37,8 @@ public class TurnOffHVACCommand extends Command {
                 }
                 rooms.set(i, r);
                 this.house.setRooms(rooms);
-                return;
             }
+            return;
         }
     }
 }
