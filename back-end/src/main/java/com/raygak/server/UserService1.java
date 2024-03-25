@@ -27,8 +27,8 @@ public class UserService1 {
         return userRepository.findById(objId);
     }
 
-    public Optional<User> getUserProfileByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public Optional<User> getUserProfileByEmail(String username) {
+        return userRepository.findByUsername(username);
     }
 
     public User createUserProfile(User user) {
@@ -42,7 +42,7 @@ public class UserService1 {
         ObjectId objId = new ObjectId(id);
         User user = userRepository.findById(objId)
                 .orElseThrow(() -> new RuntimeException("User profile not found for this id :: " + id));
-        user.setEmail(userDetails.getEmail());
+        user.setUsername(userDetails.getUsername());
         user.setPassword(userDetails.getPassword());
         user.setUserType(userDetails.getUserType());
         return userRepository.save(user);
