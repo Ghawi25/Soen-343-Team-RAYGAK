@@ -1,4 +1,4 @@
-# SOEN343: House Simulation Syste
+# SOEN343: House Simulation System
 
 By Team RAYGAK.
 
