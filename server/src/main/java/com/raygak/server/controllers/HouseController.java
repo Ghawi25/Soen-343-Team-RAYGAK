@@ -2,6 +2,7 @@ package com.raygak.server.controllers;
 
 import com.raygak.server.smarthome.House;
 import com.raygak.server.smarthome.HouseView;
+import com.raygak.server.smarthome.heating.Demo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,4 +21,12 @@ public class HouseController {
         return new ResponseEntity<House>(houseView.house, HttpStatus.OK);
     }
 
+    @GetMapping(path = "/temperature")
+    public ResponseEntity<String> getTemperature() {
+        Demo temperature = new Demo();
+        House houseRef = temperature.initialize();
+        return new ResponseEntity<>(
+                "House temperature: " + houseRef.getIndoorTemperature(),
+                HttpStatus.OK);
+    }
 }
