@@ -1,5 +1,6 @@
 package com.raygak.server.controllers;
 
+import com.raygak.server.models.Logs;
 import com.raygak.server.smarthome.House;
 import com.raygak.server.smarthome.HouseView;
 import com.raygak.server.smarthome.heating.Demo;
@@ -22,11 +23,10 @@ public class HouseController {
     }
 
     @GetMapping(path = "/temperature")
-    public ResponseEntity<String> getTemperature() {
+    public ResponseEntity<Logs> getTemperature() {
         Demo temperature = new Demo();
         House houseRef = temperature.initialize();
-        return new ResponseEntity<>(
-                "House temperature: " + houseRef.getIndoorTemperature(),
+        return new ResponseEntity<Logs>(new Logs("House temperature: " + houseRef.getIndoorTemperature()),
                 HttpStatus.OK);
     }
 }
