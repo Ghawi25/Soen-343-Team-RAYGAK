@@ -30,7 +30,7 @@ public class Room {
     private Zone zone = null;
     private DecimalFormat temperatureFormat = new DecimalFormat("0.00");
     private double lastGeneralTempChange = 0.00;
-
+    
     public Room(String idInput, String name, int width, int height, boolean hasLight) {
         this.roomID = idInput;
         this.name = name;
@@ -46,6 +46,7 @@ public class Room {
         this.height = height;
         this.light = light;
     }
+
     public Room(String idInput, String name, int width, int height, Light light, double desTempInput, boolean isHVACOn, Room topAdjacent, Room bottomAdjacent, Room leftAdjacent, Room rightAdjacent) {
         this.roomID = idInput;
         this.name = name;
@@ -60,6 +61,7 @@ public class Room {
         this.leftAdjacentRoom = leftAdjacent;
         this.rightAdjacentRoom = rightAdjacent;
     }
+
     public Room(String idInput, String name, int width, int height, Light light, double desTempInput, boolean isHVACOn, ArrayList<Window> windowListInput, ArrayList<Door> doorListInput, ArrayList<User> inhabitantListInput, Room topAdjacent, Room bottomAdjacent, Room leftAdjacent, Room rightAdjacent) {
         this.roomID = idInput;
         this.name = name;
@@ -199,9 +201,9 @@ public class Room {
                 this.isHVACOn = false;
             }
             if (this.currentTemperature < this.desiredZoneSpecificTemperature) {
-                this.currentTemperature = Math.round((this.currentTemperature + 0.1) * 100.0) /100.0;
+                this.currentTemperature = Math.round((this.currentTemperature + 0.1) * 100.0) / 100.0;
             } else {
-                this.currentTemperature = Math.round((this.currentTemperature - 0.1) * 100.0) /100.0;
+                this.currentTemperature = Math.round((this.currentTemperature - 0.1) * 100.0) / 100.0;
             }
         } else {
             if (this.currentTemperature <= (this.desiredZoneSpecificTemperature - 0.25) || this.currentTemperature >= (this.desiredZoneSpecificTemperature + 0.25)) {
@@ -210,9 +212,9 @@ public class Room {
                 changeCurrentTemperature(outsideTemperature);
             }
             if (this.currentTemperature < outsideTemperature) {
-                this.currentTemperature = Math.round((this.currentTemperature + 0.05) * 100.0) /100.0;
+                this.currentTemperature = Math.round((this.currentTemperature + 0.05) * 100.0) / 100.0;
             } else if (this.currentTemperature > outsideTemperature) {
-                this.currentTemperature = Math.round((this.currentTemperature - 0.05) * 100.0) /100.0;
+                this.currentTemperature = Math.round((this.currentTemperature - 0.05) * 100.0) / 100.0;
             } else {
                 System.out.println("The temperature remains unchanged.");
             }
@@ -225,12 +227,12 @@ public class Room {
     public void updateTemperature() {
         System.out.println("UPDATING TEMPERATURE OF ROOM " + this.getRoomID());
         if (this.inhabitants.size() >= 1) {
-           if (this.zone.getType() == ZoneType.HEATING) {
-               this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredZoneSpecificTemperature * 1.2));
-           }
-           if (this.zone.getType() == ZoneType.COOLING) {
-               this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredZoneSpecificTemperature * 0.8));
-           }
+            if (this.zone.getType() == ZoneType.HEATING) {
+                this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredZoneSpecificTemperature * 1.2));
+            }
+            if (this.zone.getType() == ZoneType.COOLING) {
+                this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredZoneSpecificTemperature * 0.8));
+            }
         } else {
             this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredUnoccupiedTemperature));
         }

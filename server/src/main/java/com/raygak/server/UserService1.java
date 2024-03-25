@@ -1,7 +1,8 @@
 package com.raygak.server;
 
-import com.raygak.server.model.User;
+import com.raygak.server.models.User;
 import com.raygak.server.repos.*;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,11 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService1 {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService1(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -22,7 +23,8 @@ public class UserService {
     }
 
     public Optional<User> getUserProfileById(String id) {
-        return userRepository.findById(id);
+        ObjectId objId = new ObjectId(id);
+        return userRepository.findById(objId);
     }
 
     public Optional<User> getUserProfileByEmail(String email) {
@@ -35,15 +37,19 @@ public class UserService {
     }
 
     public User updateUserProfile(String id, User userDetails) {
-        User user = userRepository.findById(id)
+        // findById takes ObjectId BUT it was getting passed a string before.
+        // This is a quickfix, not sure if it works.
+        ObjectId objId = new ObjectId(id);
+        User user = userRepository.findById(objId)
                 .orElseThrow(() -> new RuntimeException("User profile not found for this id :: " + id));
-        user.setUsername(userDetails.getUsername());
+        user.setEmail(userDetails.getEmail());
         user.setPassword(userDetails.getPassword());
         user.setUserType(userDetails.getUserType());
         return userRepository.save(user);
     }
 
     public void deleteUserProfile(String id) {
-        userRepository.deleteById(id);
+        ObjectId objId = new ObjectId(id);
+        userRepository.deleteById(objId);
     }
 }

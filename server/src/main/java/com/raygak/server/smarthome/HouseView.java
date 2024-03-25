@@ -30,42 +30,47 @@ public final class HouseView {
             Room newRoom = new Room(id, name, width, height, light);
 
             JSONArray windowsArr = (JSONArray) windowsOBJ.get("north");
-            for(Object dir : windowsArr) {
+            for (Object dir : windowsArr) {
                 String wId = (String) dir;
                 windows.add(new Window(wId, false, false));
             }
 
             windowsArr = (JSONArray) windowsOBJ.get("south");
-            for(Object dir : windowsArr) {
+            for (Object dir : windowsArr) {
                 String wId = (String) dir;
                 windows.add(new Window(wId, false, false));
             }
 
             windowsArr = (JSONArray) windowsOBJ.get("east");
-            for(Object dir : windowsArr) {
+            for (Object dir : windowsArr) {
                 String wId = (String) dir;
                 windows.add(new Window(wId, false, false));
             }
 
             windowsArr = (JSONArray) windowsOBJ.get("west");
-            for(Object dir : windowsArr) {
+            for (Object dir : windowsArr) {
                 String wId = (String) dir;
                 windows.add(new Window(wId, false, false));
             }
 
             newRoom.setWindows(windows);
 
-            String adjacentToString = (String) adjacencyOBJ.get("north");
-            newRoom.setTopAdjacentRoom(adjacentToString);
+//            String adjacentToString = (String) adjacencyOBJ.get("north");
+//            adjacentToString = (String) adjacencyOBJ.get("south");
+//            adjacentToString = (String) adjacencyOBJ.get("east");
+//            adjacentToString = (String) adjacencyOBJ.get("west");
 
-            adjacentToString = (String) adjacencyOBJ.get("south");
-            newRoom.setBottomAdjacentRoom(adjacentToString);
+            // Quick fix because setTopAdjacentRoom takes in a Room type not String
+            Room newRoom1 = new Room(id, name, width, height, light);
+            newRoom.setTopAdjacentRoom(newRoom1);
 
-            adjacentToString = (String) adjacencyOBJ.get("east");
-            newRoom.setRightAdjacentRoom(adjacentToString);
 
-            adjacentToString = (String) adjacencyOBJ.get("west");
-            newRoom.setLeftAdjacentRoom(adjacentToString);
+            newRoom.setBottomAdjacentRoom(newRoom1);
+
+            newRoom.setRightAdjacentRoom(newRoom1);
+
+
+            newRoom.setLeftAdjacentRoom(newRoom1);
 
             rooms.add(newRoom);
         }

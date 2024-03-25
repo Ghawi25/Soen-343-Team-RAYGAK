@@ -7,23 +7,23 @@ import java.util.ArrayList;
 
 public class Demo {
 
-	public static void main(String[] args) {
-		User p1 = new User("james@gmail.com", "james123", UserType.PARENT);
-		User p2 = new User("quinn@gmail.com", "quinn456", UserType.CHILD);
-		User p3 = new User("dennis@gmail.com", "dennis789", UserType.GUEST);
+    public static void main(String[] args) {
+        User p1 = new User("james@gmail.com", "james123", UserType.PARENT);
+        User p2 = new User("quinn@gmail.com", "quinn456", UserType.CHILD);
+        User p3 = new User("dennis@gmail.com", "dennis789", UserType.GUEST);
 
-		ArrayList<User> userList1 = new ArrayList<User>();
-		userList1.add(p1);
-		userList1.add(p2);
+        ArrayList<User> userList1 = new ArrayList<User>();
+        userList1.add(p1);
+        userList1.add(p2);
 
-		ArrayList<User> userList2 = new ArrayList<User>();
+        ArrayList<User> userList2 = new ArrayList<User>();
 
-		Window w1 = new Window("1", false, false);
-		Window w2 = new Window("2", true, false);
-		Window w3 = new Window("3", false, true);
-		Window w4 = new Window("4", true, true);
+        Window w1 = new Window("1", false, false);
+        Window w2 = new Window("2", true, false);
+        Window w3 = new Window("3", false, true);
+        Window w4 = new Window("4", true, true);
 
-		ArrayList<Window> windowList1 = new ArrayList<Window>();
+        ArrayList<Window> windowList1 = new ArrayList<Window>();
         windowList1.add(w1);
         windowList1.add(w2);
 
@@ -34,8 +34,8 @@ public class Demo {
         Light l1 = new Light("Room 1 Light", "Centre");
         Light l2 = new Light("Room 2 Light", "Centre");
 
-        Door d1 = new Door("Room 1 Light", "Bottom Centre");
-        Door d2 = new Door("Room 2 Light", "Bottom Centre");
+        Door d1 = new Door("Room 1 Door", "Bottom Centre");
+        Door d2 = new Door("Room 2 Door", "Bottom Centre");
 
         ArrayList<Door> doorList1 = new ArrayList<Door>();
         doorList1.add(d1);
@@ -101,9 +101,9 @@ public class Demo {
         h1.setOutdoorTemperature(10.0);
         h1.setOutdoorTemperature(50.0);
 
-		System.out.println(h1.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
-		h1.openDoorWithName("Room 1 Door");
-		System.out.println(h1.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
+        System.out.println(h1.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
+        h1.openDoorWithName("Room 1 Door");
+        System.out.println(h1.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
 //		h1.turnOnSHH();
 //		System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
 //		System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
@@ -154,5 +154,5 @@ public class Demo {
 //				System.out.println("Thread interrupted.");
 //			}
 //		}
-	}
+    }
 }

@@ -1,8 +1,10 @@
 package com.raygak.server.utils;
 
 // Imports
+
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
+
 import java.io.FileReader;
 
 public class LayoutReader {
@@ -11,7 +13,7 @@ public class LayoutReader {
         JSONParser parser = new JSONParser();
         JSONObject parsedLayout = new JSONObject();
         try {
-            Object parsedFile = parser.parse(new FileReader("./src/main/resources/jsonTest.json"));
+            Object parsedFile = parser.parse(new FileReader("./server/src/main/resources/jsonTest.json"));
             parsedLayout = (JSONObject) parsedFile;
         } catch (Exception e) {
             e.printStackTrace();
