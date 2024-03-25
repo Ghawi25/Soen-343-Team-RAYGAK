@@ -8,12 +8,15 @@ const AuthProvider = ({children}) => {
     
     const loginAction = async (data) => {
         const res = await axios.get(`http://localhost:8080/api/users/user/${data.username}`);
-        setUser(res.data);
+        if(data.password === res.data.password) {
+            setUser(res.data);
+        }
     }
 
     const logOut = () => {
         setUser(null);
     }
+    
     return <AuthContext.Provider value={{user, loginAction, logOut}}>{children}</AuthContext.Provider>;
 };
 
