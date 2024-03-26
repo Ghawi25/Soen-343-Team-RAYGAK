@@ -34,7 +34,7 @@ const DateTimePicker: React.FC = () => {
       time: formattedTime,
     });
 
-    const endpoint = `YOUR_ENDPOINT_URL?${queryParams}`;
+    const endpoint = `http://localhost:8080?${queryParams}`;
     try {
       const response = await fetch(endpoint);
       if (response.ok) {

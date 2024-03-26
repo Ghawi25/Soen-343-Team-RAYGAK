@@ -1,8 +1,8 @@
 package com.raygak.server.smarthome;
 
+import com.raygak.server.controllers.TemperatureController;
 import com.raygak.server.states.*;
 import lombok.Getter;
-
 import java.time.LocalTime;
 import java.util.Date;
 
@@ -22,6 +22,11 @@ public class Simulator {
         this.currentTime = LocalTime.of(hoursInput, minutesInput, 0);
         this.house = houseInput;
         this.currentState = new SimulationOffState(this);
+    }
+
+    public void loadTemperatureData(String jsonFilePath, String csvFilePath){
+        TemperatureController temp = new TemperatureController();
+        this.house.setOutdoorTemperature(temp.loadTemperatureData(jsonFilePath, csvFilePath)); ;
     }
 
     public void setCurrentDate(Date newDate) {
