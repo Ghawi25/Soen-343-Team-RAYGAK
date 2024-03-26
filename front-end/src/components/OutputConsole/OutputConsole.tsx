@@ -1,4 +1,4 @@
-import OutputBox from "./OuputBox";
+import OutputBox from "./OutputBox";
 
 function OutputConsole() {
   return (
