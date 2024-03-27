@@ -15,4 +15,8 @@ public class Logs {
     public Logs(String msg) {
         this.logMsg.add(msg);
     }
+
+    public void addMsg(String msg) {
+        this.logMsg.add(msg);
+    }
 }
