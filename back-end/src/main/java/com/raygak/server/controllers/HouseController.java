@@ -26,7 +26,13 @@ public class HouseController {
     public ResponseEntity<Logs> getTemperature() {
         Demo temperature = new Demo();
         House houseRef = temperature.initialize();
-        return new ResponseEntity<Logs>(new Logs("House temperature: " + houseRef.getIndoorTemperature()),
+        Logs logs = new Logs("House temperature: " + houseRef.getIndoorTemperature());
+        logs.addMsg("Room 1 temperature: " + houseRef.getRooms().get(0).getCurrentTemperature());
+        logs.addMsg("Room 2 temperature: " + houseRef.getRooms().get(1).getCurrentTemperature());
+        logs.addMsg(houseRef.getRoomByID("1").isHVACOn() ? "Room 1 - HVAC On" : "Room 1 - HVAC Off");
+        logs.addMsg(houseRef.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
+        logs.addMsg(houseRef.getDoorByName("Room 2 Door").isOpen() ? "Door 2 Open" : "Door 2 Closed");
+        return new ResponseEntity<Logs>(logs,
                 HttpStatus.OK);
     }
 }
