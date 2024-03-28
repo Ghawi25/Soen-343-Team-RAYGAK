@@ -14,8 +14,4 @@ public class Layout {
         LayoutReader lr = new LayoutReader();
         layoutJSON = lr.readFile();
     }
-
-    ;
-
-
 }
