@@ -18,10 +18,10 @@ public class Demo {
 
         ArrayList<User> userList2 = new ArrayList<User>();
 
-        Window w1 = new Window("1", false, false);
-        Window w2 = new Window("2", true, false);
-        Window w3 = new Window("3", false, true);
-        Window w4 = new Window("4", true, true);
+        Window w1 = new Window("1", false, false, "west");
+        Window w2 = new Window("2", true, false, "west");
+        Window w3 = new Window("3", false, true, "west");
+        Window w4 = new Window("4", true, true, "west");
 
         ArrayList<Window> windowList1 = new ArrayList<Window>();
         windowList1.add(w1);
@@ -210,10 +210,10 @@ public class Demo {
 
         ArrayList<User> userList2 = new ArrayList<User>();
 
-        Window w1 = new Window("1", false, false);
-        Window w2 = new Window("2", true, false);
-        Window w3 = new Window("3", false, true);
-        Window w4 = new Window("4", true, true);
+        Window w1 = new Window("1", false, false, "west");
+        Window w2 = new Window("2", true, false, "west");
+        Window w3 = new Window("3", false, true, "west");
+        Window w4 = new Window("4", true, true, "west");
 
         ArrayList<Window> windowList1 = new ArrayList<Window>();
         windowList1.add(w1);
