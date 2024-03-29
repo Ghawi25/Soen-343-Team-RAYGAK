@@ -40,7 +40,7 @@
         "north": "",
         "south": "RoomA",
         "east": "",
-        "west": ""
+        "west": "RoomC"
       },
       "windows": {
         "north": [],
@@ -56,6 +56,31 @@
         "north": "",
         "south": "DoorA",
         "east": "",
+        "west": ""
+      },
+      "lightInRoom": true
+    },
+    {
+      "_id": "id3",
+      "name": "RoomC",
+      "width": 2,
+      "height": 2,
+      "adjacentTo": {
+        "north": "",
+        "south": "",
+        "east": "RoomB",
+        "west": ""
+      },
+      "windows": {
+        "north": [],
+        "south": [],
+        "east": [],
+        "west": []
+      },
+      "doors": {
+        "north": "",
+        "south": "",
+        "east": "DoorB",
         "west": ""
       },
       "lightInRoom": true
