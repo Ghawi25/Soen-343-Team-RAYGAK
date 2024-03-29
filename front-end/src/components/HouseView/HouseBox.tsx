@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 var roomPositions = {}
 // function to generate a rectangle for the room
-const Room = ({ name, x, y, width, height, id }) => {
+const Room = ({ name, x, y, width, height, id }: any) => {
   return (
     <g key={id} id={id}>
       <rect x={x * width * 100} y={y * height * 100} width={width * 100} height={height * 100} fill="white" stroke="black" />
@@ -12,7 +12,7 @@ const Room = ({ name, x, y, width, height, id }) => {
 }
 
 // function to generate doors
-const Door = ({ name, x, y, roomWidth, roomHeight, isVertical }) => {
+const Door = ({ name, x, y, roomWidth, roomHeight, isVertical }: any) => {
   if (isVertical) {
     return (
       <g key={name} id={name}>
@@ -22,13 +22,28 @@ const Door = ({ name, x, y, roomWidth, roomHeight, isVertical }) => {
   }
   return (
     <g key={name} id={name}>
-      <rect x={x * roomWidth * 100  - 12.5} y={y * roomHeight * 100 - 5} width={25} height={10} fill="rgb(139,69,19)" />
+      <rect x={x * roomWidth * 100 - 12.5} y={y * roomHeight * 100 - 5} width={25} height={10} fill="rgb(139,69,19)" />
+    </g>
+  )
+}
+
+const Window = ({ name, x, y, roomWidth, roomHeight, isVertical }: any) => {
+  if (isVertical) {
+    return (
+      <g key={name} id={name}>
+        <rect x={x * roomWidth * 100 - 5} y={y * roomHeight * 100 - 12.5} width={10} height={25} fill="rgb(135,206,235)" />
+      </g>
+    )
+  }
+  return (
+    <g key={name} id={name}>
+      <rect x={x * roomWidth * 100 - 12.5} y={y * roomHeight * 100 - 5} width={25} height={10} fill="rgb(135,206,235)" />
     </g>
   )
 }
 
 // Function to render all rooms
-function renderRooms(rooms) {
+function renderRooms(rooms: any[]) {
   // Get positions first
   roomPositions = {};
   // Start at 0, 0
@@ -75,51 +90,86 @@ function renderRooms(rooms) {
 }
 
 // Render all doors
-function renderDoors(rooms) {
+function renderDoors(rooms: any[]) {
   var doorPositions = {};
 
   // get offset of doors
   rooms.forEach(room => {
-    const roomPosition =  roomPositions[room.roomID];
+    const roomPosition = roomPositions[room.roomID];
     const doors = room.doors;
-    doors.forEach(door => {
-      if(door.position === "north") {
-        doorPositions[door.name] = {x: roomPosition.x + 0.5, y: roomPosition.y, isVertical: false};
+    doors.forEach((door: { position: string; name: string; }) => {
+      if (door.position === "north") {
+        doorPositions[door.name] = { x: roomPosition.x + 0.5, y: roomPosition.y, isVertical: false };
       }
-      else if(door.position === "south") {
-        console.log(roomPosition)
-        doorPositions[door.name] = {x: roomPosition.x + 0.5, y: roomPosition.y + 1, isVertical: false};
+      else if (door.position === "south") {
+        doorPositions[door.name] = { x: roomPosition.x + 0.5, y: roomPosition.y + 1, isVertical: false };
       }
-      else if(door.position === "east") {
-        doorPositions[door.name] = {x: roomPosition.x + 1, y: roomPosition.y + 0.5, isVertical: true};
+      else if (door.position === "east") {
+        doorPositions[door.name] = { x: roomPosition.x + 1, y: roomPosition.y + 0.5, isVertical: true };
       }
       else {
-        doorPositions[door.name] = {x: roomPosition.x, y: roomPosition.y + 0.5, isVertical: true};
+        doorPositions[door.name] = { x: roomPosition.x, y: roomPosition.y + 0.5, isVertical: true };
       }
     });
   });
-  console.log(doorPositions);
-  console.log(roomPositions);
-  
+
   // Render doors, skip if already rendered
   const added = new Set();
   return rooms.map(room => {
     const doors = room.doors;
-    return doors.map(door => {
+    return doors.map((door: { name: string; }) => {
       const doorPosition = doorPositions[door.name]
-      if(added.has(door.name)) return;
+      if (added.has(door.name)) return;
       added.add(door.name)
       if (doorPosition.isVertical) {
-        return <Door name={door.name} x={doorPosition.x} y={doorPosition.y} roomWidth={room.width} roomHeight={room.height} isVertical={doorPosition.isVertical}/>
+        return <Door name={door.name} x={doorPosition.x} y={doorPosition.y} roomWidth={room.width} roomHeight={room.height} isVertical={doorPosition.isVertical} />
       }
       else {
-        return <Door name={door.name} x={doorPosition.x} y={doorPosition.y} roomWidth={room.width} roomHeight={room.height} isVertical={doorPosition.isVertical}/>
+        return <Door name={door.name} x={doorPosition.x} y={doorPosition.y} roomWidth={room.width} roomHeight={room.height} isVertical={doorPosition.isVertical} />
       }
-  }) 
+    })
   })
 }
 
-// TODO render windows
+// render windows
+function renderWindows(rooms: any[]) {
+  var windowPositions = {};
+
+  rooms.forEach(room => {
+    const roomPosition = roomPositions[room.roomID];
+    const windows = room.windows;
+    // For each room, get windows per wall
+    const windowsPerDirection = {
+      "north": [],
+      "south": [],
+      "east": [],
+      "west": []
+    };
+
+    windows.forEach(window => {
+      console.log(window);
+      if (window.position === "north") {
+        windowsPerDirection["north"].push(window);
+      }
+      else if (window.position === "south") {
+        windowsPerDirection["south"].push(window);
+      }
+      else if (window.position === "east") {
+        windowsPerDirection["east"].push(window);
+      }
+      else {
+        windowsPerDirection["west"].push(window);
+      }
+    });
+    
+    // Get positions of windows 
+    windows.forEach(window => {
+      
+    });
+  });
+}
+
+
 // TODO render lights
 
 function HouseBox() {
@@ -140,6 +190,7 @@ function HouseBox() {
       <svg width="2000" height="2000">
         {renderRooms(house.rooms)}
         {renderDoors(house.rooms)}
+        {renderWindows(house.rooms)}
       </svg>
     )
   }
