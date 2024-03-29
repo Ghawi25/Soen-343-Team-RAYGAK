@@ -15,7 +15,9 @@
       },
       "windows": {
         "north": [],
-        "south": [],
+        "south": [
+          "WindowE"
+        ],
         "east": [
           "WindowA"
         ],
@@ -48,9 +50,7 @@
         "east": [
           "WindowD"
         ],
-        "west": [
-          "WindowF"
-        ]
+        "west": []
       },
       "doors": {
         "north": "",
