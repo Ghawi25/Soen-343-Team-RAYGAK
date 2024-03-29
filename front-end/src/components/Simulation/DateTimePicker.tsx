@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const DateTimePicker: React.FC = () => {
+const DateTimePicker: React.FC<{ onTemperatureFetch: (temperature: string) => void }> = ({ onTemperatureFetch })=> {
   const [dateTime, setDateTime] = useState("");
 
   const formatDateTime = (inputDateTime: string) => {
@@ -34,7 +34,7 @@ const DateTimePicker: React.FC = () => {
       time: formattedTime,
     });
 
-    const endpoint = `http://localhost:8080?${queryParams}`;
+    const endpoint = `http://localhost:8080/temperature?${queryParams}`;
     try {
       const response = await fetch(endpoint);
       if (response.ok) {
@@ -42,6 +42,7 @@ const DateTimePicker: React.FC = () => {
         // Assuming the server response contains a temperature value
         // setTemperature(data.temperature); // Update the state with the received temperature
         console.log("Temperature received:", data.temperature);
+        onTemperatureFetch(data.temperature.toString()); // Call the handler with the new temperature
       } else {
         // Handle server errors or invalid responses
         console.error("Server error:", response.statusText);
@@ -50,6 +51,7 @@ const DateTimePicker: React.FC = () => {
       // Handle network errors
       console.error("Network error:", error);
     }
+    
   };
 
   return (

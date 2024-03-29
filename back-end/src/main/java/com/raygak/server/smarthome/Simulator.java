@@ -24,11 +24,6 @@ public class Simulator {
         this.currentState = new SimulationOffState(this);
     }
 
-    public void loadTemperatureData(String jsonFilePath, String csvFilePath){
-        TemperatureController temp = new TemperatureController();
-        this.house.setOutdoorTemperature(temp.loadTemperatureData(jsonFilePath, csvFilePath)); ;
-    }
-
     public void setCurrentDate(Date newDate) {
         this.currentDate = newDate;
     }
