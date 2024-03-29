@@ -7,11 +7,13 @@ public class Window {
 	private String windowID;
 	private boolean isOpen;
 	private boolean isObstructed;
+	private String position;
 	
-	public Window(String idInput, boolean isOpen, boolean isObstructed) {
+	public Window(String idInput, boolean isOpen, boolean isObstructed, String position) {
 		this.windowID = idInput;
 		this.isOpen = isOpen;
 		this.isObstructed = isObstructed;
+		this.position = position;
 	}
 	
 	public void open() {
