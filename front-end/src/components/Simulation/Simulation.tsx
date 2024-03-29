@@ -3,6 +3,11 @@ import DateTimePicker from "./DateTimePicker";
 
 function Simulation() {
   const today = new Date().toJSON().slice(0, 10);
+  var [temperature, setTemperature] = useState('--'); // Initialize temperature with placeholder
+
+  const handleSetTemperature = (newTemperature: string) => {
+    setTemperature(newTemperature);
+  };
 
   return (
     <>
@@ -24,10 +29,10 @@ function Simulation() {
         </div>
       </div>
       <div className="simulation-details">
-        <DateTimePicker />
+        <DateTimePicker onTemperatureFetch={handleSetTemperature}/>
         <div className="temperature">
           <p>
-            Temperature fetched: <span id="temp-fetched">-- °C</span>
+            Temperature fetched: <span id="temp-fetched">{temperature} °C</span>
           </p>
         </div>
         <div className="time-speed">
