@@ -83,7 +83,10 @@ public class House {
 
     public void summerProtocol() {
         if (this.shh.getIsOn()) {
-            if (this.outdoorTemperature < this.indoorTemperature && this.currentSeason == Season.SUMMER) {
+            if ((this.outdoorTemperature < this.indoorTemperature && this.currentSeason == Season.SUMMER) && this.inhabitants.size() > 0) {
+                if (this.isInWinterAndEmptyHouseProtocol) {
+                    reverseWinterAndEmptyHouseProtocol();
+                }
                 isInSummerProtocol = true;
                 System.out.println("SUMMER PROTOCOL.");
                 for (Room r : this.rooms) {
@@ -100,12 +103,14 @@ public class House {
 
     public void reverseSummerProtocol() {
         if (this.shh.getIsOn()) {
-            System.out.println("REVERSE SUMMER PROTOCOL.");
-            isInSummerProtocol = false;
-            for (Room r : this.rooms) {
-                turnOnHVACInRoomWithID(r.getRoomID());
-                for (Window w : r.getWindows()) {
-                    closeWindowWithID(w.getWindowID());
+            if ((this.outdoorTemperature >= this.indoorTemperature || this.currentSeason == Season.SUMMER) || this.inhabitants.size() == 0) {
+                System.out.println("REVERSE SUMMER PROTOCOL.");
+                isInSummerProtocol = false;
+                for (Room r : this.rooms) {
+                    turnOnHVACInRoomWithID(r.getRoomID());
+                    for (Window w : r.getWindows()) {
+                        closeWindowWithID(w.getWindowID());
+                    }
                 }
             }
         }
@@ -166,6 +171,9 @@ public class House {
     public void winterAndEmptyHouseProtocol() {
         if (this.shh.getIsOn()) {
             if (this.currentSeason == Season.WINTER && this.inhabitants.size() == 0) {
+                if (this.isInSummerProtocol) {
+                    reverseSummerProtocol();
+                }
                 this.isInWinterAndEmptyHouseProtocol = true;
                 System.out.println("WINTER AND EMPTY HOUSE PROTOCOL.");
                 for (int i = 0; i < this.rooms.size(); i++) {
@@ -294,6 +302,9 @@ public class House {
                         if (inhabitantList.get(k).getUsername().equals(inhabitantUsername)) {
                             r.removeInhabitant(inhabitantUsername);
                             this.rooms.set(j, r);
+                            if (this.inhabitants.size() == 0) {
+                                System.out.println("The house is now empty.");
+                            }
                             if (this.shh.getIsOn()) {
                                 winterAndEmptyHouseProtocol();
                                 if (this.inhabitants.size() == 0 && isInSummerProtocol) {
@@ -350,36 +361,33 @@ public class House {
 
     public void setOutdoorTemperature(double temperatureInput) {
         this.outdoorTemperature = temperatureInput;
-        //Per the requirements listed in the project description.
-        if (this.shh.getIsOn()) {
-            if (this.outdoorTemperature < this.indoorTemperature) {
-                for (Room r : this.rooms) {
-                    turnOffHVACInRoomWithID(r.getRoomID());
-                    ArrayList<Window> currentRoomWindows = r.getWindows();
-                    for (Window w : currentRoomWindows) {
-                        openWindowWithID(w.getWindowID());
-                    }
-                    r.setWindows(currentRoomWindows);
-                }
-            } else {
-                for (Room r : this.rooms) {
-                    turnOnHVACInRoomWithID(r.getRoomID());
-                    ArrayList<Window> currentRoomWindows = r.getWindows();
-                    for (Window w : currentRoomWindows) {
-                        closeWindowWithID(w.getWindowID());
-                    }
-                    r.setWindows(currentRoomWindows);
-                }
-            }
+        if (isInSummerProtocol == false) {
+            summerProtocol();
+        } else {
+            reverseSummerProtocol();
         }
     }
 
     public void setCurrentSeason(Season newSeason) {
         this.currentSeason = newSeason;
         if (this.shh.getIsOn()) {
-            winterAndEmptyHouseProtocol();
-            if (this.currentSeason != Season.SUMMER && isInSummerProtocol) {
+            if (this.currentSeason != Season.SUMMER && isInWinterAndEmptyHouseProtocol) {
                 reverseSummerProtocol();
+            }
+            if (this.currentSeason != Season.WINTER && isInWinterAndEmptyHouseProtocol) {
+                reverseWinterAndEmptyHouseProtocol();
+            }
+            if (this.currentSeason == Season.WINTER) {
+                if (this.isInSummerProtocol) {
+                    reverseSummerProtocol();
+                }
+                winterAndEmptyHouseProtocol();
+            }
+            if (this.currentSeason == Season.SUMMER) {
+                if (this.isInWinterAndEmptyHouseProtocol) {
+                    reverseWinterAndEmptyHouseProtocol();
+                }
+                summerProtocol();
             }
         }
     }
@@ -512,9 +520,17 @@ public class House {
 
     public void turnOnSHH() {
         this.shh.turnOn();
+        summerProtocol();
+        winterAndEmptyHouseProtocol();
     }
 
     public void turnOffSHH() {
         this.shh.turnOff();
+        if (isInSummerProtocol) {
+            reverseSummerProtocol();
+        }
+        if (isInWinterAndEmptyHouseProtocol) {
+            reverseWinterAndEmptyHouseProtocol();
+        }
     }
 }
