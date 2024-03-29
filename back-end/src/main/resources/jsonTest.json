@@ -16,7 +16,8 @@
       "windows": {
         "north": [],
         "south": [
-          "WindowE"
+          "WindowE",
+          "WindowF"
         ],
         "east": [
           "WindowA"
@@ -48,7 +49,8 @@
         "north": [],
         "south": [],
         "east": [
-          "WindowD"
+          "WindowD",
+          "WindowF"
         ],
         "west": []
       },
@@ -56,7 +58,7 @@
         "north": "",
         "south": "DoorA",
         "east": "",
-        "west": ""
+        "west": "DoorB"
       },
       "lightInRoom": true
     },
