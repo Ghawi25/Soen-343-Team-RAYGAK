@@ -49,25 +49,25 @@ public final class HouseView {
             JSONArray windowsArr = (JSONArray) windowsOBJ.get("north");
             for (Object dir : windowsArr) {
                 String wId = (String) dir;
-                windows.add(new Window(wId, false, false));
+                windows.add(new Window(wId, false, false, "north"));
             }
 
             windowsArr = (JSONArray) windowsOBJ.get("south");
             for (Object dir : windowsArr) {
                 String wId = (String) dir;
-                windows.add(new Window(wId, false, false));
+                windows.add(new Window(wId, false, false,  "south"));
             }
 
             windowsArr = (JSONArray) windowsOBJ.get("east");
             for (Object dir : windowsArr) {
                 String wId = (String) dir;
-                windows.add(new Window(wId, false, false));
+                windows.add(new Window(wId, false, false, "east"));
             }
 
             windowsArr = (JSONArray) windowsOBJ.get("west");
             for (Object dir : windowsArr) {
                 String wId = (String) dir;
-                windows.add(new Window(wId, false, false));
+                windows.add(new Window(wId, false, false, "west"));
             }
 
             newRoom.setWindows(windows);
