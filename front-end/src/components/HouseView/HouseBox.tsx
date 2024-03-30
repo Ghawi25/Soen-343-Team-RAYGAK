@@ -54,7 +54,7 @@ const Door = ({ name, x, y, roomWidth, roomHeight, isVertical }: any) => {
     </g>
   );
 };
-
+//Function to make a window
 const Window = ({ name, x, y, roomWidth, roomHeight, isVertical }: any) => {
   if (isVertical) {
     return (
@@ -81,6 +81,15 @@ const Window = ({ name, x, y, roomWidth, roomHeight, isVertical }: any) => {
     </g>
   );
 };
+
+//function to make lights
+const Light = ({name, x, y, roomWidth, roomHeight}) => {
+  return (
+    <g key={name} id={name}>
+      <circle r={5} cx={x*roomWidth*100} cy={y*roomHeight*100} fill="yellow"/>
+    </g>
+  )
+}
 
 // Function to render all rooms
 function renderRooms(rooms: any[]) {
@@ -297,7 +306,13 @@ function renderWindows(rooms: any[]) {
   });
 }
 
-// TODO render lights
+// render lights
+function renderLights(rooms) {
+  return rooms.map((room) => { 
+    const roomPosition = roomPositions[room.roomID];
+    return <Light name={room.roomID + "Light"} x={roomPosition.x + 0.5} y={roomPosition.y + 0.5} roomHeight={room.height} roomWidth={room.width}/>
+  })
+}
 
 function HouseBox() {
   const [house, setHouse] = useState(null);
@@ -318,6 +333,7 @@ function HouseBox() {
         {renderRooms(house.rooms)}
         {renderDoors(house.rooms)}
         {renderWindows(house.rooms)}
+        {renderLights(house.rooms)}
       </svg>
     );
   }
