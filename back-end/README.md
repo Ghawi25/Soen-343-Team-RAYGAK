@@ -5,7 +5,7 @@
 Requirements:
 - Java 21
 - Node 20.11.1 LTS
-- MongoDB Compass
+- MongoDB Community Server
 
 ## Running the Back-End
 
