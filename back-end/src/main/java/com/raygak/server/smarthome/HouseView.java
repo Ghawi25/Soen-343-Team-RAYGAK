@@ -1,5 +1,9 @@
 package com.raygak.server.smarthome;
 
+import com.raygak.server.smarthome.heating.Demo;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -10,6 +14,7 @@ import java.util.Map;
 
 public final class HouseView {
     private static HouseView home;
+    @Getter @Setter
     public House house;
 
     private HouseView() {
@@ -128,7 +133,10 @@ public final class HouseView {
 
     public static HouseView getHome() {
         if (home == null) {
+            Demo demo = new Demo();
             home = new HouseView();
+            House newHouse = demo.initialize();
+            home.setHouse(newHouse);
         }
         return home;
     }

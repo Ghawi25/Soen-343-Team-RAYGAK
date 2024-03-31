@@ -1,15 +1,15 @@
 package com.raygak.server.controllers;
 
-import com.raygak.server.models.Logs;
+import com.raygak.server.models.LogsPOJO;
+import com.raygak.server.models.RoomPOJO;
 import com.raygak.server.smarthome.House;
 import com.raygak.server.smarthome.HouseView;
-import com.raygak.server.smarthome.heating.Demo;
+import com.raygak.server.smarthome.Room;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 @CrossOrigin
 @RestController
@@ -23,16 +23,33 @@ public class HouseController {
     }
 
     @GetMapping(path = "/temperature")
-    public ResponseEntity<Logs> getTemperature() {
-        Demo temperature = new Demo();
-        House houseRef = temperature.initialize();
-        Logs logs = new Logs("House temperature: " + houseRef.getIndoorTemperature());
-        logs.addMsg("Room 1 temperature: " + houseRef.getRooms().get(0).getCurrentTemperature());
-        logs.addMsg("Room 2 temperature: " + houseRef.getRooms().get(1).getCurrentTemperature());
-        logs.addMsg(houseRef.getRoomByID("1").isHVACOn() ? "Room 1 - HVAC On" : "Room 1 - HVAC Off");
-        logs.addMsg(houseRef.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
-        logs.addMsg(houseRef.getDoorByName("Room 2 Door").isOpen() ? "Door 2 Open" : "Door 2 Closed");
-        return new ResponseEntity<Logs>(logs,
+    public ResponseEntity<LogsPOJO> getTemperature() {
+        HouseView house = HouseView.getHome();
+        House houseRef = house.getHouse();
+        LogsPOJO logsPOJO = new LogsPOJO("House temperature: " + houseRef.getIndoorTemperature());
+        logsPOJO.addMsg("Room 1 temperature: " + houseRef.getRooms().get(0).getCurrentTemperature());
+        logsPOJO.addMsg("Room 2 temperature: " + houseRef.getRooms().get(1).getCurrentTemperature());
+        logsPOJO.addMsg(houseRef.getRoomByID("1").isHVACOn() ? "Room 1 - HVAC On" : "Room 1 - HVAC Off");
+        logsPOJO.addMsg(houseRef.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
+        logsPOJO.addMsg(houseRef.getDoorByName("Room 2 Door").isOpen() ? "Door 2 Open" : "Door 2 Closed");
+        return new ResponseEntity<LogsPOJO>(logsPOJO,
                 HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/rooms")
+    public ResponseEntity<RoomPOJO> getRooms(@RequestParam("id") String roomId) {
+        HouseView house = HouseView.getHome();
+        House houseRef = house.getHouse();
+        ArrayList<Room> roomsList = houseRef.getRooms();
+        for(Room room : roomsList) {
+            if(room.getRoomID().equals(roomId)) {
+                RoomPOJO roomPOJO = new RoomPOJO(room.getRoomID(),
+                        room.getName(), room.getWidth(), room.getHeight(),
+                        room.getCurrentTemperature());
+                return new ResponseEntity<RoomPOJO>(roomPOJO,
+                        HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
