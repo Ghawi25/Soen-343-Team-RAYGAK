@@ -6,13 +6,13 @@ import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
 
-public class Logs {
+public class LogsPOJO {
     @Id
     private ObjectId id;
     @Getter
     private ArrayList<String> logMsg = new ArrayList<>();
 
-    public Logs(String msg) {
+    public LogsPOJO(String msg) {
         this.logMsg.add(msg);
     }
 
