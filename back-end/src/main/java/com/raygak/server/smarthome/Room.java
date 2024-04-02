@@ -131,7 +131,7 @@ public class Room {
             if (this.inhabitants.get(i).getUsername().equals(username)) {
                 this.inhabitants.remove(i);
                 if (this.inhabitants.isEmpty()) {
-                    this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredUnoccupiedTemperature));
+                    this.setCurrentTemperature(Double.parseDouble(temperatureFormat.format(this.desiredUnoccupiedTemperature)));
                     System.out.println("Room " + this.roomID + " is now empty. New temperature: " + this.currentTemperature);
                 }
                 return;
@@ -166,7 +166,7 @@ public class Room {
 
     public void setCurrentTemperature(double temperatureInput, boolean isManualChange) {
         double oldTemperature = this.currentTemperature;
-        this.currentTemperature = temperatureInput;
+        this.setCurrentTemperature(temperatureInput);
         this.lastGeneralTempChange = Math.abs(this.currentTemperature - oldTemperature);
         this.desiredZoneSpecificTemperature = temperatureInput;
         if (isManualChange) {
@@ -203,9 +203,9 @@ public class Room {
                 this.isHVACOn = false;
             }
             if (this.currentTemperature < this.desiredZoneSpecificTemperature) {
-                this.currentTemperature = Math.round((this.currentTemperature + 0.1) * 100.0) / 100.0;
+                this.setCurrentTemperature(Math.round((this.currentTemperature + 0.1) * 100.0) / 100.0);
             } else {
-                this.currentTemperature = Math.round((this.currentTemperature - 0.1) * 100.0) / 100.0;
+                this.setCurrentTemperature(Math.round((this.currentTemperature - 0.1) * 100.0) / 100.0);
             }
         } else {
             if (this.currentTemperature <= (this.desiredZoneSpecificTemperature - 0.25) || this.currentTemperature >= (this.desiredZoneSpecificTemperature + 0.25)) {
@@ -214,9 +214,9 @@ public class Room {
                 changeCurrentTemperature(outsideTemperature);
             }
             if (this.currentTemperature < outsideTemperature) {
-                this.currentTemperature = Math.round((this.currentTemperature + 0.05) * 100.0) / 100.0;
+                this.setCurrentTemperature(Math.round((this.currentTemperature + 0.05) * 100.0) / 100.0);
             } else if (this.currentTemperature > outsideTemperature) {
-                this.currentTemperature = Math.round((this.currentTemperature - 0.05) * 100.0) / 100.0;
+                this.setCurrentTemperature(Math.round((this.currentTemperature - 0.05) * 100.0) / 100.0);
             } else {
                 System.out.println("The temperature remains unchanged.");
             }
@@ -230,13 +230,13 @@ public class Room {
         System.out.println("UPDATING TEMPERATURE OF ROOM " + this.getRoomID());
         if (this.inhabitants.size() >= 1) {
             if (this.zone.getType() == ZoneType.HEATING) {
-                this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredZoneSpecificTemperature * 1.2));
+                this.setCurrentTemperature(Double.parseDouble(temperatureFormat.format(this.desiredZoneSpecificTemperature * 1.2)));
             }
             if (this.zone.getType() == ZoneType.COOLING) {
-                this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredZoneSpecificTemperature * 0.8));
+                this.setCurrentTemperature(Double.parseDouble(temperatureFormat.format(this.desiredZoneSpecificTemperature * 0.8)));
             }
         } else {
-            this.currentTemperature = Double.parseDouble(temperatureFormat.format(this.desiredUnoccupiedTemperature));
+            this.setCurrentTemperature(Double.parseDouble(temperatureFormat.format(this.desiredUnoccupiedTemperature)));
         }
     }
 }

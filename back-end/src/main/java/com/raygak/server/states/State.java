@@ -33,6 +33,8 @@ public abstract class State {
     public abstract void moveInhabitantToRoom(User inhabitant, String newRoomID);
     public abstract void setIndoorTemperature(double temperatureInput);
     public abstract void setOutdoorTemperature(double temperatureInput);
+    public abstract void updateAllRoomTemperatures();
+    public abstract void displayTemperatureInRoomWithID(String roomID);
     public abstract void setCurrentSeason(Season newSeason);
     public abstract void changeZone(String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList);
     public abstract void changeTemperatureInCurrentRoom_Remote(double newTemperature);
@@ -58,4 +60,14 @@ public abstract class State {
     public abstract void turnOnLightWithName(String lightName);
 
     public abstract void turnOffLightWithName(String lightName);
+
+    public abstract void turnOnSHP();
+
+    public abstract void turnOffSHP();
+
+    public abstract void enableAwayMode();
+
+    public abstract void disableAwayMode();
+
+    public abstract void setTimeForAlert(int newSeconds);
 }

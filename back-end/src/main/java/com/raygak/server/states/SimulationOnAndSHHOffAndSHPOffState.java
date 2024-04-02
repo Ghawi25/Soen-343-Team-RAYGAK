@@ -13,8 +13,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class SimulationOnAndSHHOnState extends State {
-    public SimulationOnAndSHHOnState(Simulator simulatorInput) {
+public class SimulationOnAndSHHOffAndSHPOffState extends State {
+    public SimulationOnAndSHHOffAndSHPOffState(Simulator simulatorInput) {
         super(simulatorInput);
     }
 
@@ -24,10 +24,8 @@ public class SimulationOnAndSHHOnState extends State {
     public void turnOffSimulator() {
         System.out.println("The simulation will be turned off.");
         SimulationOffState newState = new SimulationOffState(this.simulator);
-        this.simulator.turnOff();
-        this.simulator.setCurrentState(newState);
+        this.simulator.setCurrentState(this.simulator.getSimOff());
     }
-
     public void setSimulationDate(Date newDate) {
         this.simulator.setCurrentDate(newDate);
     }
@@ -94,37 +92,37 @@ public class SimulationOnAndSHHOnState extends State {
         h.setOutdoorTemperature(temperatureInput);
         this.simulator.setHouse(h);
     }
+    public void updateAllRoomTemperatures() {
+        System.out.println("This feature is inaccessible while SHH is turned off.");
+    }
+    public void displayTemperatureInRoomWithID(String roomID) {
+        System.out.println("This feature is inaccessible while SHH is turned off.");
+    }
     public void setCurrentSeason(Season newSeason) {
         House h = this.simulator.getHouse();
         h.setCurrentSeason(newSeason);
         this.simulator.setHouse(h);
     }
     public void changeZone(String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList) {
-        House h = this.simulator.getHouse();
-        h.changeZone(zoneID, type, settingList, roomList);
-        this.simulator.setHouse(h);
+        System.out.println("This feature is inaccessible while SHH is turned off.");
     }
     public void changeTemperatureInCurrentRoom_Remote(double newTemperature) {
-        User u = this.simulator.getCurrentUser();
-        u.changeTemperatureInCurrentRoom_Remote(newTemperature);
+        System.out.println("This feature is inaccessible while SHH is turned off.");
     }
     public void changeTemperatureInCurrentRoom_Local(double newTemperature) {
-        User u = this.simulator.getCurrentUser();
-        u.changeTemperatureInCurrentRoom_Local(newTemperature);
+        System.out.println("This feature is inaccessible while SHH is turned off.");
     }
     public void setUpZone(House house, String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList)  {
-        User u = this.simulator.getCurrentUser();
-        u.setUpZone(house, zoneID, type, settingList, roomList);
+        System.out.println("This feature is inaccessible while SHH is turned off.");
     }
     public void turnOnSHH() {
-        System.out.println("SHH is already turned on.");
+        House h = this.simulator.getHouse();
+        h.turnOnSHH();
+        this.simulator.setHouse(h);
+        this.simulator.setCurrentState(this.simulator.getSimOn_SHHOn());
     }
     public void turnOffSHH() {
-        House h = this.simulator.getHouse();
-        h.turnOffSHH();
-        this.simulator.setHouse(h);
-        SimulationOnAndSHHOffState newState = new SimulationOnAndSHHOffState(this.simulator);
-        this.simulator.setCurrentState(newState);
+        System.out.println("SHH is already turned off.");
     }
 
     public void openDoorWithName(String doorName) {
@@ -185,5 +183,28 @@ public class SimulationOnAndSHHOnState extends State {
         House h = this.simulator.getHouse();
         h.turnOffLightWithName(lightName);
         this.simulator.setHouse(h);
+    }
+
+    public void turnOnSHP() {
+        House h = this.simulator.getHouse();
+        h.turnOnSHP();
+        this.simulator.setHouse(h);
+        this.simulator.setCurrentState(this.simulator.getSimOn_SHPOn());
+    }
+
+    public void turnOffSHP() {
+        System.out.println("SHP is already turned off.");
+    }
+
+    public void enableAwayMode() {
+        System.out.println("This feature is inaccessible while SHP is turned off.");
+    }
+
+    public void disableAwayMode() {
+        System.out.println("This feature is inaccessible while SHP is turned off.");
+    }
+
+    public void setTimeForAlert(int newSeconds) {
+        System.out.println("This feature is inaccessible while SHP is turned off.");
     }
 }
