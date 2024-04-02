@@ -3,7 +3,9 @@ package com.raygak.server.smarthome.heating;
 import com.raygak.server.commands.*;
 import com.raygak.server.smarthome.*;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Demo {
 
@@ -55,18 +57,24 @@ public class Demo {
         allRooms.add(r1);
         allRooms.add(r2);
 
-        TemperatureSetting temp1 = new TemperatureSetting("1", 26.0, 0, 0, 8, 0);
-        TemperatureSetting temp2 = new TemperatureSetting("2", 27.5, 8, 1, 16, 0);
-        TemperatureSetting temp3 = new TemperatureSetting("3", 24.5, 16, 1, 23, 59);
+//        TemperatureSetting temp1 = new TemperatureSetting("1", 26.0, 0, 0, 8, 0);
+//        TemperatureSetting temp2 = new TemperatureSetting("2", 27.5, 8, 1, 16, 0);
+//        TemperatureSetting temp3 = new TemperatureSetting("3", 24.5, 16, 1, 23, 59);
+        TemperatureSetting temp1 = new TemperatureSetting("1", 326.0, 0, 0, 8, 0);
+        TemperatureSetting temp2 = new TemperatureSetting("2", 327.5, 8, 1, 16, 0);
+        TemperatureSetting temp3 = new TemperatureSetting("3", 324.5, 16, 1, 23, 59);
         ArrayList<TemperatureSetting> settingList1 = new ArrayList<TemperatureSetting>();
         settingList1.add(temp1);
         settingList1.add(temp2);
         settingList1.add(temp3);
         Zone z1 = new Zone("1", ZoneType.HEATING, settingList1, roomList1);
 
-        TemperatureSetting temp4 = new TemperatureSetting("4", 39.0, 0, 0, 8, 0);
-        TemperatureSetting temp5 = new TemperatureSetting("5", 42.5, 8, 1, 16, 0);
-        TemperatureSetting temp6 = new TemperatureSetting("6", 40.5, 16, 1, 23, 59);
+//        TemperatureSetting temp4 = new TemperatureSetting("4", 39.0, 0, 0, 8, 0);
+//        TemperatureSetting temp5 = new TemperatureSetting("5", 42.5, 8, 1, 16, 0);
+//        TemperatureSetting temp6 = new TemperatureSetting("6", 40.5, 16, 1, 23, 59);
+        TemperatureSetting temp4 = new TemperatureSetting("4", 339.0, 0, 0, 8, 0);
+        TemperatureSetting temp5 = new TemperatureSetting("5", 342.5, 8, 1, 16, 0);
+        TemperatureSetting temp6 = new TemperatureSetting("6", 340.5, 16, 1, 23, 59);
         ArrayList<TemperatureSetting> settingList2 = new ArrayList<TemperatureSetting>();
         settingList2.add(temp4);
         settingList2.add(temp5);
@@ -77,110 +85,118 @@ public class Demo {
         zoneList.add(z1);
         zoneList.add(z2);
 
-        House h1 = new House(allRooms, zoneList, 35.0, Season.SUMMER);
-        h1.turnOnSHH();
+//        House h1 = new House(allRooms, zoneList, 35.0, Season.SUMMER);
+        House h1 = new House(allRooms, zoneList, 335.0, Season.SUMMER);
+        //The current date
+        Date today = new Date();
+        LocalTime now = LocalTime.now();
+        Simulator simulator = new Simulator(today.getDay(), today.getMonth(), today.getYear(), now.getHour(), now.getMinute(), h1);
+        simulator.turnOn();
+        simulator.turnOnSHH();
+        simulator.turnOnSHP();
         System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
         System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
         System.out.println("House temperature: " + h1.getIndoorTemperature());
         System.out.println("Outdoor temperature: " + h1.getOutdoorTemperature());
-        h1.removeInhabitant("james@gmail.com");
-        h1.removeInhabitant("quinn@gmail.com");
+        simulator.removeInhabitant("james@gmail.com");
+        simulator.removeInhabitant("quinn@gmail.com");
         System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
         System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
         System.out.println("House temperature: " + h1.getIndoorTemperature());
         System.out.println("Outdoor temperature: " + h1.getOutdoorTemperature());
-        h1.addInhabitantToRoom(p3, "1");
+        simulator.addInhabitantToRoom(p3, "1");
         System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
         System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
         System.out.println("House temperature: " + h1.getIndoorTemperature());
         System.out.println("Outdoor temperature: " + h1.getOutdoorTemperature());
-        h1.addInhabitantToRoom(p2, "2");
+        simulator.addInhabitantToRoom(p2, "2");
         System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
         System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
         System.out.println("House temperature: " + h1.getIndoorTemperature());
         System.out.println("Outdoor temperature: " + h1.getOutdoorTemperature());
-        h1.removeInhabitant("dennis@gmail.com");
+        simulator.removeInhabitant("dennis@gmail.com");
 //        h1.removeInhabitant("quinn@gmail.com");
-        h1.setCurrentSeason(Season.WINTER);
+        simulator.setCurrentSeason(Season.WINTER);
         System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
         System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
         System.out.println("House temperature: " + h1.getIndoorTemperature());
         System.out.println("Outdoor temperature: " + h1.getOutdoorTemperature());
-        h1.setCurrentSeason(Season.SUMMER);
+        simulator.setCurrentSeason(Season.SUMMER);
         System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
         System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
         System.out.println("House temperature: " + h1.getIndoorTemperature());
         System.out.println("Outdoor temperature: " + h1.getOutdoorTemperature());
-        h1.setOutdoorTemperature(10.0);
+        simulator.setOutdoorTemperature(10.0);
         System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
         System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
         System.out.println("House temperature: " + h1.getIndoorTemperature());
         System.out.println("Outdoor temperature: " + h1.getOutdoorTemperature());
-        h1.setOutdoorTemperature(50.0);
+//        simulator.setOutdoorTemperature(50.0);
+        simulator.setOutdoorTemperature(350.0);
         System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
         System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
         System.out.println("House temperature: " + h1.getIndoorTemperature());
         System.out.println("Outdoor temperature: " + h1.getOutdoorTemperature());
 
         System.out.println(h1.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
-        h1.openDoorWithName("Room 1 Door");
+        simulator.openDoorWithName("Room 1 Door");
         System.out.println(h1.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
         System.out.println(h1.getDoorByName("Room 2 Door").isOpen() ? "Door 2 Open" : "Door 2 Closed");
-        h1.openDoorWithName("Room 2 Door");
+        simulator.openDoorWithName("Room 2 Door");
         System.out.println(h1.getDoorByName("Room 2 Door").isOpen() ? "Door 2 Open" : "Door 2 Closed");
-        h1.closeDoorWithName("Room 2 Door");
+        simulator.closeDoorWithName("Room 2 Door");
         System.out.println(h1.getDoorByName("Room 2 Door").isOpen() ? "Door 2 Open" : "Door 2 Closed");
 
         System.out.println(h1.getLightByName("Room 1 Light").isOn() ? "Light 1 On" : "Light 1 Off");
-        h1.turnOnLightWithName("Room 1 Light");
+        simulator.turnOnLightWithName("Room 1 Light");
         System.out.println(h1.getLightByName("Room 1 Light").isOn() ? "Light 1 On" : "Light 1 Off");
         System.out.println(h1.getLightByName("Room 2 Light").isOn() ? "Light 2 On" : "Light 2 Off");
-        h1.turnOnLightWithName("Room 2 Light");
+        simulator.turnOnLightWithName("Room 2 Light");
         System.out.println(h1.getLightByName("Room 2 Light").isOn() ? "Light 2 On" : "Light 2 Off");
-        h1.turnOffLightWithName("Room 2 Light");
+        simulator.turnOffLightWithName("Room 2 Light");
         System.out.println(h1.getLightByName("Room 2 Light").isOn() ? "Light 2 On" : "Light 2 Off");
 
         System.out.println(h1.getRoomByID("1").isHVACOn() ? "Room 1 - HVAC On" : "Room 1 - HVAC Off");
-        h1.turnOnHVACInRoomWithID("1");
+        simulator.turnOnHVACInRoomWithID("1");
         System.out.println(h1.getRoomByID("1").isHVACOn() ? "Room 1 - HVAC On" : "Room 1 - HVAC Off");
         System.out.println(h1.getRoomByID("2").isHVACOn() ? "Room 2 - HVAC On" : "Room 2 - HVAC Off");
-        h1.turnOnHVACInRoomWithID("2");
+        simulator.turnOnHVACInRoomWithID("2");
         System.out.println(h1.getRoomByID("2").isHVACOn() ? "Room 2 - HVAC On" : "Room 2 - HVAC Off");
-        h1.turnOffHVACInRoomWithID("2");
+        simulator.turnOffHVACInRoomWithID("2");
         System.out.println(h1.getRoomByID("2").isHVACOn() ? "Room 2 - HVAC On" : "Room 2 - HVAC Off");
 
         System.out.println(h1.getWindowByID("1").isOpen() ? "Window 1 Open" : "Window 1 Closed");
-        h1.openWindowWithID("1");
+        simulator.openWindowWithID("1");
         System.out.println(h1.getWindowByID("1").isOpen() ? "Window 1 Open" : "Window 1 Closed");
 
         System.out.println(h1.getWindowByID("2").isOpen() ? "Window 2 Open" : "Window 2 Closed");
-        h1.closeWindowWithID("2");
+        simulator.closeWindowWithID("2");
         System.out.println(h1.getWindowByID("2").isOpen() ? "Window 2 Open" : "Window 2 Closed");
 
         System.out.println(h1.getWindowByID("3").isOpen() ? "Window 3 Open" : "Window 3 Closed");
-        h1.openWindowWithID("3");
+        simulator.openWindowWithID("3");
         System.out.println(h1.getWindowByID("3").isOpen() ? "Window 3 Open" : "Window 3 Closed");
-        h1.unobstructWindowWithID("3");
-        h1.openWindowWithID("3");
+        simulator.unobstructWindowWithID("3");
+        simulator.openWindowWithID("3");
         System.out.println(h1.getWindowByID("3").isOpen() ? "Window 3 Open" : "Window 3 Closed");
 
         System.out.println(h1.getWindowByID("4").isOpen() ? "Window 4 Open" : "Window 4 Closed");
-        h1.closeWindowWithID("4");
+        simulator.closeWindowWithID("4");
         System.out.println(h1.getWindowByID("4").isOpen() ? "Window 4 Open" : "Window 4 Closed");
-        h1.unobstructWindowWithID("4");
-        h1.closeWindowWithID("4");
+        simulator.unobstructWindowWithID("4");
+        simulator.closeWindowWithID("4");
         System.out.println(h1.getWindowByID("4").isOpen() ? "Window 4 Open" : "Window 4 Closed");
 
 		int limit1 = 0;
 		while (limit1 <= 10) {
 			try {
-				h1.updateAllRoomTemperatures();
+                simulator.updateAllRoomTemperatures();
 				System.out.println("Indoor temperature: " + h1.getIndoorTemperature());
 				System.out.println("Outdoor temperature: " + h1.getOutdoorTemperature());
                 System.out.println("Room 1:");
-                h1.getRoomByID("1").displayTemperature();
+                simulator.displayTemperatureInRoomWithID("1");
                 System.out.println("Room 2:");
-                h1.getRoomByID("2").displayTemperature();
+                simulator.displayTemperatureInRoomWithID("2");
 				limit1++;
 				Thread.sleep(1000);
 			}
@@ -188,28 +204,31 @@ public class Demo {
 				System.out.println("Thread interrupted.");
 			}
 		}
-		h1.setOutdoorTemperature(10.0);
-		h1.setCurrentSeason(Season.WINTER);
-		h1.removeInhabitant("quinn@gmail.com");
-        h1.addInhabitantToRoom(p1, "1");
-        h1.addInhabitantToRoom(p2, "2");
-        h1.addInhabitantToRoom(p3, "2");
-        p1.changeTemperatureInCurrentRoom_Local(20.0);
-        p2.changeTemperatureInCurrentRoom_Local(30.0);
-        p3.changeTemperatureInCurrentRoom_Local(40.0);
-        p1.changeTemperatureInCurrentRoom_Remote(20.0);
-        p2.changeTemperatureInCurrentRoom_Remote(30.0);
-        p3.changeTemperatureInCurrentRoom_Remote(40.0);
+        simulator.setOutdoorTemperature(10.0);
+        simulator.setCurrentSeason(Season.WINTER);
+        simulator.removeInhabitant("quinn@gmail.com");
+        simulator.addInhabitantToRoom(p1, "1");
+        simulator.addInhabitantToRoom(p2, "2");
+        simulator.addInhabitantToRoom(p3, "2");
+        simulator.setCurrentUser(p1);
+        simulator.changeTemperatureInCurrentRoom_Local(20.0);
+        simulator.changeTemperatureInCurrentRoom_Remote(20.0);
+        simulator.setCurrentUser(p2);
+        simulator.changeTemperatureInCurrentRoom_Local(30.0);
+        simulator.changeTemperatureInCurrentRoom_Remote(30.0);
+        simulator.setCurrentUser(p3);
+        simulator.changeTemperatureInCurrentRoom_Local(40.0);
+        simulator.changeTemperatureInCurrentRoom_Remote(40.0);
 		int limit2 = 0;
 		while (limit2 <= 10) {
 			try {
-				h1.updateAllRoomTemperatures();
+                simulator.updateAllRoomTemperatures();
                 System.out.println("Indoor temperature: " + h1.getIndoorTemperature());
                 System.out.println("Outdoor temperature: " + h1.getOutdoorTemperature());
                 System.out.println("Room 1:");
-                h1.getRoomByID("1").displayTemperature();
+                simulator.displayTemperatureInRoomWithID("1");
                 System.out.println("Room 2:");
-                h1.getRoomByID("2").displayTemperature();
+                simulator.displayTemperatureInRoomWithID("2");
 				limit2++;
 				Thread.sleep(1000);
 			}

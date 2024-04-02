@@ -1,6 +1,7 @@
 package com.raygak.server.smarthome;
 
 import com.raygak.server.controllers.TemperatureController;
+import com.raygak.server.smarthome.heating.Season;
 import com.raygak.server.states.*;
 import lombok.Getter;
 import java.time.LocalTime;
@@ -12,16 +13,27 @@ public class Simulator {
     private Date currentDate;
     private LocalTime currentTime;
     private double timeSpeed = 1.0;
-    private HouseView houseView = HouseView.getHome();
+//    private HouseView houseView = HouseView.getHome();
     private House house;
     private User currentUser = null;
     private State currentState;
+
+    private SimulationOffState simOff;
+    private SimulationOnAndSHHOffAndSHPOffState simOn_AllOff;
+    private SimulationOnAndSHHOnAndSHPOffState simOn_SHHOn;
+    private SimulationOnAndSHHOffAndSHPOnState simOn_SHPOn;
+    private SimulationOnAndSHHOnAndSHPOnState simOn_AllOn;
 
     public Simulator(int dayInput, int monthInput, int yearInput, int hoursInput, int minutesInput, House houseInput) {
         this.currentDate = new Date(yearInput, monthInput, dayInput);
         this.currentTime = LocalTime.of(hoursInput, minutesInput, 0);
         this.house = houseInput;
-        this.currentState = new SimulationOffState(this);
+        this.simOff = new SimulationOffState(this);
+        this.currentState = this.simOff;
+        this.simOn_AllOff = new SimulationOnAndSHHOffAndSHPOffState(this);
+        this.simOn_SHHOn = new SimulationOnAndSHHOnAndSHPOffState(this);
+        this.simOn_SHPOn = new SimulationOnAndSHHOffAndSHPOnState(this);
+        this.simOn_AllOn = new SimulationOnAndSHHOnAndSHPOnState(this);
     }
 
     public void setCurrentDate(Date newDate) {
@@ -56,51 +68,102 @@ public class Simulator {
         this.currentState = newState;
     }
 
+    public void setCurrentSeason(Season newSeason) { this.currentState.setCurrentSeason(newSeason); }
+    public void setOutdoorTemperature(double newTemperature) { this.currentState.setOutdoorTemperature(newTemperature); }
+    public void updateAllRoomTemperatures() { this.currentState.updateAllRoomTemperatures(); }
+    public void displayTemperatureInRoomWithID(String roomID) { this.currentState.displayTemperatureInRoomWithID(roomID); }
+    public void changeTemperatureInCurrentRoom_Remote(double newTemperature) {
+        this.currentState.changeTemperatureInCurrentRoom_Remote(newTemperature);
+    }
+    public void changeTemperatureInCurrentRoom_Local(double newTemperature) {
+        this.currentState.changeTemperatureInCurrentRoom_Local(newTemperature);
+    }
+
     public void openDoorWithName(String doorName) {
-        this.house.openDoorWithName(doorName);
+        this.currentState.openDoorWithName(doorName);
     }
 
     public void closeDoorWithName(String doorName) {
-        this.house.closeDoorWithName(doorName);
+        this.currentState.closeDoorWithName(doorName);
     }
 
     public void openWindowWithID(String windowID) {
-        this.house.openWindowWithID(windowID);
+        this.currentState.openWindowWithID(windowID);
     }
 
     public void closeWindowWithID(String windowID) {
-        this.house.closeWindowWithID(windowID);
+        this.currentState.closeWindowWithID(windowID);
     }
 
     public void obstructWindowWithID(String windowID) {
-        this.house.obstructWindowWithID(windowID);
+        this.currentState.obstructWindowWithID(windowID);
     }
 
     public void unobstructWindowWithID(String windowID) {
-        this.house.unobstructWindowWithID(windowID);
+        this.currentState.unobstructWindowWithID(windowID);
     }
 
     public void turnOnHVACInRoomWithID(String roomID) {
-        this.house.turnOnHVACInRoomWithID(roomID);
+        this.currentState.turnOnHVACInRoomWithID(roomID);
     }
 
     public void turnOffHVACInRoomWithID(String roomID) {
-        this.house.turnOffHVACInRoomWithID(roomID);
+        this.currentState.turnOffHVACInRoomWithID(roomID);
+    }
+
+    public void addInhabitantToRoom(User inhabitant, String roomID) {
+        this.currentState.addInhabitantToRoom(inhabitant, roomID);
+    }
+
+    public void removeInhabitant(String userEmail) {
+        this.currentState.removeInhabitant(userEmail);
+    }
+
+    public void moveInhabitantToOtherRoom(User inhabitant, String roomID) {
+        this.currentState.moveInhabitantToRoom(inhabitant, roomID);
     }
 
     public void turnOnLightWithName(String lightName) {
-        this.house.turnOnLightWithName(lightName);
+        this.currentState.turnOnLightWithName(lightName);
     }
 
     public void turnOffLightWithName(String lightName) {
-        this.house.turnOffLightWithName(lightName);
+        this.currentState.turnOffLightWithName(lightName);
     }
 
     public void turnOn() {
-        this.isOn = true;
+        this.currentState.turnOnSimulator();
     }
 
     public void turnOff() {
-        this.isOn = false;
+        this.currentState.turnOffSimulator();
+    }
+
+    public void turnOnSHH() {
+        this.currentState.turnOnSHH();
+    }
+
+    public void turnOffSHH() {
+        this.currentState.turnOffSHH();
+    }
+
+    public void turnOnSHP() {
+        this.currentState.turnOnSHP();
+    }
+
+    public void turnOffSHP() {
+        this.currentState.turnOffSHP();
+    }
+
+    public void enableAwayMode() {
+        this.currentState.enableAwayMode();
+    }
+
+    public void disableAwayMode() {
+        this.currentState.disableAwayMode();
+    }
+
+    public void setTimeForAlert(int newSeconds) {
+        this.currentState.setTimeForAlert(newSeconds);
     }
 }

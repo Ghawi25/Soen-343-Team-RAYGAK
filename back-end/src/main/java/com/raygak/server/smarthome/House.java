@@ -2,6 +2,8 @@ package com.raygak.server.smarthome;
 
 import com.raygak.server.commands.*;
 import com.raygak.server.smarthome.heating.*;
+import com.raygak.server.smarthome.security.SHP;
+import com.raygak.server.smarthome.security.SHPEventType;
 import lombok.Getter;
 
 import java.text.DecimalFormat;
@@ -20,6 +22,7 @@ public class House {
     private double outdoorTemperature;
     private Season currentSeason;
     private SHH shh;
+    private SHP shp;
     private HouseControl houseControl = new HouseControl();
 
     //Boolean to check if the house is currently empty during winter.
@@ -34,11 +37,13 @@ public class House {
         this.currentSeason = seasonInput;
         this.isInWinterAndEmptyHouseProtocol = true;
         this.shh = new SHH(this);
+        this.shp = new SHP(this);
     }
 
     public House(ArrayList<Room> roomListInput) {
         this.rooms = roomListInput;
         this.shh = new SHH(this);
+        this.shp = new SHP(this);
     }
 
     public House(ArrayList<Room> roomListInput, ArrayList<Zone> zoneListInput, double outdoorTempInput, Season seasonInput) {
@@ -68,6 +73,7 @@ public class House {
             isInWinterAndEmptyHouseProtocol = true;
         }
         this.shh = new SHH(this);
+        this.shp = new SHP(this);
     }
 
 
@@ -113,6 +119,19 @@ public class House {
                     }
                 }
             }
+        }
+    }
+
+    public void updateAllRoomTemperatures() {
+        if (this.shh.getIsOn()) {
+            for (Room r : this.rooms) {
+                r.changeCurrentTemperature(this.outdoorTemperature);
+                if (r.getCurrentTemperature() >= 135) {
+                    this.shp.notify(SHPEventType.ROOM_TEMP_AT_135_DEGREES);
+                    System.out.println("[SHP] WARNING: TEMPERATURE OF ROOM " + r.getRoomID() + " HAS REACHED 135 DEGREES!");
+                }
+            }
+            computeIndoorTemperature();
         }
     }
 
@@ -286,6 +305,9 @@ public class House {
                     }
                     summerProtocol();
                 }
+                if (this.shp.getIsOn()) {
+                    this.shp.notify(SHPEventType.MOTION_DETECTED);
+                }
                 return;
             }
         }
@@ -431,21 +453,15 @@ public class House {
         this.lights = newLightList;
     }
 
-    public void updateAllRoomTemperatures() {
-        if (this.shh.getIsOn()) {
-            for (Room r : this.rooms) {
-                r.changeCurrentTemperature(this.outdoorTemperature);
-            }
-            computeIndoorTemperature();
-        }
-    }
-
     public void openDoorWithName(String doorName) {
         DoorOpenCommand command = new DoorOpenCommand(this, doorName);
         this.houseControl.setCommand(command);
         this.houseControl.execute();
         this.rooms = ((DoorOpenCommand)this.houseControl.getCommand()).getHouse().getRooms();
         this.doors = ((DoorOpenCommand)this.houseControl.getCommand()).getHouse().getDoors();
+        if (this.shp.getIsOn()) {
+            this.shp.notify(SHPEventType.DOOR_OPENED);
+        }
     }
 
     public void closeDoorWithName(String doorName) {
@@ -462,6 +478,9 @@ public class House {
         this.houseControl.execute();
         this.rooms = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getRooms();
         this.windows = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getWindows();
+        if (this.shp.getIsOn()) {
+            this.shp.notify(SHPEventType.WINDOW_OPENED);
+        }
     }
 
     public void closeWindowWithID(String windowID) {
@@ -531,6 +550,32 @@ public class House {
         }
         if (isInWinterAndEmptyHouseProtocol) {
             reverseWinterAndEmptyHouseProtocol();
+        }
+    }
+
+    public void turnOnSHP() {
+        this.shp.turnOn();
+    }
+
+    public void turnOffSHP() {
+        this.shp.turnOff();
+    }
+
+    public void enableAwayMode() {
+        if (this.shp.getIsOn()) {
+            this.shp.turnOnAwayMode();
+        }
+    }
+
+    public void disableAwayMode() {
+        if (this.shp.getIsOn()) {
+            this.shp.turnOffAwayMode();
+        }
+    }
+
+    public void setTimeForAlert(int newSeconds) {
+        if (this.shp.getIsOn()) {
+            this.shp.setTimeForAlert(newSeconds);
         }
     }
 }

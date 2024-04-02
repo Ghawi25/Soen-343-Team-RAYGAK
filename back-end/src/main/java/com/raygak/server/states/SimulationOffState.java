@@ -19,9 +19,8 @@ public class SimulationOffState extends State {
     }
     public void turnOnSimulator() {
         System.out.println("The simulation will be turned on.");
-        SimulationOnAndSHHOffState newState = new SimulationOnAndSHHOffState(this.simulator);
-        this.simulator.turnOn();
-        this.simulator.setCurrentState(newState);
+        SimulationOnAndSHHOffAndSHPOffState newState = new SimulationOnAndSHHOffAndSHPOffState(this.simulator);
+        this.simulator.setCurrentState(this.simulator.getSimOn_AllOff());
     }
     public void turnOffSimulator() {
         System.out.println("The simulation is already off.");
@@ -59,6 +58,8 @@ public class SimulationOffState extends State {
     public void removeZone(String zoneID) {
         System.out.println("Nothing can be done while the simulation is off.");
     }
+
+
     public void addInhabitantToRoom(User newInhabitant, String inhabitedRoomID) {
         System.out.println("Nothing can be done while the simulation is off.");
     }
@@ -72,6 +73,12 @@ public class SimulationOffState extends State {
         System.out.println("Nothing can be done while the simulation is off.");
     }
     public void setOutdoorTemperature(double temperatureInput) {
+        System.out.println("Nothing can be done while the simulation is off.");
+    }
+    public void updateAllRoomTemperatures() {
+        System.out.println("Nothing can be done while the simulation is off.");
+    }
+    public void displayTemperatureInRoomWithID(String roomID) {
         System.out.println("Nothing can be done while the simulation is off.");
     }
     public void setCurrentSeason(Season newSeason) {
@@ -133,6 +140,26 @@ public class SimulationOffState extends State {
     }
 
     public void turnOffLightWithName(String lightName) {
+        System.out.println("Nothing can be done while the simulation is off.");
+    }
+
+    public void turnOnSHP() {
+        System.out.println("Nothing can be done while the simulation is off.");
+    }
+
+    public void turnOffSHP() {
+        System.out.println("Nothing can be done while the simulation is off.");
+    }
+
+    public void enableAwayMode() {
+        System.out.println("Nothing can be done while the simulation is off.");
+    }
+
+    public void disableAwayMode() {
+        System.out.println("Nothing can be done while the simulation is off.");
+    }
+
+    public void setTimeForAlert(int newSeconds) {
         System.out.println("Nothing can be done while the simulation is off.");
     }
 }
