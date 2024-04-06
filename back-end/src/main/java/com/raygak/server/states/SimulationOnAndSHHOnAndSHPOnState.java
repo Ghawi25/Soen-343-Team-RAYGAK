@@ -13,19 +13,19 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class SimulationOnAndSHHOffState extends State {
-    public SimulationOnAndSHHOffState(Simulator simulatorInput) {
+public class SimulationOnAndSHHOnAndSHPOnState extends State {
+    public SimulationOnAndSHHOnAndSHPOnState(Simulator simulatorInput) {
         super(simulatorInput);
     }
+
     public void turnOnSimulator() {
         System.out.println("The simulation is already on.");
     }
     public void turnOffSimulator() {
         System.out.println("The simulation will be turned off.");
-        SimulationOffState newState = new SimulationOffState(this.simulator);
-        this.simulator.turnOff();
-        this.simulator.setCurrentState(newState);
+        this.simulator.setCurrentState(this.simulator.getSimOff());
     }
+
     public void setSimulationDate(Date newDate) {
         this.simulator.setCurrentDate(newDate);
     }
@@ -92,32 +92,45 @@ public class SimulationOnAndSHHOffState extends State {
         h.setOutdoorTemperature(temperatureInput);
         this.simulator.setHouse(h);
     }
+    public void updateAllRoomTemperatures() {
+        House h = this.simulator.getHouse();
+        h.updateAllRoomTemperatures();
+        this.simulator.setHouse(h);
+    }
+    public void displayTemperatureInRoomWithID(String roomID) {
+        this.simulator.getHouse().getRoomByID(roomID).displayTemperature();
+    }
     public void setCurrentSeason(Season newSeason) {
         House h = this.simulator.getHouse();
         h.setCurrentSeason(newSeason);
         this.simulator.setHouse(h);
     }
     public void changeZone(String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList) {
-        System.out.println("This feature is inaccessible while SHH is turned off.");
+        House h = this.simulator.getHouse();
+        h.changeZone(zoneID, type, settingList, roomList);
+        this.simulator.setHouse(h);
     }
     public void changeTemperatureInCurrentRoom_Remote(double newTemperature) {
-        System.out.println("This feature is inaccessible while SHH is turned off.");
+        User u = this.simulator.getCurrentUser();
+        u.changeTemperatureInCurrentRoom_Remote(newTemperature);
     }
     public void changeTemperatureInCurrentRoom_Local(double newTemperature) {
-        System.out.println("This feature is inaccessible while SHH is turned off.");
+        User u = this.simulator.getCurrentUser();
+        u.changeTemperatureInCurrentRoom_Local(newTemperature);
     }
     public void setUpZone(House house, String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList)  {
-        System.out.println("This feature is inaccessible while SHH is turned off.");
+        User u = this.simulator.getCurrentUser();
+        u.setUpZone(house, zoneID, type, settingList, roomList);
     }
     public void turnOnSHH() {
-        House h = this.simulator.getHouse();
-        h.turnOnSHH();
-        this.simulator.setHouse(h);
-        SimulationOnAndSHHOnState newState = new SimulationOnAndSHHOnState(this.simulator);
-        this.simulator.setCurrentState(newState);
+        System.out.println("SHH is already turned on.");
     }
     public void turnOffSHH() {
-        System.out.println("SHH is already turned off.");
+        House h = this.simulator.getHouse();
+        h.turnOffSHH();
+        this.simulator.setHouse(h);
+        SimulationOnAndSHHOffAndSHPOnState newState = new SimulationOnAndSHHOffAndSHPOnState(this.simulator);
+        this.simulator.setCurrentState(this.simulator.getSimOn_SHPOn());
     }
 
     public void openDoorWithName(String doorName) {
@@ -178,5 +191,28 @@ public class SimulationOnAndSHHOffState extends State {
         House h = this.simulator.getHouse();
         h.turnOffLightWithName(lightName);
         this.simulator.setHouse(h);
+    }
+
+    public void turnOnSHP() {
+        System.out.println("SHP is already turned on.");
+    }
+
+    public void turnOffSHP() {
+        House h = this.simulator.getHouse();
+        h.turnOffSHP();
+        this.simulator.setHouse(h);
+        this.simulator.setCurrentState(this.simulator.getSimOn_SHHOn());
+    }
+
+    public void enableAwayMode() {
+        this.simulator.enableAwayMode();
+    }
+
+    public void disableAwayMode() {
+        this.simulator.disableAwayMode();
+    }
+
+    public void setTimeForAlert(int newSeconds) {
+        this.simulator.setTimeForAlert(newSeconds);
     }
 }
