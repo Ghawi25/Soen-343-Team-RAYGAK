@@ -4,6 +4,7 @@ import com.raygak.server.commands.*;
 import com.raygak.server.smarthome.heating.*;
 import com.raygak.server.smarthome.security.SHP;
 import com.raygak.server.smarthome.security.SHPEventType;
+import com.raygak.server.smarthome.security.SHPListener;
 import lombok.Getter;
 
 import java.text.DecimalFormat;
@@ -24,6 +25,7 @@ public class House {
     private SHH shh;
     private SHP shp;
     private HouseControl houseControl = new HouseControl();
+    private Simulator associatedSimulator;
 
     //Boolean to check if the house is currently empty during winter.
     private boolean isInWinterAndEmptyHouseProtocol = false;
@@ -38,12 +40,14 @@ public class House {
         this.isInWinterAndEmptyHouseProtocol = true;
         this.shh = new SHH(this);
         this.shp = new SHP(this);
+        this.shp.setHouse(this);
     }
 
     public House(ArrayList<Room> roomListInput) {
         this.rooms = roomListInput;
         this.shh = new SHH(this);
         this.shp = new SHP(this);
+        this.shp.setHouse(this);
     }
 
     public House(ArrayList<Room> roomListInput, ArrayList<Zone> zoneListInput, double outdoorTempInput, Season seasonInput) {
@@ -51,6 +55,7 @@ public class House {
         //Every User, window and light in every room in the input room list is considered to be a part of the house itself.
         for (Room r : roomListInput) {
             for (User p : r.getInhabitants()) {
+                p.setAssociatedHouse(this);
                 this.inhabitants.add(p);
             }
             for (Window w : r.getWindows()) {
@@ -62,10 +67,6 @@ public class House {
             this.lights.add(r.getLight());
         }
         this.zones = zoneListInput;
-
-        for (Room r : this.rooms) {
-            r.setCurrentTemperature(outdoorTempInput, false);
-        }
         this.indoorTemperature = outdoorTempInput;
         this.outdoorTemperature = outdoorTempInput;
         this.currentSeason = seasonInput;
@@ -74,6 +75,15 @@ public class House {
         }
         this.shh = new SHH(this);
         this.shp = new SHP(this);
+        this.shp.setHouse(this);
+        for (Room r : this.rooms) {
+            r.setAssociatedHouse(this);
+            r.setCurrentTemperature(outdoorTempInput, false);
+        }
+    }
+
+    public void setAssociatedSimulator(Simulator newSimulator) {
+        this.associatedSimulator = newSimulator;
     }
 
 
@@ -103,6 +113,7 @@ public class House {
                         }
                     }
                 }
+                this.associatedSimulator.getLogger().protocolLog(this.shh.getIsOn(), "The outside temperature of the house has become lower than the inside temperature and at least one person is home during the summer season.");
             }
         }
     }
@@ -118,6 +129,7 @@ public class House {
                         closeWindowWithID(w.getWindowID());
                     }
                 }
+                this.associatedSimulator.getLogger().protocolLog(this.shh.getIsOn(), "The outside temperature of the house has become equal to or greater than the inside temperature, or nobody is home, during the summer season.");
             }
         }
     }
@@ -127,8 +139,7 @@ public class House {
             for (Room r : this.rooms) {
                 r.changeCurrentTemperature(this.outdoorTemperature);
                 if (r.getCurrentTemperature() >= 135) {
-                    this.shp.notify(SHPEventType.ROOM_TEMP_AT_135_DEGREES);
-                    System.out.println("[SHP] WARNING: TEMPERATURE OF ROOM " + r.getRoomID() + " HAS REACHED 135 DEGREES!");
+                    this.shp.notify(SHPEventType.ROOM_TEMP_AT_135_DEGREES, r.getRoomID());
                 }
             }
             computeIndoorTemperature();
@@ -209,6 +220,7 @@ public class House {
                     this.rooms.set(i, r);
                 }
             }
+            this.associatedSimulator.getLogger().protocolLog(this.shh.getIsOn(), "The house has become uninhabited during the winter season.");
             computeIndoorTemperature();
         }
     }
@@ -232,6 +244,7 @@ public class House {
                 r.setZone(z);
                 this.rooms.set(i, r);
             }
+            this.associatedSimulator.getLogger().protocolLog(this.shh.getIsOn(), "The house has become inhabited once again during the winter season.");
             computeIndoorTemperature();
         }
     }
@@ -239,8 +252,10 @@ public class House {
 
     //In adding a new room, add every inhabitant of that room to the house's inhabitant list
     public void addRoom(Room newRoom) {
+        newRoom.setAssociatedHouse(this);
         this.rooms.add(newRoom);
         for (User p : newRoom.getInhabitants()) {
+            p.setAssociatedHouse(this);
             this.inhabitants.add(p);
         }
         computeIndoorTemperature();
@@ -382,7 +397,10 @@ public class House {
     }
 
     public void setOutdoorTemperature(double temperatureInput) {
+        double oldTemperature = this.outdoorTemperature;
         this.outdoorTemperature = temperatureInput;
+        double newTemperature = this.outdoorTemperature;
+        this.associatedSimulator.getLogger().temperatureUpdateLog("Outside", oldTemperature, newTemperature, this.shh.getIsOn(), "The outside temperature has been changed by a simulator user.", "Simulator User");
         if (isInSummerProtocol == false) {
             summerProtocol();
         } else {
@@ -576,6 +594,42 @@ public class House {
     public void setTimeForAlert(int newSeconds) {
         if (this.shp.getIsOn()) {
             this.shp.setTimeForAlert(newSeconds);
+        }
+    }
+
+    public void closeAllDoorsAndWindows() {
+        for (Door d : this.doors) {
+            d.closeDoor();
+        }
+        for (Window w : this.windows) {
+            w.close();
+        }
+    }
+
+    public void addSHPListener(SHPListener newListener) {
+        this.shp.addListener(newListener);
+    }
+
+    public void startAll15DegreeTimers() {
+        for (Room r : this.rooms) {
+            r.start15DegreeTimer();
+        }
+    }
+
+    public void stopAll15DegreeTimers() {
+        for (Room r : this.rooms) {
+            r.stop15DegreeTimer();
+        }
+    }
+
+    public void setTempOfRoom(String roomID, double newTemp) {
+        for (int i = 0;i < this.rooms.size();i++) {
+            Room r = this.rooms.get(i);
+            if (r.getRoomID().equals(roomID)) {
+                r.setCurrentTemperature(newTemp);
+                this.rooms.set(i, r);
+                return;
+            }
         }
     }
 }

@@ -110,9 +110,9 @@ public class SimulationOnAndSHHOnAndSHPOffState extends State {
         h.changeZone(zoneID, type, settingList, roomList);
         this.simulator.setHouse(h);
     }
-    public void changeTemperatureInCurrentRoom_Remote(double newTemperature) {
+    public void changeTemperatureInRoom_Remote(String roomID, double newTemperature) {
         User u = this.simulator.getCurrentUser();
-        u.changeTemperatureInCurrentRoom_Remote(newTemperature);
+        u.changeTemperatureInRoom_Remote(roomID, newTemperature);
     }
     public void changeTemperatureInCurrentRoom_Local(double newTemperature) {
         User u = this.simulator.getCurrentUser();

@@ -16,6 +16,7 @@ public class User {
     private String password;
     private UserType userType; // adult, child, guest
     private Room currentRoom = null;
+    private House associatedHouse = null;
 
     // Constructors
     public User() {}
@@ -66,12 +67,31 @@ public class User {
         this.currentRoom = newCurrentRoom;
     }
 
-    public void changeTemperatureInCurrentRoom_Remote(double newTemperature) {
+    public House getAssociatedHouse() {
+        return associatedHouse;
+    }
+
+    public void setAssociatedHouse(House newHouse) {
+        this.associatedHouse = newHouse;
+    }
+
+    public void changeTemperatureInRoom_Remote(String roomID, double newTemperature) {
         if (this.userType != UserType.PARENT) {
             System.out.println("Error: Only a parent can remotely change a room's temperature.");
             return;
         }
-        this.currentRoom.setCurrentTemperature(newTemperature, true);
+        ArrayList<Room> houseRooms = this.associatedHouse.getRooms();
+        for (int i = 0;i < houseRooms.size();i++) {
+            Room room = houseRooms.get(i);
+            if (room.getRoomID().equals(roomID)) {
+                double oldTemperature = room.getCurrentTemperature();
+                room.setCurrentTemperature(newTemperature, true);
+                double temperatureAfter = room.getCurrentTemperature();
+                houseRooms.set(i, room);
+                this.associatedHouse.setRooms(houseRooms);
+                this.associatedHouse.getAssociatedSimulator().getLogger().temperatureUpdateLog(room.getRoomID(), oldTemperature, temperatureAfter, this.associatedHouse.getShh().getIsOn(),"A person has manually changed the temperature of a room in remote fashion.", this.username);
+            }
+        }
     }
 
     public void changeTemperatureInCurrentRoom_Local(double newTemperature) {
@@ -80,6 +100,18 @@ public class User {
             return;
         }
         this.currentRoom.setCurrentTemperature(newTemperature, true);
+        ArrayList<Room> houseRooms = this.associatedHouse.getRooms();
+        for (int i = 0;i < houseRooms.size();i++) {
+            Room room = houseRooms.get(i);
+            if (room.getRoomID().equals(this.currentRoom.getRoomID())) {
+                double oldTemperature = room.getCurrentTemperature();
+                room.setCurrentTemperature(newTemperature, true);
+                double temperatureAfter = room.getCurrentTemperature();
+                houseRooms.set(i, room);
+                this.associatedHouse.setRooms(houseRooms);
+                this.associatedHouse.getAssociatedSimulator().getLogger().temperatureUpdateLog(room.getRoomID(), oldTemperature, temperatureAfter, this.associatedHouse.getShh().getIsOn(), "A person has manually changed the temperature of a room from within it.", this.username);
+            }
+        }
     }
 
     public void setUpZone(House house, String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList) {

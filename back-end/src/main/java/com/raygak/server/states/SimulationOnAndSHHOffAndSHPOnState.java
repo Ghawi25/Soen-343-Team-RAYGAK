@@ -104,7 +104,7 @@ public class SimulationOnAndSHHOffAndSHPOnState extends State {
     public void changeZone(String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList) {
         System.out.println("This feature is inaccessible while SHH is turned off.");
     }
-    public void changeTemperatureInCurrentRoom_Remote(double newTemperature) {
+    public void changeTemperatureInRoom_Remote(String roomID, double newTemperature) {
         System.out.println("This feature is inaccessible while SHH is turned off.");
     }
     public void changeTemperatureInCurrentRoom_Local(double newTemperature) {
@@ -195,7 +195,9 @@ public class SimulationOnAndSHHOffAndSHPOnState extends State {
     }
 
     public void enableAwayMode() {
-        this.simulator.enableAwayMode();
+        House house = this.simulator.getHouse();
+        house.enableAwayMode();
+        this.simulator.setHouse(house);
     }
 
     public void disableAwayMode() {

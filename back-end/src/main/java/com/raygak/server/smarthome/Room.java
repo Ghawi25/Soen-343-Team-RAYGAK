@@ -1,5 +1,6 @@
 package com.raygak.server.smarthome;
 
+import com.raygak.server.timers.SHP15DegreeTimer;
 import lombok.Data;
 import com.raygak.server.smarthome.heating.*;
 
@@ -30,7 +31,9 @@ public class Room {
     private Zone zone = null;
     private DecimalFormat temperatureFormat = new DecimalFormat("0.00");
     private double lastGeneralTempChange = 0.00;
-    
+    private House associatedHouse;
+    private SHP15DegreeTimer fifteenDegreeTimer;
+
     public Room(String idInput, String name, int width, int height, boolean hasLight) {
         this.roomID = idInput;
         this.name = name;
@@ -80,6 +83,11 @@ public class Room {
         this.rightAdjacentRoom = rightAdjacent;
     }
 
+    public void setAssociatedHouse(House newHouse) {
+        this.associatedHouse = newHouse;
+        this.fifteenDegreeTimer = new SHP15DegreeTimer(this);
+    }
+
     public void displayTemperature() {
         System.out.println(this.currentTemperature + (this.isOverridden ? " (overridden)" : ""));
     }
@@ -118,7 +126,12 @@ public class Room {
         //The room's temperature should be updated from its desired unoccupied temperature when somebody enters it.
         if (this.inhabitants.size() == 1) {
             System.out.println("FILLING ROOM " + this.roomID + " WITH FIRST INHABITANT");
+            double oldTemp = this.currentTemperature;
             updateTemperature();
+            double newTemp = this.currentTemperature;
+            if (oldTemp != newTemp) {
+                this.associatedHouse.getAssociatedSimulator().getLogger().temperatureUpdateLog(this.roomID, oldTemp, newTemp, this.associatedHouse.getShh().getIsOn(), "A new person has entered the room when it was originally uninhabited.", newInhabitant.getUsername());
+            }
         }
     }
 
@@ -131,8 +144,14 @@ public class Room {
             if (this.inhabitants.get(i).getUsername().equals(username)) {
                 this.inhabitants.remove(i);
                 if (this.inhabitants.isEmpty()) {
-                    this.setCurrentTemperature(Double.parseDouble(temperatureFormat.format(this.desiredUnoccupiedTemperature)));
+                    double oldTemp = this.currentTemperature;
+                    updateTemperature();
+                    double newTemp = this.currentTemperature;
+                    if (oldTemp != newTemp) {
+                        this.associatedHouse.getAssociatedSimulator().getLogger().temperatureUpdateLog(this.roomID, oldTemp, newTemp, this.associatedHouse.getShh().getIsOn(), "A person has exited a room, leaving it uninhabited.", username);
+                    }
                     System.out.println("Room " + this.roomID + " is now empty. New temperature: " + this.currentTemperature);
+
                 }
                 return;
             }
@@ -238,5 +257,13 @@ public class Room {
         } else {
             this.setCurrentTemperature(Double.parseDouble(temperatureFormat.format(this.desiredUnoccupiedTemperature)));
         }
+    }
+
+    public void start15DegreeTimer() {
+        this.fifteenDegreeTimer.start();
+    }
+
+    public void stop15DegreeTimer() {
+        this.fifteenDegreeTimer.stopTimer();
     }
 }

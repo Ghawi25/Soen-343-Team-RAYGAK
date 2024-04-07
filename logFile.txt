@@ -1,0 +1,234 @@
+Timestamp: 2024-04-07 01:19:35
+Device Name: House-Wide Thermostat
+Event Type: Protocol Change 
+Event Description: All relevant zone temperature settings within the house have been set to 17 degrees Celsius.
+Details: 
+- Heating Mode: Active
+- Cause of Event: The house has become uninhabited during the winter season.
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: House-Wide Thermostat
+Event Type: Protocol Change 
+Event Description: All relevant zone temperature settings within the house have been set to 17 degrees Celsius.
+Details: 
+- Heating Mode: Active
+- Cause of Event: The house has become uninhabited during the winter season.
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: Room 1 Thermostat
+Event Type: Temperature Change 
+Event Description: Room temperature decreased.
+Details: 
+- Previous Temperature: 335.0
+- New Temperature: 345.0
+- Heating Mode: Active
+- Reason: A person has exited a room, leaving it uninhabited.
+- User (person who left room): quinn@gmail.com
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: House-Wide Thermostat
+Event Type: Protocol Change 
+Event Description: All relevant zone temperature settings within the house have been set to 17 degrees Celsius.
+Details: 
+- Heating Mode: Active
+- Cause of Event: The house has become uninhabited during the winter season.
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: Room 1 Thermostat
+Event Type: Temperature Change 
+Event Description: Room temperature decreased.
+Details: 
+- Previous Temperature: 345.0
+- New Temperature: 402.0
+- Heating Mode: Active
+- Reason: A new person has entered the room when it was originally uninhabited.
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: House-Wide Thermostat
+Event Type: Protocol Change 
+Event Description: All rooms in the house have had their HVAC turned off and their windows opened.
+Details: 
+- Heating Mode: Active
+- Cause of Event: The outside temperature of the house has become lower than the inside temperature and at least one person is home during the summer season.
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: Room 2 Thermostat
+Event Type: Temperature Change 
+Event Description: Room temperature increased.
+Details: 
+- Previous Temperature: 335.0
+- New Temperature: 268.0
+- Heating Mode: Active
+- Reason: A new person has entered the room when it was originally uninhabited.
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: Room 1 Thermostat
+Event Type: Temperature Change 
+Event Description: Room temperature increased.
+Details: 
+- Previous Temperature: 402.0
+- New Temperature: 345.0
+- Heating Mode: Active
+- Reason: A person has exited a room, leaving it uninhabited.
+- User (person who left room): dennis@gmail.com
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: House-Wide Thermostat
+Event Type: Protocol Change 
+Event Description: All relevant zone temperature settings within the house have been set to 17 degrees Celsius.
+Details: 
+- Heating Mode: Active
+- Cause of Event: The house has become uninhabited during the winter season.
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: Room 2 Thermostat
+Event Type: Temperature Change 
+Event Description: Room temperature decreased.
+Details: 
+- Previous Temperature: 268.0
+- New Temperature: 345.0
+- Heating Mode: Active
+- Reason: A person has exited a room, leaving it uninhabited.
+- User (person who left room): quinn@gmail.com
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: House-Wide Thermostat
+Event Type: Protocol Change 
+Event Description: All relevant zone temperature settings within the house have been set to 17 degrees Celsius.
+Details: 
+- Heating Mode: Active
+- Cause of Event: The house has become uninhabited during the winter season.
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: House-Wide Thermostat
+Event Type: Protocol Change 
+Event Description: All rooms in the house have had their HVAC turned on and their windows closed.
+Details: 
+- Heating Mode: Active
+- Cause of Event: The outside temperature of the house has become equal to or greater than the inside temperature, or nobody is home, during the summer season.
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: House-Wide Thermostat
+Event Type: Protocol Change 
+Event Description: All relevant zone temperature settings within the house have been set to 17 degrees Celsius.
+Details: 
+- Heating Mode: Active
+- Cause of Event: The house has become uninhabited during the winter season.
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: House-Wide Thermostat
+Event Type: Protocol Change 
+Event Description: All relevant zone temperature settings within the house have been set back to their original temperature values.
+Details: 
+- Heating Mode: Active
+- Cause of Event: The house has become inhabited once again during the winter season.
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: Room Outside Thermostat
+Event Type: Temperature Change 
+Event Description: Room temperature increased.
+Details: 
+- Previous Temperature: 335.0
+- New Temperature: 10.0
+- Heating Mode: Active
+- Reason: The outside temperature has been changed by a simulator user.
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: Room Outside Thermostat
+Event Type: Temperature Change 
+Event Description: Room temperature decreased.
+Details: 
+- Previous Temperature: 10.0
+- New Temperature: 50.0
+- Heating Mode: Active
+- Reason: The outside temperature has been changed by a simulator user.
+
+Timestamp: 2024-04-07 01:19:35
+Device Name: Room Outside Thermostat
+Event Type: Temperature Change 
+Event Description: Room temperature decreased.
+Details: 
+- Previous Temperature: 50.0
+- New Temperature: 350.0
+- Heating Mode: Active
+- Reason: The outside temperature has been changed by a simulator user.
+
+Timestamp: 2024-04-07 01:19:46
+Device Name: Room Outside Thermostat
+Event Type: Temperature Change 
+Event Description: Room temperature increased.
+Details: 
+- Previous Temperature: 350.0
+- New Temperature: 10.0
+- Heating Mode: Active
+- Reason: The outside temperature has been changed by a simulator user.
+
+Timestamp: 2024-04-07 01:19:46
+Device Name: House-Wide Thermostat
+Event Type: Protocol Change 
+Event Description: All relevant zone temperature settings within the house have been set to 17 degrees Celsius.
+Details: 
+- Heating Mode: Active
+- Cause of Event: The house has become uninhabited during the winter season.
+
+Timestamp: 2024-04-07 01:19:46
+Device Name: House-Wide Thermostat
+Event Type: Protocol Change 
+Event Description: All relevant zone temperature settings within the house have been set back to their original temperature values.
+Details: 
+- Heating Mode: Active
+- Cause of Event: The house has become inhabited once again during the winter season.
+
+Timestamp: 2024-04-07 01:19:46
+Device Name: Room 1 Thermostat
+Event Type: Temperature Change 
+Event Description: Room temperature decreased.
+Details: 
+- Previous Temperature: 345.0
+- New Temperature: 391.2
+- Heating Mode: Active
+- Reason: A new person has entered the room when it was originally uninhabited.
+
+Timestamp: 2024-04-07 01:19:46
+Device Name: Room 2 Thermostat
+Event Type: Temperature Change 
+Event Description: Room temperature increased.
+Details: 
+- Previous Temperature: 345.0
+- New Temperature: 271.2
+- Heating Mode: Active
+- Reason: A new person has entered the room when it was originally uninhabited.
+
+Timestamp: 2024-04-07 01:19:46
+Device Name: Room 1 Thermostat
+Event Type: Temperature Change 
+Event Description: Room temperature increased.
+Details: 
+- Previous Temperature: 20.0
+- New Temperature: 20.0
+- Heating Mode: Active
+- Reason: A person has manually changed the temperature of a room from within it.
+- User (person who changed temperature locally): james@gmail.com
+
+Timestamp: 2024-04-07 01:19:46
+Device Name: Room 2 Thermostat
+Event Type: Temperature Change 
+Event Description: Room temperature increased.
+Details: 
+- Previous Temperature: 271.2
+- New Temperature: 20.0
+- Heating Mode: Active
+- Reason: A person has manually changed the temperature of a room in remote fashion.
+- User (person who changed temperature remotely): james@gmail.com
+
+Timestamp: 2024-04-07 01:19:46
+Device Name: Room 2 Thermostat
+Event Type: Temperature Change 
+Event Description: Room temperature increased.
+Details: 
+- Previous Temperature: 30.0
+- New Temperature: 30.0
+- Heating Mode: Active
+- Reason: A person has manually changed the temperature of a room from within it.
+- User (person who changed temperature locally): quinn@gmail.com
+
