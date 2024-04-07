@@ -12,5 +12,11 @@ public class TestSHPListener extends SHPListener {
         if (eventType.equals(SHPEventType.ROOM_TEMP_AT_135_DEGREES)) {
             System.out.println("[SHP] WARNING: TEMPERATURE OF ROOM " + identifier + " HAS REACHED 135 DEGREES!");
         }
+        else if(eventType.equals(SHPEventType.DOOR_OPENED)){
+            System.out.println("[SHP] WARNING: DOOR " + identifier + " IS OPEN!");
+        }
+        else if(eventType.equals(SHPEventType.WINDOW_OPENED)){
+            System.out.println("[SHP] WARNING: WINDOW " + identifier + " IS OPEN!");
+        }
     }
 }

@@ -55,6 +55,7 @@ public class SHP {
 
     public void turnOnAwayMode() {
         this.awayMode = true;
+        this.house.closeAllDoorsAndWindows();
         this.house.startAll15DegreeTimers();
     }
 
