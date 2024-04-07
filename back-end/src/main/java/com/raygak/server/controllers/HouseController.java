@@ -73,32 +73,4 @@ public class HouseController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(path = "/zones")
-    public ResponseEntity<ArrayList<ZonePOJO>> getZones() {
-        HouseView house = HouseView.getHome();
-        House houseRef = house.getHouse();
-        ArrayList<Zone> zoneList = houseRef.getZones();
-        ArrayList<ZonePOJO> zonePOJOs = new ArrayList<>();
-        for(Zone zone : zoneList) {
-            // Get Room Ids inside the zone
-            ArrayList<Room> roomsList = zone.getRoomList();
-            ArrayList<String> roomIds = new ArrayList<>();
-            for(Room room : roomsList) {
-                roomIds.add(room.getRoomID());
-            }
-            // Get temperature settings
-            ArrayList<TemperatureSetting> settingList = zone.getSettingList();
-            ArrayList<TemperatureSettingPOJO> temperatureSettingPOJOS = new ArrayList<>();
-            for(TemperatureSetting setting : settingList) {
-                TemperatureSettingPOJO settingPOJO = new TemperatureSettingPOJO(setting.getSettingID(),
-                        setting.getDesiredTemperature(), setting.getOriginalDesiredTemperature(), setting.getStart(), setting.getEnd());
-                temperatureSettingPOJOS.add(settingPOJO);
-            }
-            ZonePOJO zonePOJO = new ZonePOJO(zone.getZoneID(),
-                    zone.getType(), temperatureSettingPOJOS, roomIds);
-            zonePOJOs.add(zonePOJO);
-        }
-        return new ResponseEntity<ArrayList<ZonePOJO>>(zonePOJOs,
-                HttpStatus.OK);
-    }
 }
