@@ -37,7 +37,23 @@ public class HouseController {
     }
 
     @GetMapping(path = "/rooms")
-    public ResponseEntity<RoomPOJO> getRooms(@RequestParam("id") String roomId) {
+    public ResponseEntity<ArrayList<RoomPOJO>> getRooms() {
+        HouseView house = HouseView.getHome();
+        House houseRef = house.getHouse();
+        ArrayList<Room> roomsList = houseRef.getRooms();
+        ArrayList<RoomPOJO> roomPOJOs = new ArrayList<>();
+        for(Room room : roomsList) {
+            RoomPOJO roomPOJO = new RoomPOJO(room.getRoomID(),
+                    room.getName(), room.getWidth(), room.getHeight(),
+                    room.getCurrentTemperature());
+            roomPOJOs.add(roomPOJO);
+        }
+        return new ResponseEntity<ArrayList<RoomPOJO>>(roomPOJOs,
+                HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/room")
+    public ResponseEntity<RoomPOJO> getRoomsById(@RequestParam("id") String roomId) {
         HouseView house = HouseView.getHome();
         House houseRef = house.getHouse();
         ArrayList<Room> roomsList = houseRef.getRooms();
