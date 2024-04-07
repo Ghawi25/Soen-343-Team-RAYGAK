@@ -48,6 +48,8 @@ public class SHP {
 
     public void turnOnAwayMode() {
         this.awayMode = true;
+        this.house.closeAllDoors();
+        this.house.closeAllWindows();
     }
 
     public void turnOffAwayMode() {

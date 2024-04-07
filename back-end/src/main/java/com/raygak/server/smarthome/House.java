@@ -472,6 +472,10 @@ public class House {
         this.doors = ((DoorCloseCommand)this.houseControl.getCommand()).getHouse().getDoors();
     }
 
+    public void closeAllDoors(){ //close every door
+
+    }
+
     public void openWindowWithID(String windowID) {
         WindowOpenCommand command = new WindowOpenCommand(this, windowID);
         this.houseControl.setCommand(command);
@@ -489,6 +493,10 @@ public class House {
         this.houseControl.execute();
         this.rooms = ((WindowCloseCommand)this.houseControl.getCommand()).getHouse().getRooms();
         this.windows = ((WindowCloseCommand)this.houseControl.getCommand()).getHouse().getWindows();
+    }
+
+    public void closeAllWindows(){ //close every window
+        
     }
 
     public void obstructWindowWithID(String windowID) {
