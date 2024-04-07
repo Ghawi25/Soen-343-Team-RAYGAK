@@ -73,4 +73,18 @@ public class HouseController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @DeleteMapping(path = "/room")
+    public ResponseEntity deleteRoomById(@RequestParam("id") String roomId) {
+        HouseView house = HouseView.getHome();
+        House houseRef = house.getHouse();
+        try {
+            houseRef.removeRoom(roomId);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Error: The zone with the provided ID does not exist.");
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
