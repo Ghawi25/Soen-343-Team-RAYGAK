@@ -1,6 +1,6 @@
 package com.raygak.server.controllers;
 
-import com.raygak.server.models.RoomPOJO;
+import com.raygak.server.models.RoomWrapper;
 import com.raygak.server.models.TemperatureSettingPOJO;
 import com.raygak.server.models.ZonePOJO;
 import com.raygak.server.smarthome.House;
@@ -8,6 +8,7 @@ import com.raygak.server.smarthome.HouseView;
 import com.raygak.server.smarthome.Room;
 import com.raygak.server.smarthome.heating.TemperatureSetting;
 import com.raygak.server.smarthome.heating.Zone;
+import com.raygak.server.smarthome.heating.ZoneType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -75,5 +76,38 @@ public class SHHController {
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping(path = "/zone/{zoneId}")
+    public ResponseEntity<HttpStatus> updateRoomTemp(@PathVariable(value = "zoneId") String zoneId,
+                                                     @RequestBody RoomWrapper roomIds) {
+        HouseView house = HouseView.getHome();
+        House houseRef = house.getHouse();
+        ArrayList<Room> allRooms = houseRef.getRooms();
+        ArrayList<Room> roomsList = new ArrayList<>();
+
+        for(String id: roomIds.getRoomIds()) {
+            for(Room room : allRooms) {
+                if(room.getRoomID().equals(id)) {
+                    roomsList.add(room);
+                }
+            }
+        }
+
+        TemperatureSetting temp1 = new TemperatureSetting("1", 46.0, 0, 0, 8, 0);
+        TemperatureSetting temp2 = new TemperatureSetting("2", 43.5, 8, 1, 16, 0);
+        TemperatureSetting temp3 = new TemperatureSetting("3", 47.5, 16, 1, 23, 59);
+        ArrayList<TemperatureSetting> settingList = new ArrayList<TemperatureSetting>();
+        settingList.add(temp1);
+        settingList.add(temp2);
+        settingList.add(temp3);
+
+        Zone zone = new Zone(zoneId, ZoneType.HEATING, settingList, roomsList);
+        try {
+            houseRef.addZone(zone);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
