@@ -634,31 +634,34 @@ public class House {
         this.shp.turnOff();
     }
 
+    public void closeAllDoorsAndWindows() {
+        for (Door d : this.doors) {
+            boolean isDoorInitiallyOpen = d.isOpen();
+            d.closeDoor();
+            boolean isDoorOpenAfter = d.isOpen();
+            if (isDoorInitiallyOpen != isDoorOpenAfter) {
+                this.associatedSimulator.getLogger().openCloseLog("Door", d.getName(), isDoorOpenAfter ? "Open" : "Closed", "'Away Mode' has been turned on, automatically closing all doors in the house.");
+            }
+            if (isDoorInitiallyOpen == isDoorOpenAfter) {
+                this.associatedSimulator.getLogger().unableToOpenOrCloseLog("Door", d.getName(), isDoorOpenAfter ? "Opened" : "Closed", "Obstruction");
+            }
+        }
+        for (Window w : this.windows) {
+            boolean isWindowInitiallyOpen = w.isOpen();
+            w.close();
+            boolean isWindowOpenAfter = w.isOpen();
+            if (isWindowInitiallyOpen != isWindowOpenAfter) {
+                this.associatedSimulator.getLogger().openCloseLog("Window", w.getWindowID(), isWindowOpenAfter ? "Open" : "Closed", "'Away Mode' has been turned on, automatically closing all doors in the house.");
+            }
+            if (isWindowInitiallyOpen == isWindowOpenAfter) {
+                this.associatedSimulator.getLogger().unableToOpenOrCloseLog("Window", w.getWindowID(), isWindowOpenAfter ? "Opened" : "Closed", "Obstruction");
+            }
+        }
+    }
+
     public void enableAwayMode() {
         if (this.shp.isOn()) {
             this.shp.turnOnAwayMode();
-            for (Door d : this.doors) {
-                boolean isDoorInitiallyOpen = d.isOpen();
-                d.closeDoor();
-                boolean isDoorOpenAfter = d.isOpen();
-                if (isDoorInitiallyOpen != isDoorOpenAfter) {
-                    this.associatedSimulator.getLogger().openCloseLog("Door", d.getName(), isDoorOpenAfter ? "Open" : "Closed", "'Away Mode' has been turned on, automatically closing all doors in the house.");
-                }
-                if (isDoorInitiallyOpen == isDoorOpenAfter) {
-                    this.associatedSimulator.getLogger().unableToOpenOrCloseLog("Door", d.getName(), isDoorOpenAfter ? "Opened" : "Closed", "Obstruction");
-                }
-            }
-            for (Window w : this.windows) {
-                boolean isWindowInitiallyOpen = w.isOpen();
-                w.close();
-                boolean isWindowOpenAfter = w.isOpen();
-                if (isWindowInitiallyOpen != isWindowOpenAfter) {
-                    this.associatedSimulator.getLogger().openCloseLog("Window", w.getWindowID(), isWindowOpenAfter ? "Open" : "Closed", "'Away Mode' has been turned on, automatically closing all doors in the house.");
-                }
-                if (isWindowInitiallyOpen == isWindowOpenAfter) {
-                    this.associatedSimulator.getLogger().unableToOpenOrCloseLog("Window", w.getWindowID(), isWindowOpenAfter ? "Opened" : "Closed", "Obstruction");
-                }
-            }
         }
     }
 
