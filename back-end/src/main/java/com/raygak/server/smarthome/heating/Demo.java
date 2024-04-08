@@ -220,7 +220,6 @@ public class Demo {
         simulator.enableAwayMode();
         simulator.addInhabitantToRoom(p1, "1");
         simulator.addInhabitantToRoom(p2, "2");
-        simulator.addInhabitantToRoom(p3, "2");
         simulator.setCurrentUser(p1);
         simulator.changeTemperatureInCurrentRoom_Local(20.0);
         simulator.changeTemperatureInRoom_Remote("2", 20.0);
