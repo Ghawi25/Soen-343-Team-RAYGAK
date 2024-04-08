@@ -27,6 +27,12 @@ public class Simulator {
     private SimulationOnAndSHHOffAndSHPOnState simOn_SHPOn;
     private SimulationOnAndSHHOnAndSHPOnState simOn_AllOn;
 
+    private SimulationOffState simOff;
+    private SimulationOnAndSHHOffAndSHPOffState simOn_AllOff;
+    private SimulationOnAndSHHOnAndSHPOffState simOn_SHHOn;
+    private SimulationOnAndSHHOffAndSHPOnState simOn_SHPOn;
+    private SimulationOnAndSHHOnAndSHPOnState simOn_AllOn;
+
     public Simulator(int dayInput, int monthInput, int yearInput, int hoursInput, int minutesInput, House houseInput) {
         this.currentDate = new Date(yearInput, monthInput, dayInput);
         this.currentTime = LocalTime.of(hoursInput, minutesInput, 0);

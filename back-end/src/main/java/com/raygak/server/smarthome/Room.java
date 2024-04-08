@@ -193,7 +193,6 @@ public class Room {
                     if (oldTemp != newTemp) {
                         this.associatedHouse.getAssociatedSimulator().getLogger().temperatureUpdateLog(this.roomID, oldTemp, newTemp, this.associatedHouse.getShh().isOn(), "A person has exited a room, leaving it uninhabited.", username);
                     }
-
                 }
                 return;
             }

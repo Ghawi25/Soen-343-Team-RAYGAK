@@ -182,6 +182,19 @@ public class House {
         }
     }
 
+    public void updateAllRoomTemperatures() {
+        if (this.shh.getIsOn()) {
+            for (Room r : this.rooms) {
+                r.changeCurrentTemperature(this.outdoorTemperature);
+                if (r.getCurrentTemperature() >= 135) {
+                    this.shp.notify(SHPEventType.ROOM_TEMP_AT_135_DEGREES);
+                    System.out.println("[SHP] WARNING: TEMPERATURE OF ROOM " + r.getRoomID() + " HAS REACHED 135 DEGREES!");
+                }
+            }
+            computeIndoorTemperature();
+        }
+    }
+
     public Light getLightByName(String lightName) {
         for (Light l : this.lights) {
             if (l.getName().equals(lightName)) {

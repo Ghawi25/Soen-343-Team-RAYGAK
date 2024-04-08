@@ -119,7 +119,6 @@ public class SimulationOnAndSHHOnAndSHPOnState extends State {
         User u = this.simulator.getCurrentUser();
         u.changeTemperatureInCurrentRoom_Local(newTemperature);
         this.simulator.setHouse(u.getAssociatedHouse());
-
     }
     public void setUpZone(House house, String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList)  {
         User u = this.simulator.getCurrentUser();
@@ -234,6 +233,7 @@ public class SimulationOnAndSHHOnAndSHPOnState extends State {
     public void setTimeForAlert(int newSeconds) {
         User u = this.simulator.getCurrentUser();
         u.setTimeForAlert(newSeconds);
+        this.simulator.setHouse(u.getAssociatedHouse());
 //        House h = this.simulator.getHouse();
 //        h.setTimeForAlert(newSeconds);
 //        this.simulator.setHouse(h);

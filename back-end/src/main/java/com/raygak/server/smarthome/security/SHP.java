@@ -11,6 +11,7 @@ public class SHP {
     @Getter
     private House house;
     private boolean isOn = false;
+  
     private ArrayList<SHPListener> listeners = new ArrayList<SHPListener>();
 
     private boolean awayMode = false;
