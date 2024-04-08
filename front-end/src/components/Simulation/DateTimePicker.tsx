@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 
-const DateTimePicker: React.FC<{ onTemperatureFetch: (temperature: string) => void }> = ({ onTemperatureFetch })=> {
+const DateTimePicker: React.FC<{
+  onTemperatureFetch: (temperature: string) => void;
+}> = ({ onTemperatureFetch }) => {
   const [dateTime, setDateTime] = useState("");
 
   const formatDateTime = (inputDateTime: string) => {
@@ -51,7 +53,6 @@ const DateTimePicker: React.FC<{ onTemperatureFetch: (temperature: string) => vo
       // Handle network errors
       console.error("Network error:", error);
     }
-    
   };
 
   return (
@@ -62,7 +63,7 @@ const DateTimePicker: React.FC<{ onTemperatureFetch: (temperature: string) => vo
         value={dateTime}
         onChange={(e) => setDateTime(e.target.value)}
       />
-      <button id="btn--date-time" onClick={handleSubmit}>
+      <button className="btn--shift-down" onClick={handleSubmit}>
         Fetch
       </button>
     </div>
