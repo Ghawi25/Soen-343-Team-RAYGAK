@@ -1,5 +1,6 @@
 package com.raygak.server.controllers;
 
+import com.raygak.server.models.RoomPOJO;
 import com.raygak.server.models.TemperatureSettingPOJO;
 import com.raygak.server.models.ZonePOJO;
 import com.raygak.server.smarthome.House;
@@ -59,5 +60,20 @@ public class SHHController {
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/room/{roomId}")
+    public ResponseEntity<HttpStatus> updateRoomTemp(@PathVariable(value = "roomId") String roomId, @RequestParam("temp") Double temperature) {
+        HouseView house = HouseView.getHome();
+        House houseRef = house.getHouse();
+        ArrayList<Room> roomsList = houseRef.getRooms();
+        for(Room room : roomsList) {
+            if(room.getRoomID().equals(roomId)) {
+                room.setCurrentTemperature(temperature);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
