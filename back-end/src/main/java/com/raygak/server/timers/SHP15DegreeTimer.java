@@ -1,7 +1,7 @@
 package com.raygak.server.timers;
 
 import com.raygak.server.smarthome.Room;
-import com.raygak.server.smarthome.security.SHP;
+import com.raygak.server.modules.SHP;
 import com.raygak.server.smarthome.security.SHPEventType;
 import lombok.Getter;
 
@@ -14,7 +14,7 @@ public class SHP15DegreeTimer extends Thread {
     private int numSeconds = 0;
     private boolean running;
     private SHP shp;
-        private Room associatedRoom;
+    private Room associatedRoom;
 
     public SHP15DegreeTimer(SHP shp)
     {
@@ -58,7 +58,5 @@ public class SHP15DegreeTimer extends Thread {
 
         public void stopTimer() {
             running = false;
-            Thread.currentThread().interrupt();
-//            System.out.println("Number of seconds: " + numSeconds);
         }
     }

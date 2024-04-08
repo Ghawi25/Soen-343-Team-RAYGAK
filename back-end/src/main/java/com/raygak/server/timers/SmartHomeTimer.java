@@ -23,6 +23,5 @@ public class SmartHomeTimer extends Thread {
 
         public void stopTimer() {
             running = false;
-//            System.out.println("Number of seconds: " + numSeconds);
         }
     }

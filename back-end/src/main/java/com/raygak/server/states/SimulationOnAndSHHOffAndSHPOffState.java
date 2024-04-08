@@ -116,9 +116,12 @@ public class SimulationOnAndSHHOffAndSHPOffState extends State {
         System.out.println("This feature is inaccessible while SHH is turned off.");
     }
     public void turnOnSHH() {
-        House h = this.simulator.getHouse();
-        h.turnOnSHH();
-        this.simulator.setHouse(h);
+        User u = this.simulator.getCurrentUser();
+        u.turnOnSHH();
+        this.simulator.setHouse(u.getAssociatedHouse());
+//        House h = this.simulator.getHouse();
+//        h.turnOnSHH();
+//        this.simulator.setHouse(h);
         this.simulator.setCurrentState(this.simulator.getSimOn_SHHOn());
     }
     public void turnOffSHH() {
@@ -186,9 +189,12 @@ public class SimulationOnAndSHHOffAndSHPOffState extends State {
     }
 
     public void turnOnSHP() {
-        House h = this.simulator.getHouse();
-        h.turnOnSHP();
-        this.simulator.setHouse(h);
+        User u = this.simulator.getCurrentUser();
+        u.turnOnSHP();
+        this.simulator.setHouse(u.getAssociatedHouse());
+//        House h = this.simulator.getHouse();
+//        h.turnOnSHP();
+//        this.simulator.setHouse(h);
         this.simulator.setCurrentState(this.simulator.getSimOn_SHPOn());
     }
 

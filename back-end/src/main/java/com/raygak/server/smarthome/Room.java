@@ -1,5 +1,6 @@
 package com.raygak.server.smarthome;
 
+import com.raygak.server.timers.IntruderAlertTimer;
 import com.raygak.server.timers.SHP15DegreeTimer;
 import lombok.Data;
 import com.raygak.server.smarthome.heating.*;
@@ -21,6 +22,7 @@ public class Room {
     private boolean isOverridden = false;
     private boolean isHVACOn;
     private Light light;
+    private boolean motionDetectorInstalled;
     private ArrayList<Window> windows = new ArrayList<Window>();
     private ArrayList<Door> doors = new ArrayList<Door>();
     private ArrayList<User> inhabitants = new ArrayList<User>();
@@ -33,6 +35,7 @@ public class Room {
     private double lastGeneralTempChange = 0.00;
     private House associatedHouse;
     private SHP15DegreeTimer fifteenDegreeTimer;
+    private IntruderAlertTimer intruderAlertTimer;
 
     public Room(String idInput, String name, int width, int height, boolean hasLight) {
         this.roomID = idInput;
@@ -40,6 +43,7 @@ public class Room {
         this.width = width;
         this.height = height;
         this.light = hasLight ? new Light("New Light", "Centre") : null;
+        this.motionDetectorInstalled = false;
     }
 
     public Room(String idInput, String name, int width, int height, Light light) {
@@ -48,14 +52,34 @@ public class Room {
         this.width = width;
         this.height = height;
         this.light = light;
+        this.motionDetectorInstalled = false;
     }
 
-    public Room(String idInput, String name, int width, int height, Light light, double desTempInput, boolean isHVACOn, Room topAdjacent, Room bottomAdjacent, Room leftAdjacent, Room rightAdjacent) {
+    public Room(String idInput, String name, int width, int height, boolean hasLight, boolean motionDetectorInstalled) {
+        this.roomID = idInput;
+        this.name = name;
+        this.width = width;
+        this.height = height;
+        this.light = hasLight ? new Light("New Light", "Centre") : null;
+        this.motionDetectorInstalled = motionDetectorInstalled;
+    }
+
+    public Room(String idInput, String name, int width, int height, Light light, boolean motionDetectorInstalled) {
         this.roomID = idInput;
         this.name = name;
         this.width = width;
         this.height = height;
         this.light = light;
+        this.motionDetectorInstalled = motionDetectorInstalled;
+    }
+
+    public Room(String idInput, String name, int width, int height, Light light, boolean motionDetectorInstalled, double desTempInput, boolean isHVACOn, Room topAdjacent, Room bottomAdjacent, Room leftAdjacent, Room rightAdjacent) {
+        this.roomID = idInput;
+        this.name = name;
+        this.width = width;
+        this.height = height;
+        this.light = light;
+        this.motionDetectorInstalled = motionDetectorInstalled;
         this.desiredUnoccupiedTemperature = desTempInput;
         this.currentTemperature = desTempInput;
         this.isHVACOn = isHVACOn;
@@ -65,12 +89,13 @@ public class Room {
         this.rightAdjacentRoom = rightAdjacent;
     }
 
-    public Room(String idInput, String name, int width, int height, Light light, double desTempInput, boolean isHVACOn, ArrayList<Window> windowListInput, ArrayList<Door> doorListInput, ArrayList<User> inhabitantListInput, Room topAdjacent, Room bottomAdjacent, Room leftAdjacent, Room rightAdjacent) {
+    public Room(String idInput, String name, int width, int height, Light light, boolean motionDetectorInstalled, double desTempInput, boolean isHVACOn, ArrayList<Window> windowListInput, ArrayList<Door> doorListInput, ArrayList<User> inhabitantListInput, Room topAdjacent, Room bottomAdjacent, Room leftAdjacent, Room rightAdjacent) {
         this.roomID = idInput;
         this.name = name;
         this.width = width;
         this.height = height;
         this.light = light;
+        this.motionDetectorInstalled = motionDetectorInstalled;
         this.desiredUnoccupiedTemperature = desTempInput;
         this.currentTemperature = desTempInput;
         this.isHVACOn = isHVACOn;
@@ -83,9 +108,28 @@ public class Room {
         this.rightAdjacentRoom = rightAdjacent;
     }
 
+    public void setCurrentTemperature(double newCurrentTemperature) {
+        this.currentTemperature = newCurrentTemperature;
+        if (this.associatedHouse != null) {
+            this.fifteenDegreeTimer.setCurrentTemperature(newCurrentTemperature);
+        }
+    }
+
     public void setAssociatedHouse(House newHouse) {
         this.associatedHouse = newHouse;
         this.fifteenDegreeTimer = new SHP15DegreeTimer(this);
+    }
+
+    public void installMotionDetector() {
+        this.motionDetectorInstalled = true;
+    }
+
+    public void removeMotionDetector() {
+        this.motionDetectorInstalled = false;
+    }
+
+    public void setIntruderAlertTimer(IntruderAlertTimer newTimer) {
+        this.intruderAlertTimer = newTimer;
     }
 
     public void displayTemperature() {
@@ -122,15 +166,15 @@ public class Room {
 
     public void addInhabitant(User newInhabitant) {
         newInhabitant.setCurrentRoom(this);
+        newInhabitant.setAssociatedHouse(this.associatedHouse);
         this.inhabitants.add(newInhabitant);
         //The room's temperature should be updated from its desired unoccupied temperature when somebody enters it.
         if (this.inhabitants.size() == 1) {
-            System.out.println("FILLING ROOM " + this.roomID + " WITH FIRST INHABITANT");
             double oldTemp = this.currentTemperature;
             updateTemperature();
             double newTemp = this.currentTemperature;
             if (oldTemp != newTemp) {
-                this.associatedHouse.getAssociatedSimulator().getLogger().temperatureUpdateLog(this.roomID, oldTemp, newTemp, this.associatedHouse.getShh().getIsOn(), "A new person has entered the room when it was originally uninhabited.", newInhabitant.getUsername());
+                this.associatedHouse.getAssociatedSimulator().getLogger().temperatureUpdateLog(this.roomID, oldTemp, newTemp, this.associatedHouse.getShh().isOn(), "A new person has entered the room when it was originally uninhabited.", newInhabitant.getUsername());
             }
         }
     }
@@ -139,7 +183,6 @@ public class Room {
         if (this.inhabitants.isEmpty()) {
             throw new RuntimeException("Error: Cannot remove any inhabitants, as none are present.");
         }
-        System.out.println("REMOVING INHABITANT WITH USERNAME " + username);
         for (int i = 0; i < this.inhabitants.size(); i++) {
             if (this.inhabitants.get(i).getUsername().equals(username)) {
                 this.inhabitants.remove(i);
@@ -148,9 +191,8 @@ public class Room {
                     updateTemperature();
                     double newTemp = this.currentTemperature;
                     if (oldTemp != newTemp) {
-                        this.associatedHouse.getAssociatedSimulator().getLogger().temperatureUpdateLog(this.roomID, oldTemp, newTemp, this.associatedHouse.getShh().getIsOn(), "A person has exited a room, leaving it uninhabited.", username);
+                        this.associatedHouse.getAssociatedSimulator().getLogger().temperatureUpdateLog(this.roomID, oldTemp, newTemp, this.associatedHouse.getShh().isOn(), "A person has exited a room, leaving it uninhabited.", username);
                     }
-                    System.out.println("Room " + this.roomID + " is now empty. New temperature: " + this.currentTemperature);
 
                 }
                 return;
@@ -246,7 +288,6 @@ public class Room {
     }
 
     public void updateTemperature() {
-        System.out.println("UPDATING TEMPERATURE OF ROOM " + this.getRoomID());
         if (this.inhabitants.size() >= 1) {
             if (this.zone.getType() == ZoneType.HEATING) {
                 this.setCurrentTemperature(Double.parseDouble(temperatureFormat.format(this.desiredZoneSpecificTemperature * 1.2)));
@@ -260,10 +301,21 @@ public class Room {
     }
 
     public void start15DegreeTimer() {
-        this.fifteenDegreeTimer.start();
+        if (this.fifteenDegreeTimer.isRunning() == false) {
+            this.fifteenDegreeTimer = new SHP15DegreeTimer(this);
+            this.fifteenDegreeTimer.start();
+        }
     }
 
     public void stop15DegreeTimer() {
         this.fifteenDegreeTimer.stopTimer();
+    }
+
+    public void startIntruderAlertTimer() { this.intruderAlertTimer.start(); }
+
+    public void stopIntruderAlertTimer() {
+        if (this.intruderAlertTimer != null) {
+            this.intruderAlertTimer.stopTimer();
+        }
     }
 }
