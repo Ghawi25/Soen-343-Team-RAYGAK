@@ -260,6 +260,7 @@ public class Demo {
         User p1 = new User("james@gmail.com", "james123", UserType.PARENT);
         User p2 = new User("quinn@gmail.com", "quinn456", UserType.CHILD);
         User p3 = new User("dennis@gmail.com", "dennis789", UserType.STRANGER);
+        User sim_user = new User("sim_user@gmail.com", "sim_user123", UserType.SIM_USER);
 
         ArrayList<User> userList1 = new ArrayList<User>();
         userList1.add(p1);
@@ -271,8 +272,8 @@ public class Demo {
         Window w2 = new Window("2", true, false, "west");
         Window w3 = new Window("3", false, true, "west");
         Window w4 = new Window("4", true, true, "west");
-
         ArrayList<Window> windowList1 = new ArrayList<Window>();
+
         windowList1.add(w1);
         windowList1.add(w2);
 
@@ -327,56 +328,20 @@ public class Demo {
         zoneList.add(z2);
 
         House h1 = new House(allRooms, zoneList, 40.0, Season.WINTER);
-        h1.turnOnSHH();
-        System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
-        System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
-        System.out.println("House temperature: " + h1.getIndoorTemperature());
-        h1.removeInhabitant("james@gmail.com");
-        h1.removeInhabitant("quinn@gmail.com");
-        System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
-        System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
-        System.out.println("House temperature: " + h1.getIndoorTemperature());
-        h1.addInhabitantToRoom(p3, "1");
-        System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
-        System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
-        System.out.println("House temperature: " + h1.getIndoorTemperature());
-        h1.addInhabitantToRoom(p2, "2");
-        System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
-        System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
-        System.out.println("House temperature: " + h1.getIndoorTemperature());
-        h1.removeInhabitant("dennis@gmail.com");
-        System.out.println("Room 1 temperature: " + h1.getRooms().get(0).getCurrentTemperature());
-        System.out.println("Room 2 temperature: " + h1.getRooms().get(1).getCurrentTemperature());
-        System.out.println("House temperature: " + h1.getIndoorTemperature());
+
+
+
+        TestSHPListener testListener = new TestSHPListener();
+        h1.addSHPListener(testListener);
+        //The current date
+        Date today = new Date();
+        LocalTime now = LocalTime.now();
+        Simulator simulator = new Simulator(today.getDay(), today.getMonth(), today.getYear(), now.getHour(), now.getMinute(), h1);
+        sim_user.setAssociatedHouse(h1);
+        simulator.setCurrentUser(sim_user);
+        h1.setAssociatedSimulator(simulator);
         h1.setOutdoorTemperature(10.0);
         h1.setOutdoorTemperature(50.0);
-
-        System.out.println(h1.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
-        h1.openDoorWithName("Room 1 Door");
-        System.out.println(h1.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
-        System.out.println(h1.getDoorByName("Room 2 Door").isOpen() ? "Door 2 Open" : "Door 2 Closed");
-        h1.openDoorWithName("Room 2 Door");
-        System.out.println(h1.getDoorByName("Room 2 Door").isOpen() ? "Door 2 Open" : "Door 2 Closed");
-        h1.closeDoorWithName("Room 2 Door");
-        System.out.println(h1.getDoorByName("Room 2 Door").isOpen() ? "Door 2 Open" : "Door 2 Closed");
-
-        System.out.println(h1.getLightByName("Room 1 Light").isOn() ? "Light 1 On" : "Light 1 Off");
-        h1.turnOnLightWithName("Room 1 Light");
-        System.out.println(h1.getLightByName("Room 1 Light").isOn() ? "Light 1 On" : "Light 1 Off");
-        System.out.println(h1.getLightByName("Room 2 Light").isOn() ? "Light 2 On" : "Light 2 Off");
-        h1.turnOnLightWithName("Room 2 Light");
-        System.out.println(h1.getLightByName("Room 2 Light").isOn() ? "Light 2 On" : "Light 2 Off");
-        h1.turnOffLightWithName("Room 2 Light");
-        System.out.println(h1.getLightByName("Room 2 Light").isOn() ? "Light 2 On" : "Light 2 Off");
-
-        System.out.println(h1.getRoomByID("1").isHVACOn() ? "Room 1 - HVAC On" : "Room 1 - HVAC Off");
-        h1.turnOnHVACInRoomWithID("1");
-        System.out.println(h1.getRoomByID("1").isHVACOn() ? "Room 1 - HVAC On" : "Room 1 - HVAC Off");
-        System.out.println(h1.getRoomByID("2").isHVACOn() ? "Room 2 - HVAC On" : "Room 2 - HVAC Off");
-        h1.turnOnHVACInRoomWithID("2");
-        System.out.println(h1.getRoomByID("2").isHVACOn() ? "Room 2 - HVAC On" : "Room 2 - HVAC Off");
-        h1.turnOffHVACInRoomWithID("2");
-        System.out.println(h1.getRoomByID("2").isHVACOn() ? "Room 2 - HVAC On" : "Room 2 - HVAC Off");
         return h1;
     }
 }
