@@ -134,8 +134,8 @@ public final class HouseView {
     public static HouseView getHome() {
         if (home == null) {
             Demo demo = new Demo();
-            home = new HouseView();
             House newHouse = demo.initialize();
+            home = new HouseView();
             home.setHouse(newHouse);
         }
         return home;

@@ -19,10 +19,11 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/api/house")
 public class HouseController {
-    HouseView houseView = HouseView.getHome();
+
 
     @GetMapping
     public ResponseEntity<House> getHouse() {
+        HouseView houseView = HouseView.getHome();
         return new ResponseEntity<House>(houseView.house, HttpStatus.OK);
     }
 
