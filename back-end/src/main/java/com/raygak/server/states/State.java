@@ -37,7 +37,7 @@ public abstract class State {
     public abstract void displayTemperatureInRoomWithID(String roomID);
     public abstract void setCurrentSeason(Season newSeason);
     public abstract void changeZone(String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList);
-    public abstract void changeTemperatureInCurrentRoom_Remote(double newTemperature);
+    public abstract void changeTemperatureInRoom_Remote(String roomID, double newTemperature);
     public abstract void changeTemperatureInCurrentRoom_Local(double newTemperature);
     public abstract void setUpZone(House house, String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList);
     public abstract void turnOnSHH();

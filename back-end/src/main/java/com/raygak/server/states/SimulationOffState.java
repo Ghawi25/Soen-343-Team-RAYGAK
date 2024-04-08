@@ -87,7 +87,7 @@ public class SimulationOffState extends State {
     public void changeZone(String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList) {
         System.out.println("Nothing can be done while the simulation is off.");
     }
-    public void changeTemperatureInCurrentRoom_Remote(double newTemperature) {
+    public void changeTemperatureInRoom_Remote(String roomID, double newTemperature) {
         System.out.println("Nothing can be done while the simulation is off.");
     }
     public void changeTemperatureInCurrentRoom_Local(double newTemperature) {

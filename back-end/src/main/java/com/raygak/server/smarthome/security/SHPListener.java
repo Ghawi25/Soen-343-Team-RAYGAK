@@ -1,5 +1,8 @@
 package com.raygak.server.smarthome.security;
 
-public interface SHPListener {
-    public void update(SHPEventType eventType);
+public abstract class SHPListener {
+    public abstract void update(SHPEventType eventType);
+    public void update(SHPEventType eventType, String identifier) {
+
+    }
 }

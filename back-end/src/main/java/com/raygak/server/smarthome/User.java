@@ -16,6 +16,7 @@ public class User {
     private String password;
     private UserType userType; // adult, child, guest
     private Room currentRoom = null;
+    private House associatedHouse = null;
 
     // Constructors
     public User() {}
@@ -66,12 +67,31 @@ public class User {
         this.currentRoom = newCurrentRoom;
     }
 
-    public void changeTemperatureInCurrentRoom_Remote(double newTemperature) {
-        if (this.userType != UserType.PARENT) {
+    public House getAssociatedHouse() {
+        return associatedHouse;
+    }
+
+    public void setAssociatedHouse(House newHouse) {
+        this.associatedHouse = newHouse;
+    }
+
+    public void changeTemperatureInRoom_Remote(String roomID, double newTemperature) {
+        if (this.userType != UserType.PARENT && this.userType != UserType.SIM_USER) {
             System.out.println("Error: Only a parent can remotely change a room's temperature.");
             return;
         }
-        this.currentRoom.setCurrentTemperature(newTemperature, true);
+        ArrayList<Room> houseRooms = this.associatedHouse.getRooms();
+        for (int i = 0;i < houseRooms.size();i++) {
+            Room room = houseRooms.get(i);
+            if (room.getRoomID().equals(roomID)) {
+                double oldTemperature = room.getCurrentTemperature();
+                room.setCurrentTemperature(newTemperature, true);
+                double temperatureAfter = room.getCurrentTemperature();
+                houseRooms.set(i, room);
+                this.associatedHouse.setRooms(houseRooms);
+                this.associatedHouse.getAssociatedSimulator().getLogger().temperatureUpdateLog(room.getRoomID(), oldTemperature, temperatureAfter, this.associatedHouse.getShh().isOn(),"A person has manually changed the temperature of a room in remote fashion.", this.username);
+            }
+        }
     }
 
     public void changeTemperatureInCurrentRoom_Local(double newTemperature) {
@@ -80,10 +100,22 @@ public class User {
             return;
         }
         this.currentRoom.setCurrentTemperature(newTemperature, true);
+        ArrayList<Room> houseRooms = this.associatedHouse.getRooms();
+        for (int i = 0;i < houseRooms.size();i++) {
+            Room room = houseRooms.get(i);
+            if (room.getRoomID().equals(this.currentRoom.getRoomID())) {
+                double oldTemperature = room.getCurrentTemperature();
+                room.setCurrentTemperature(newTemperature, true);
+                double temperatureAfter = room.getCurrentTemperature();
+                houseRooms.set(i, room);
+                this.associatedHouse.setRooms(houseRooms);
+                this.associatedHouse.getAssociatedSimulator().getLogger().temperatureUpdateLog(room.getRoomID(), oldTemperature, temperatureAfter, this.associatedHouse.getShh().isOn(), "A person has manually changed the temperature of a room from within it.", this.username);
+            }
+        }
     }
 
     public void setUpZone(House house, String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList) {
-        if (this.userType != UserType.PARENT) {
+        if (this.userType != UserType.PARENT && this.userType != UserType.SIM_USER) {
             System.out.println("Error: Only a parent can set up a heating/cooling zone within the home.");
             return;
         }
@@ -94,24 +126,24 @@ public class User {
         }
     }
 
-    public void turnOnSHH(House house) {
-        if (this.userType != UserType.PARENT) {
+    public void turnOnSHH() {
+        if (this.userType != UserType.PARENT && this.userType != UserType.SIM_USER) {
             System.out.println("Error: Only a parent can turn on the SHH system within a house.");
             return;
         }
-        house.turnOnSHH();
+        this.associatedHouse.turnOnSHH();
     }
 
-    public void turnOffSHH(House house) {
-        if (this.userType != UserType.PARENT) {
+    public void turnOffSHH() {
+        if (this.userType != UserType.PARENT && this.userType != UserType.SIM_USER) {
             System.out.println("Error: Only a parent can turn off the SHH system within a house.");
             return;
         }
-        house.turnOnSHH();
+        this.associatedHouse.turnOnSHH();
     }
 
     public void setUpTemperatureSettingWithinZone(Zone zone, String settingID, double tempInput, int hours1, int minutes1, int hours2, int minutes2) {
-        if (this.userType != UserType.PARENT) {
+        if (this.userType != UserType.PARENT && this.userType != UserType.SIM_USER) {
             System.out.println("Error: Only a parent can create or modify temperature settings for zones.");
             return;
         }
@@ -121,5 +153,82 @@ public class User {
         else {
             zone.addSetting(new TemperatureSetting(settingID, tempInput, hours1, minutes1, hours2, minutes2));
         }
+    }
+
+    public void turnOnSHP() {
+        if (this.userType != UserType.PARENT && this.userType != UserType.SIM_USER) {
+            System.out.println("Error: Only a parent can turn on the SHH system within a house.");
+            return;
+        }
+        this.associatedHouse.turnOnSHP();
+    }
+
+    public void turnOffSHP() {
+        if (this.userType != UserType.PARENT && this.userType != UserType.SIM_USER) {
+            System.out.println("Error: Only a parent can turn off the SHH system within a house.");
+            return;
+        }
+        this.associatedHouse.turnOffSHP();
+    }
+
+    public void enableAwayMode() {
+        if (this.userType != UserType.PARENT && this.userType != UserType.SIM_USER) {
+            System.out.println("Error: Only a parent can turn on the SHH system within a house.");
+            return;
+        }
+        System.out.println("Away On");
+        this.associatedHouse.enableAwayMode();
+    }
+
+    public void disableAwayMode() {
+        if (this.userType != UserType.PARENT && this.userType != UserType.SIM_USER) {
+            System.out.println("Error: Only a parent can turn off the SHH system within a house.");
+            return;
+        }
+        System.out.println("Away Off");
+        this.associatedHouse.disableAwayMode();
+    }
+
+    public void addMotionDetectorToRoom(String roomID) {
+        if (this.userType != UserType.PARENT && this.userType != UserType.SIM_USER) {
+            System.out.println("Error: Only a parent can change the number of seconds before the authorities are alerted of someone being in the home during 'Away Mode'");
+            return;
+        }
+        ArrayList<Room> houseRooms = this.associatedHouse.getRooms();
+        for (int i = 0;i < houseRooms.size();i++) {
+            Room room = houseRooms.get(i);
+            if (room.getRoomID().equals(this.currentRoom.getRoomID())) {
+                room.installMotionDetector();
+                houseRooms.set(i, room);
+                this.associatedHouse.setRooms(houseRooms);
+                return;
+            }
+        }
+    }
+
+    public void removeMotionDetectorFromRoom(String roomID) {
+        if (this.userType != UserType.PARENT && this.userType != UserType.SIM_USER) {
+            System.out.println("Error: Only a parent can change the number of seconds before the authorities are alerted of someone being in the home during 'Away Mode'");
+            return;
+        }
+        ArrayList<Room> houseRooms = this.associatedHouse.getRooms();
+        for (int i = 0;i < houseRooms.size();i++) {
+            Room room = houseRooms.get(i);
+            if (room.getRoomID().equals(this.currentRoom.getRoomID())) {
+                room.removeMotionDetector();
+                houseRooms.set(i, room);
+                this.associatedHouse.setRooms(houseRooms);
+                return;
+            }
+        }
+    }
+
+    public void setTimeForAlert(int newSeconds) {
+        if (this.userType != UserType.PARENT && this.userType != UserType.SIM_USER) {
+            System.out.println("Error: Only a parent can change the number of seconds before the authorities are alerted of someone being in the home during 'Away Mode'");
+            return;
+        }
+        System.out.println("Alert Changed");
+        this.associatedHouse.setTimeForAlert(newSeconds);
     }
 }
