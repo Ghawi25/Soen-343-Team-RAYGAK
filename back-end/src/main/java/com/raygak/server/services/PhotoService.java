@@ -28,7 +28,7 @@ public class PhotoService {
         return photoRepository.findByUsername(username);
     }
 
-    public Optional<Photo> getPhotoByUsername(ObjectId id) {
+    public Optional<Photo> getPhotoById(ObjectId id) {
         return photoRepository.findById(id);
     }
 
