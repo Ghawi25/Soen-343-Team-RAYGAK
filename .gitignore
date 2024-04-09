@@ -1,5 +1,6 @@
 .idea/
 # Logs
+logFile.txt
 
 node_modules
 dist

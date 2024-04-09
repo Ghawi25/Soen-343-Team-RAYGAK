@@ -1,18 +1,21 @@
-package com.raygak.server.smarthome.heating;
+package com.raygak.server.modules;
 
+import com.raygak.server.mediation.Mediator;
 import com.raygak.server.smarthome.House;
 import com.raygak.server.smarthome.User;
+import lombok.Getter;
 
-public class SHH {
+@Getter
+public class SHH extends Module {
     private House house;
+    private boolean isSHPInAwayMode = false;
+    private double currentHouseTemperature;
     private boolean isOn = false;
 
-    public SHH(House house) {
+    public SHH(Mediator mediator, House house) {
+        super(mediator);
         this.house = house;
-    }
-
-    public boolean getIsOn() {
-        return this.isOn;
+        this.currentHouseTemperature = this.house.getIndoorTemperature();
     }
 
     public void turnOn() {
@@ -21,6 +24,15 @@ public class SHH {
 
     public void turnOff() {
         this.isOn = false;
+    }
+
+    public void setCurrentHouseTemperature(double newTemperature) {
+        double oldTemp = this.currentHouseTemperature;
+        this.currentHouseTemperature = newTemperature;
+        double newTemp = this.currentHouseTemperature;
+        if (oldTemp != newTemp) {
+            this.mediator.notify(this, "TemperatureUpdate " + newTemperature);
+        }
     }
 
     public void dangerousTemperatureUpdate(String status) {
@@ -64,5 +76,15 @@ public class SHH {
 
     public void newInhabitantUpdate(User newInhabitant, String roomID) {
         System.out.println("An inhabitant with user account username " + newInhabitant.getUsername() + "has entered room" + roomID);
+    }
+
+    @Override
+    public void triggerEvent(String event) {
+        if (event.equals("Away Mode On")) {
+            this.isSHPInAwayMode = true;
+        }
+        if (event.equals("Away Mode Off")) {
+            this.isSHPInAwayMode = false;
+        }
     }
 }

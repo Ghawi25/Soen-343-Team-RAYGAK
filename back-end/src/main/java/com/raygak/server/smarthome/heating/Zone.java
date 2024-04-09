@@ -22,7 +22,6 @@ public class Zone {
 		this.settingList = settingListInput;
 		this.roomList = roomListInput;
 		for (Room r : this.roomList) {
-			System.out.println("ADDING ROOM " + r.getRoomID() + " TO ZONE " + this.zoneID);
 			r.setZone(this);
 		}
 	}

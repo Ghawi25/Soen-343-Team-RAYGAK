@@ -23,7 +23,7 @@ function SHS() {
       <>
         <form id="login" className="bubble" onSubmit={handleSubmit}>
           <h5>Sign-In</h5>
-          <div className="field">
+          <div className="field--login">
             <label htmlFor="username">Username:</label>
             <input
               type="text"
@@ -33,7 +33,7 @@ function SHS() {
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-          <div className="field">
+          <div className="field--login">
             <label htmlFor="password">Password:</label>
             <input
               type="password"

@@ -4,6 +4,8 @@ import com.raygak.server.controllers.TemperatureController;
 import com.raygak.server.smarthome.heating.Season;
 import com.raygak.server.states.*;
 import lombok.Getter;
+import lombok.extern.java.Log;
+
 import java.time.LocalTime;
 import java.util.Date;
 
@@ -17,6 +19,7 @@ public class Simulator {
     private House house;
     private User currentUser = null;
     private State currentState;
+    private LogFileMaker logger = new LogFileMaker();
 
     private SimulationOffState simOff;
     private SimulationOnAndSHHOffAndSHPOffState simOn_AllOff;
@@ -34,6 +37,7 @@ public class Simulator {
         this.simOn_SHHOn = new SimulationOnAndSHHOnAndSHPOffState(this);
         this.simOn_SHPOn = new SimulationOnAndSHHOffAndSHPOnState(this);
         this.simOn_AllOn = new SimulationOnAndSHHOnAndSHPOnState(this);
+        this.house.setAssociatedSimulator(this);
     }
 
     public void setCurrentDate(Date newDate) {
@@ -72,8 +76,8 @@ public class Simulator {
     public void setOutdoorTemperature(double newTemperature) { this.currentState.setOutdoorTemperature(newTemperature); }
     public void updateAllRoomTemperatures() { this.currentState.updateAllRoomTemperatures(); }
     public void displayTemperatureInRoomWithID(String roomID) { this.currentState.displayTemperatureInRoomWithID(roomID); }
-    public void changeTemperatureInCurrentRoom_Remote(double newTemperature) {
-        this.currentState.changeTemperatureInCurrentRoom_Remote(newTemperature);
+    public void changeTemperatureInRoom_Remote(String roomID, double newTemperature) {
+        this.currentState.changeTemperatureInRoom_Remote(roomID, newTemperature);
     }
     public void changeTemperatureInCurrentRoom_Local(double newTemperature) {
         this.currentState.changeTemperatureInCurrentRoom_Local(newTemperature);

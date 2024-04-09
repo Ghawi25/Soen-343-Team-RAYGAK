@@ -1,9 +1,13 @@
 package com.raygak.server.smarthome;
 
 import com.raygak.server.commands.*;
+import com.raygak.server.mediation.SHSMediator;
+import com.raygak.server.modules.SHH;
 import com.raygak.server.smarthome.heating.*;
-import com.raygak.server.smarthome.security.SHP;
+import com.raygak.server.modules.SHP;
 import com.raygak.server.smarthome.security.SHPEventType;
+import com.raygak.server.smarthome.security.SHPListener;
+import com.raygak.server.timers.IntruderAlertTimer;
 import lombok.Getter;
 
 import java.text.DecimalFormat;
@@ -21,9 +25,11 @@ public class House {
     private double indoorTemperature;
     private double outdoorTemperature;
     private Season currentSeason;
+    private SHSMediator mediator = new SHSMediator();
     private SHH shh;
     private SHP shp;
     private HouseControl houseControl = new HouseControl();
+    private Simulator associatedSimulator;
 
     //Boolean to check if the house is currently empty during winter.
     private boolean isInWinterAndEmptyHouseProtocol = false;
@@ -36,14 +42,16 @@ public class House {
         this.indoorTemperature = outdoorTempInput;
         this.currentSeason = seasonInput;
         this.isInWinterAndEmptyHouseProtocol = true;
-        this.shh = new SHH(this);
-        this.shp = new SHP(this);
+        this.shh = new SHH(this.mediator, this);
+        this.shp = new SHP(this.mediator, this);
+        this.shp.setHouse(this);
     }
 
     public House(ArrayList<Room> roomListInput) {
         this.rooms = roomListInput;
-        this.shh = new SHH(this);
-        this.shp = new SHP(this);
+        this.shh = new SHH(this.mediator, this);
+        this.shp = new SHP(this.mediator, this);
+        this.shp.setHouse(this);
     }
 
     public House(ArrayList<Room> roomListInput, ArrayList<Zone> zoneListInput, double outdoorTempInput, Season seasonInput) {
@@ -51,6 +59,7 @@ public class House {
         //Every User, window and light in every room in the input room list is considered to be a part of the house itself.
         for (Room r : roomListInput) {
             for (User p : r.getInhabitants()) {
+                p.setAssociatedHouse(this);
                 this.inhabitants.add(p);
             }
             for (Window w : r.getWindows()) {
@@ -62,18 +71,25 @@ public class House {
             this.lights.add(r.getLight());
         }
         this.zones = zoneListInput;
-
-        for (Room r : this.rooms) {
-            r.setCurrentTemperature(outdoorTempInput, false);
-        }
         this.indoorTemperature = outdoorTempInput;
         this.outdoorTemperature = outdoorTempInput;
         this.currentSeason = seasonInput;
         if (this.inhabitants.isEmpty() && this.currentSeason == Season.WINTER) {
             isInWinterAndEmptyHouseProtocol = true;
         }
-        this.shh = new SHH(this);
-        this.shp = new SHP(this);
+        this.shh = new SHH(this.mediator, this);
+        this.shp = new SHP(this.mediator, this);
+        this.shp.setHouse(this);
+        this.mediator.setSHH(this.shh);
+        this.mediator.setSHP(this.shp);
+        for (Room r : this.rooms) {
+            r.setAssociatedHouse(this);
+            r.setCurrentTemperature(outdoorTempInput, false);
+        }
+    }
+
+    public void setAssociatedSimulator(Simulator newSimulator) {
+        this.associatedSimulator = newSimulator;
     }
 
 
@@ -84,11 +100,13 @@ public class House {
             averageIndoorTemp += r.getCurrentTemperature();
         }
         this.indoorTemperature = Double.parseDouble(temperatureFormat.format(averageIndoorTemp / this.rooms.size()));
+        this.shh.setCurrentHouseTemperature(this.indoorTemperature);
         checkForDangerousTemperature();
     }
 
     public void summerProtocol() {
-        if (this.shh.getIsOn()) {
+        LogFileMaker logger = this.associatedSimulator.getLogger();
+        if (this.shh.isOn()) {
             if ((this.outdoorTemperature < this.indoorTemperature && this.currentSeason == Season.SUMMER) && this.inhabitants.size() > 0) {
                 if (this.isInWinterAndEmptyHouseProtocol) {
                     reverseWinterAndEmptyHouseProtocol();
@@ -96,34 +114,67 @@ public class House {
                 isInSummerProtocol = true;
                 System.out.println("SUMMER PROTOCOL.");
                 for (Room r : this.rooms) {
+                    boolean isHVACInitiallyOpen = r.isHVACOn();
                     turnOffHVACInRoomWithID(r.getRoomID());
+                    boolean isHVACOpenAfter = r.isHVACOn();
+                    if (isHVACInitiallyOpen != isHVACOpenAfter) {
+                        logger.openCloseLog("HVAC Unit in Room", r.getRoomID(), isHVACOpenAfter ? "Open" : "Closed", "The outside temperature of the house has become equal to or greater than the inside temperature, or nobody is home, during the summer season.");
+                    }
                     if (this.inhabitants.size() > 0) {
                         for (Window w : r.getWindows()) {
-                            openWindowWithID(w.getWindowID());
+                            if (this.shh.isSHPInAwayMode()) {
+                                logger.unableToOpenOrCloseLog("Window", w.getWindowID(), w.isOpen() ? "Opened" : "Closed", "Away Mode");
+                            } else {
+                                boolean isInitiallyOpen = w.isOpen();
+                                openWindowWithID(w.getWindowID());
+                                boolean isOpenAfter = w.isOpen();
+                                if (isInitiallyOpen != isOpenAfter) {
+                                    logger.openCloseLog("Window", w.getWindowID(), isOpenAfter ? "Open" : "Closed", "The outside temperature of the house has become equal to or greater than the inside temperature, or nobody is home, during the summer season.");
+                                }
+                                if (isInitiallyOpen == isOpenAfter) {
+                                    logger.unableToOpenOrCloseLog("Window", w.getWindowID(), isInitiallyOpen ? "Opened" : "Closed", "Obstruction");
+                                }
+                            }
                         }
                     }
                 }
+                this.associatedSimulator.getLogger().protocolLog(this.shh.isOn(), "The outside temperature of the house has become lower than the inside temperature and at least one person is home during the summer season.");
             }
         }
     }
 
     public void reverseSummerProtocol() {
-        if (this.shh.getIsOn()) {
+        LogFileMaker logger = this.associatedSimulator.getLogger();
+        if (this.shh.isOn()) {
             if ((this.outdoorTemperature >= this.indoorTemperature || this.currentSeason == Season.SUMMER) || this.inhabitants.size() == 0) {
                 System.out.println("REVERSE SUMMER PROTOCOL.");
                 isInSummerProtocol = false;
                 for (Room r : this.rooms) {
+                    boolean isHVACInitiallyOpen = r.isHVACOn();
                     turnOnHVACInRoomWithID(r.getRoomID());
+                    boolean isHVACOpenAfter = r.isHVACOn();
+                    if (isHVACInitiallyOpen != isHVACOpenAfter) {
+                        logger.openCloseLog("HVAC Unit in Room", r.getRoomID(), isHVACOpenAfter ? "Open" : "Closed", "The outside temperature of the house has become equal to or greater than the inside temperature, or nobody is home, during the summer season.");
+                    }
                     for (Window w : r.getWindows()) {
+                        boolean isInitiallyOpen = w.isOpen();
                         closeWindowWithID(w.getWindowID());
+                        boolean isOpenAfter = w.isOpen();
+                        if (isInitiallyOpen != isOpenAfter) {
+                            logger.openCloseLog("Window", w.getWindowID(), isOpenAfter ? "Open" : "Closed", "The outside temperature of the house has become equal to or greater than the inside temperature, or nobody is home, during the summer season.");
+                        }
+                        if (isInitiallyOpen == isOpenAfter) {
+                            logger.unableToOpenOrCloseLog("Window", w.getWindowID(), isInitiallyOpen ? "Opened" : "Closed", "Obstruction");
+                        }
                     }
                 }
+                logger.protocolLog(this.shh.isOn(), "The outside temperature of the house has become equal to or greater than the inside temperature, or nobody is home, during the summer season.");
             }
         }
     }
 
     public void updateAllRoomTemperatures() {
-        if (this.shh.getIsOn()) {
+        if (this.shh.isOn()) {
             for (Room r : this.rooms) {
                 r.changeCurrentTemperature(this.outdoorTemperature);
                 if (r.getCurrentTemperature() >= 135) {
@@ -173,10 +224,10 @@ public class House {
 
     //Dangerous temperature levels need to be checked for in order for emergency notifications to be sent as needed.
     public void checkForDangerousTemperature() {
-        if (this.shh.getIsOn()) {
+        if (this.shh.isOn()) {
             //Source of potential temperature at which there could be a house fire present: https://www.ready.gov/home-fires
             //Temperature units used: Celsius
-            if (this.indoorTemperature > 40) {
+            if (this.indoorTemperature > 135.0) {
                 this.shh.dangerousTemperatureUpdate("Too Hot");
             }
             //Source of potential temperature at which pipes are susceptible to bursting: https://www.freezemiser.com/blogs/blog/at-what-temperature-do-pipes-burst
@@ -188,7 +239,8 @@ public class House {
 
     //Lowers the temperature of the house (all of its rooms) in winter if the house is empty. Done for energy-saving reasons.
     public void winterAndEmptyHouseProtocol() {
-        if (this.shh.getIsOn()) {
+        LogFileMaker logger = this.associatedSimulator.getLogger();
+        if (this.shh.isOn()) {
             if (this.currentSeason == Season.WINTER && this.inhabitants.size() == 0) {
                 if (this.isInSummerProtocol) {
                     reverseSummerProtocol();
@@ -209,6 +261,7 @@ public class House {
                     this.rooms.set(i, r);
                 }
             }
+            this.associatedSimulator.getLogger().protocolLog(this.shh.isOn(), "The house has become uninhabited during the winter season.");
             computeIndoorTemperature();
         }
     }
@@ -216,7 +269,7 @@ public class House {
     //When the season transitions from Winter to Spring or somebody enters the house
     //during the "winter and empty house protocol", reverse the changes made to the room temperatures via that protocol.
     public void reverseWinterAndEmptyHouseProtocol() {
-        if (this.shh.getIsOn()) {
+        if (this.shh.isOn()) {
             this.isInWinterAndEmptyHouseProtocol = false;
             System.out.println("REVERSE WINTER AND EMPTY HOUSE PROTOCOL.");
             for (int i = 0; i < this.rooms.size(); i++) {
@@ -232,6 +285,7 @@ public class House {
                 r.setZone(z);
                 this.rooms.set(i, r);
             }
+            this.associatedSimulator.getLogger().protocolLog(this.shh.isOn(), "The house has become inhabited once again during the winter season.");
             computeIndoorTemperature();
         }
     }
@@ -239,8 +293,10 @@ public class House {
 
     //In adding a new room, add every inhabitant of that room to the house's inhabitant list
     public void addRoom(Room newRoom) {
+        newRoom.setAssociatedHouse(this);
         this.rooms.add(newRoom);
         for (User p : newRoom.getInhabitants()) {
+            p.setAssociatedHouse(this);
             this.inhabitants.add(p);
         }
         computeIndoorTemperature();
@@ -289,24 +345,29 @@ public class House {
         boolean oldIsInWinterAndEmptyHouseProtocol = this.isInWinterAndEmptyHouseProtocol;
         //Due to how the commencement of this protocol occurred after the removal of the last final inhabitant from the house,
         //the steps need to be reversed in order to restore the temperature to its proper
-        if (this.shh.getIsOn() && this.isInWinterAndEmptyHouseProtocol == true) {
+        if (this.shh.isOn() && this.isInWinterAndEmptyHouseProtocol == true) {
             reverseWinterAndEmptyHouseProtocol();
         }
         this.inhabitants.add(newInhabitant);
         for (Room r : this.rooms) {
             if (r.getRoomID().equals(inhabitedRoomID)) {
+                newInhabitant.setAssociatedHouse(this);
                 r.addInhabitant(newInhabitant);
                 newInhabitant.setCurrentRoom(r);
                 //Due to how the indoor temperature is computed in the "reverseWinterAndEmptyHouseProtocol" method, it needs
                 //to be computed via an explicit function call if the aforementioned method is not called.
-                if (this.shh.getIsOn()) {
+                if (this.shh.isOn()) {
                     if (oldIsInWinterAndEmptyHouseProtocol == false) {
                         computeIndoorTemperature();
                     }
                     summerProtocol();
                 }
-                if (this.shp.getIsOn()) {
-                    this.shp.notify(SHPEventType.MOTION_DETECTED);
+                if (this.shp.isOn() && r.isMotionDetectorInstalled()) {
+                    this.associatedSimulator.getLogger().motionDetectedLog(r.getRoomID(), newInhabitant.getUsername());
+                    this.shp.notify(SHPEventType.MOTION_DETECTED, newInhabitant.getUsername());
+                    IntruderAlertTimer intruderAlertTimer = new IntruderAlertTimer(newInhabitant.getUsername(), this);
+                    r.setIntruderAlertTimer(intruderAlertTimer);
+                    r.startIntruderAlertTimer();
                 }
                 return;
             }
@@ -327,7 +388,7 @@ public class House {
                             if (this.inhabitants.size() == 0) {
                                 System.out.println("The house is now empty.");
                             }
-                            if (this.shh.getIsOn()) {
+                            if (this.shh.isOn()) {
                                 winterAndEmptyHouseProtocol();
                                 if (this.inhabitants.size() == 0 && isInSummerProtocol) {
                                     reverseSummerProtocol();
@@ -378,11 +439,15 @@ public class House {
 
     public void setIndoorTemperature(double temperatureInput) {
         this.indoorTemperature = temperatureInput;
+        this.shh.setCurrentHouseTemperature(temperatureInput);
         checkForDangerousTemperature();
     }
 
     public void setOutdoorTemperature(double temperatureInput) {
+        double oldTemperature = this.outdoorTemperature;
         this.outdoorTemperature = temperatureInput;
+        double newTemperature = this.outdoorTemperature;
+        this.associatedSimulator.getLogger().temperatureUpdateLog("Outside", oldTemperature, newTemperature, this.shh.isOn(), "The outside temperature has been changed by a simulator user.", "Simulator User");
         if (isInSummerProtocol == false) {
             summerProtocol();
         } else {
@@ -392,7 +457,7 @@ public class House {
 
     public void setCurrentSeason(Season newSeason) {
         this.currentSeason = newSeason;
-        if (this.shh.getIsOn()) {
+        if (this.shh.isOn()) {
             if (this.currentSeason != Season.SUMMER && isInWinterAndEmptyHouseProtocol) {
                 reverseSummerProtocol();
             }
@@ -454,13 +519,19 @@ public class House {
     }
 
     public void openDoorWithName(String doorName) {
-        DoorOpenCommand command = new DoorOpenCommand(this, doorName);
-        this.houseControl.setCommand(command);
-        this.houseControl.execute();
-        this.rooms = ((DoorOpenCommand)this.houseControl.getCommand()).getHouse().getRooms();
-        this.doors = ((DoorOpenCommand)this.houseControl.getCommand()).getHouse().getDoors();
-        if (this.shp.getIsOn()) {
-            this.shp.notify(SHPEventType.DOOR_OPENED);
+        if (this.shh.isSHPInAwayMode()) {
+            System.out.println("[ERROR] Cannot open a window while the house is in 'Away Mode'!");
+            this.associatedSimulator.getLogger().unableToOpenOrCloseLog("Door", doorName, "Open", "Away Mode");
+        } else {
+            DoorOpenCommand command = new DoorOpenCommand(this, doorName);
+            this.houseControl.setCommand(command);
+            this.houseControl.execute();
+            this.rooms = ((DoorOpenCommand) this.houseControl.getCommand()).getHouse().getRooms();
+            this.doors = ((DoorOpenCommand) this.houseControl.getCommand()).getHouse().getDoors();
+            if (this.shp.isOn() && this.getDoorByName(doorName).isOpen()) {
+                this.associatedSimulator.getLogger().openCloseLog("Door", doorName, "Open", "The door with name '" + doorName + " has been opened while the home is in 'Away Mode'.");
+                this.shp.notify(SHPEventType.DOOR_OPENED);
+            }
         }
     }
 
@@ -473,13 +544,19 @@ public class House {
     }
 
     public void openWindowWithID(String windowID) {
-        WindowOpenCommand command = new WindowOpenCommand(this, windowID);
-        this.houseControl.setCommand(command);
-        this.houseControl.execute();
-        this.rooms = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getRooms();
-        this.windows = ((WindowOpenCommand)this.houseControl.getCommand()).getHouse().getWindows();
-        if (this.shp.getIsOn()) {
-            this.shp.notify(SHPEventType.WINDOW_OPENED);
+        if (this.shh.isSHPInAwayMode()) {
+            System.out.println("[ERROR] Cannot open a window while the house is in 'Away Mode'!");
+            this.associatedSimulator.getLogger().unableToOpenOrCloseLog("Window", windowID, "Open", "Away Mode");
+        } else {
+            WindowOpenCommand command = new WindowOpenCommand(this, windowID);
+            this.houseControl.setCommand(command);
+            this.houseControl.execute();
+            this.rooms = ((WindowOpenCommand) this.houseControl.getCommand()).getHouse().getRooms();
+            this.windows = ((WindowOpenCommand) this.houseControl.getCommand()).getHouse().getWindows();
+            if (this.shp.isOn() && this.getWindowByID(windowID).isOpen()) {
+                this.associatedSimulator.getLogger().openCloseLog("Window", windowID, "Open", "The window with ID '" + windowID + " has been opened while the home is in 'Away Mode'.");
+                this.shp.notify(SHPEventType.WINDOW_OPENED);
+            }
         }
     }
 
@@ -561,21 +638,81 @@ public class House {
         this.shp.turnOff();
     }
 
+    public void closeAllDoorsAndWindows() {
+        for (Door d : this.doors) {
+            boolean isDoorInitiallyOpen = d.isOpen();
+            d.closeDoor();
+            boolean isDoorOpenAfter = d.isOpen();
+            if (isDoorInitiallyOpen != isDoorOpenAfter) {
+                this.associatedSimulator.getLogger().openCloseLog("Door", d.getName(), isDoorOpenAfter ? "Open" : "Closed", "'Away Mode' has been turned on, automatically closing all doors in the house.");
+            }
+            if (isDoorInitiallyOpen == isDoorOpenAfter) {
+                this.associatedSimulator.getLogger().unableToOpenOrCloseLog("Door", d.getName(), isDoorOpenAfter ? "Opened" : "Closed", "Obstruction");
+            }
+        }
+        for (Window w : this.windows) {
+            boolean isWindowInitiallyOpen = w.isOpen();
+            w.close();
+            boolean isWindowOpenAfter = w.isOpen();
+            if (isWindowInitiallyOpen != isWindowOpenAfter) {
+                this.associatedSimulator.getLogger().openCloseLog("Window", w.getWindowID(), isWindowOpenAfter ? "Open" : "Closed", "'Away Mode' has been turned on, automatically closing all doors in the house.");
+            }
+            if (isWindowInitiallyOpen == isWindowOpenAfter) {
+                this.associatedSimulator.getLogger().unableToOpenOrCloseLog("Window", w.getWindowID(), isWindowOpenAfter ? "Opened" : "Closed", "Obstruction");
+            }
+        }
+    }
+
     public void enableAwayMode() {
-        if (this.shp.getIsOn()) {
+        if (this.shp.isOn()) {
             this.shp.turnOnAwayMode();
         }
     }
 
     public void disableAwayMode() {
-        if (this.shp.getIsOn()) {
+        if (this.shp.isOn()) {
             this.shp.turnOffAwayMode();
         }
     }
 
     public void setTimeForAlert(int newSeconds) {
-        if (this.shp.getIsOn()) {
+        if (this.shp.isOn()) {
             this.shp.setTimeForAlert(newSeconds);
+        }
+    }
+
+    public void addSHPListener(SHPListener newListener) {
+        this.shp.addListener(newListener);
+    }
+
+    public void startAll15DegreeTimers() {
+        for (Room r : this.rooms) {
+            if (r.getFifteenDegreeTimer().isRunning() == false) {
+                r.start15DegreeTimer();
+            }
+        }
+    }
+
+    public void stopAll15DegreeTimers() {
+        for (Room r : this.rooms) {
+            r.stop15DegreeTimer();
+        }
+    }
+
+    public void stopAllIntruderAlertTimers() {
+        for (Room r : this.rooms) {
+            r.stopIntruderAlertTimer();
+        }
+    }
+
+    public void setTempOfRoom(String roomID, double newTemp) {
+        for (int i = 0;i < this.rooms.size();i++) {
+            Room r = this.rooms.get(i);
+            if (r.getRoomID().equals(roomID)) {
+                r.setCurrentTemperature(newTemp);
+                this.rooms.set(i, r);
+                return;
+            }
         }
     }
 }

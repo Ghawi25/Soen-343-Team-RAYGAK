@@ -110,26 +110,31 @@ public class SimulationOnAndSHHOnAndSHPOnState extends State {
         h.changeZone(zoneID, type, settingList, roomList);
         this.simulator.setHouse(h);
     }
-    public void changeTemperatureInCurrentRoom_Remote(double newTemperature) {
+    public void changeTemperatureInRoom_Remote(String roomID, double newTemperature) {
         User u = this.simulator.getCurrentUser();
-        u.changeTemperatureInCurrentRoom_Remote(newTemperature);
+        u.changeTemperatureInRoom_Remote(roomID, newTemperature);
+        this.simulator.setHouse(u.getAssociatedHouse());
     }
     public void changeTemperatureInCurrentRoom_Local(double newTemperature) {
         User u = this.simulator.getCurrentUser();
         u.changeTemperatureInCurrentRoom_Local(newTemperature);
+        this.simulator.setHouse(u.getAssociatedHouse());
     }
     public void setUpZone(House house, String zoneID, ZoneType type, ArrayList<TemperatureSetting> settingList, ArrayList<Room> roomList)  {
         User u = this.simulator.getCurrentUser();
         u.setUpZone(house, zoneID, type, settingList, roomList);
+        this.simulator.setHouse(u.getAssociatedHouse());
     }
     public void turnOnSHH() {
         System.out.println("SHH is already turned on.");
     }
     public void turnOffSHH() {
-        House h = this.simulator.getHouse();
-        h.turnOffSHH();
-        this.simulator.setHouse(h);
-        SimulationOnAndSHHOffAndSHPOnState newState = new SimulationOnAndSHHOffAndSHPOnState(this.simulator);
+        User u = this.simulator.getCurrentUser();
+        u.turnOffSHH();
+        this.simulator.setHouse(u.getAssociatedHouse());
+//        House h = this.simulator.getHouse();
+//        h.turnOffSHH();
+//        this.simulator.setHouse(h);
         this.simulator.setCurrentState(this.simulator.getSimOn_SHPOn());
     }
 
@@ -198,21 +203,39 @@ public class SimulationOnAndSHHOnAndSHPOnState extends State {
     }
 
     public void turnOffSHP() {
-        House h = this.simulator.getHouse();
-        h.turnOffSHP();
-        this.simulator.setHouse(h);
+        User u = this.simulator.getCurrentUser();
+        u.turnOffSHP();
+        this.simulator.setHouse(u.getAssociatedHouse());
+//        House h = this.simulator.getHouse();
+//        h.turnOffSHP();
+//        this.simulator.setHouse(h);
         this.simulator.setCurrentState(this.simulator.getSimOn_SHHOn());
     }
 
     public void enableAwayMode() {
-        this.simulator.enableAwayMode();
+        User u = this.simulator.getCurrentUser();
+        u.enableAwayMode();
+        this.simulator.setHouse(u.getAssociatedHouse());
+//        House house = this.simulator.getHouse();
+//        house.enableAwayMode();
+//        this.simulator.setHouse(house);
     }
 
     public void disableAwayMode() {
-        this.simulator.disableAwayMode();
+        User u = this.simulator.getCurrentUser();
+        u.disableAwayMode();
+        this.simulator.setHouse(u.getAssociatedHouse());
+//        House house = this.simulator.getHouse();
+//        house.disableAwayMode();
+//        this.simulator.setHouse(house);
     }
 
     public void setTimeForAlert(int newSeconds) {
-        this.simulator.setTimeForAlert(newSeconds);
+        User u = this.simulator.getCurrentUser();
+        u.setTimeForAlert(newSeconds);
+        this.simulator.setHouse(u.getAssociatedHouse());
+//        House h = this.simulator.getHouse();
+//        h.setTimeForAlert(newSeconds);
+//        this.simulator.setHouse(h);
     }
 }
