@@ -114,7 +114,7 @@ public class SHHController {
     public ResponseEntity<Boolean> toggleHeatingSys(@PathVariable(value = "isHeatingOn") Boolean isHeatingOn) {
         HouseView house = HouseView.getHome();
         House houseRef = house.getHouse();
-        if (isHeatingOn) {
+        if (!isHeatingOn) {
             houseRef.turnOnSHH();
         } else {
             houseRef.turnOffSHH();

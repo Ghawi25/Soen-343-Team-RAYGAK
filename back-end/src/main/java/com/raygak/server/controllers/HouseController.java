@@ -32,11 +32,16 @@ public class HouseController {
         HouseView house = HouseView.getHome();
         House houseRef = house.getHouse();
         LogsPOJO logsPOJO = new LogsPOJO("House temperature: " + houseRef.getIndoorTemperature());
+        logsPOJO.addMsg(houseRef.getShh().isOn() ? "House - SHH is On" : "House - SHH is Off");
         logsPOJO.addMsg("Room 1 temperature: " + houseRef.getRooms().get(0).getCurrentTemperature());
         logsPOJO.addMsg("Room 2 temperature: " + houseRef.getRooms().get(1).getCurrentTemperature());
-        logsPOJO.addMsg(houseRef.getRoomByID("1").isHVACOn() ? "Room 1 - HVAC On" : "Room 1 - HVAC Off");
-        logsPOJO.addMsg(houseRef.getDoorByName("Room 1 Door").isOpen() ? "Door 1 Open" : "Door 1 Closed");
-        logsPOJO.addMsg(houseRef.getDoorByName("Room 2 Door").isOpen() ? "Door 2 Open" : "Door 2 Closed");
+        for (Zone zone: houseRef.getZones()){
+            logsPOJO.addMsg("Zone " + zone.getZoneID() + " has rooms:");
+            for (Room room : zone.getRoomList()) {
+                logsPOJO.addMsg("Room: " + room.getRoomID());
+            }
+        }
+
         return new ResponseEntity<LogsPOJO>(logsPOJO,
                 HttpStatus.OK);
     }
