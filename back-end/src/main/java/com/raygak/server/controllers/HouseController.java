@@ -2,12 +2,9 @@ package com.raygak.server.controllers;
 
 import com.raygak.server.models.LogsPOJO;
 import com.raygak.server.models.RoomPOJO;
-import com.raygak.server.models.TemperatureSettingPOJO;
-import com.raygak.server.models.ZonePOJO;
 import com.raygak.server.smarthome.House;
 import com.raygak.server.smarthome.HouseView;
 import com.raygak.server.smarthome.Room;
-import com.raygak.server.smarthome.heating.TemperatureSetting;
 import com.raygak.server.smarthome.heating.Zone;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -77,20 +74,5 @@ public class HouseController {
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @DeleteMapping(path = "/room")
-    public ResponseEntity deleteRoomById(@RequestParam("id") String roomId) {
-        HouseView house = HouseView.getHome();
-        House houseRef = house.getHouse();
-        try {
-            houseRef.removeRoom(roomId);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body("Error: The zone with the provided ID does not exist.");
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
