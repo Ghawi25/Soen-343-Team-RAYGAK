@@ -1,6 +1,6 @@
 package com.raygak.server.controllers;
 
-import com.raygak.server.models.RoomWrapper;
+import com.raygak.server.models.ZoneWrapper;
 import com.raygak.server.models.TemperatureSettingPOJO;
 import com.raygak.server.models.ZonePOJO;
 import com.raygak.server.smarthome.House;
@@ -78,15 +78,14 @@ public class SHHController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping(path = "/zone/{zoneId}")
-    public ResponseEntity<HttpStatus> updateRoomTemp(@PathVariable(value = "zoneId") String zoneId,
-                                                     @RequestBody RoomWrapper roomIds) {
+    @PostMapping(path = "/zones")
+    public ResponseEntity<HttpStatus> updateRoomTemp(@RequestBody ZoneWrapper newZone) {
         HouseView house = HouseView.getHome();
         House houseRef = house.getHouse();
         ArrayList<Room> allRooms = houseRef.getRooms();
         ArrayList<Room> roomsList = new ArrayList<>();
 
-        for(String id: roomIds.getRoomIds()) {
+        for(String id: newZone.getRoomIds()) {
             for(Room room : allRooms) {
                 if(room.getRoomID().equals(id)) {
                     roomsList.add(room);
@@ -102,7 +101,7 @@ public class SHHController {
         settingList.add(temp2);
         settingList.add(temp3);
 
-        Zone zone = new Zone(zoneId, ZoneType.HEATING, settingList, roomsList);
+        Zone zone = new Zone(newZone.getZoneName(), ZoneType.HEATING, settingList, roomsList);
         try {
             houseRef.addZone(zone);
         } catch (Exception e) {
