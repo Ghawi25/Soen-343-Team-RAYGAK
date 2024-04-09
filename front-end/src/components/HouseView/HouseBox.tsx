@@ -5,7 +5,7 @@ var roomPositions = {};
 // function to generate a rectangle for the room
 const Room = ({ name, x, y, width, height, id }: any) => {
   return (
-    <g key={id} id={id}>
+    <g key={id} id={name}>
       <rect
         x={x * width * 100}
         y={y * height * 100}
@@ -335,6 +335,7 @@ function HouseBox() {
         {renderWindows(house)}
         {renderLights(house)}
       </svg>
+      // <img src="houseView.jpg" alt="houseView" />
     );
   }
 }

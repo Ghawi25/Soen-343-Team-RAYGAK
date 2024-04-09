@@ -16,6 +16,7 @@ public final class HouseView {
     private static HouseView home;
     @Getter @Setter
     public House house;
+    public House viewHouse;
 
     private HouseView() {
         // Init our home instance here
@@ -128,7 +129,7 @@ public final class HouseView {
             }
         }
 
-        house = new House(rooms);
+        viewHouse = new House(rooms);
     }
 
     public static HouseView getHome() {
@@ -136,7 +137,7 @@ public final class HouseView {
             Demo demo = new Demo();
             House newHouse = demo.initialize();
             home = new HouseView();
-            // home.setHouse(newHouse);
+            home.setHouse(newHouse);
         }
         return home;
     }
