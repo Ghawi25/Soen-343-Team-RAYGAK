@@ -4,17 +4,16 @@ import React, { useState, useEffect } from "react";
 
 // interfaces for Zone and Room
 interface Zone {
-  zoneID?: string;
-  zoneName: string;
+  zoneID: string;
   zoneType: string;
-  rooms: Room[];
+  roomIds: string[];
 }
 
-interface Room {
-  roomID?: string;
-  roomName: string;
-  temperature?: number;
-}
+// interface Room {
+//   roomID?: string;
+//   roomName: string;
+//   temperature?: number;
+// }
 
 // The SHH component
 function SHH() {
@@ -35,7 +34,7 @@ function SHH() {
   }, []);
 
   const fetchZones = async () => {
-    const response = await fetch("your_api_endpoint/zones");
+    const response = await fetch("http://localhost:8080/api/SHH/zones");
     const data = await response.json();
     setZones(data);
   };
@@ -47,9 +46,9 @@ function SHH() {
   const handleRoomChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const room = zones
       .find((zone) => zone.zoneID === selectedZone)
-      ?.rooms.find((room) => room.roomID === e.target.value);
+      ?.roomIds.find((id) => id === e.target.value);
     setSelectedRoom(e.target.value);
-    if (room) setRoomTemperature(room.temperature ?? 20);
+    if (room) setRoomTemperature(20);
   };
 
   const deleteRoom = async () => {
@@ -62,7 +61,7 @@ function SHH() {
 
   const deleteZone = async () => {
     // Send DELETE request to delete zone
-    await fetch(`your_api_endpoint/zones/${selectedZone}`, {
+    await fetch(`http://localhost:8080/api/SHH/zones/${selectedZone}`, {
       method: "DELETE",
     });
     fetchZones(); // Refresh zones after deletion
@@ -82,29 +81,26 @@ function SHH() {
 
   const toggleHeatingSystem = async () => {
     setIsHeatingOn(!isHeatingOn);
-    await fetch("your_api_endpoint/heatingSystem", {
+    await fetch(`http://localhost:8080/api/SHH/heatingSystem/${isHeatingOn}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ on: !isHeatingOn }),
     });
   };
 
   const createZone = async (e: React.FormEvent) => {
     e.preventDefault();
-    const rooms = newRoomNames
-      .split(",")
-      .map((name) => ({ roomName: name.trim() }));
+    const rooms = newRoomNames.split(",");
 
-    const newZone: Zone = {
+    const newZone = {
       zoneName: newZoneName,
       zoneType: newZoneType,
-      rooms: rooms,
+      roomIds: rooms,
     };
 
     // Send POST request to create a new zone
-    await fetch("your_api_endpoint/zones", {
+    await fetch("http://localhost:8080/api/SHH/zones", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -132,7 +128,7 @@ function SHH() {
         <select value={selectedZone} onChange={handleZoneChange}>
           {zones.map((zone) => (
             <option key={zone.zoneID} value={zone.zoneID}>
-              {zone.zoneName}
+              {zone.zoneID}
             </option>
           ))}
         </select>
@@ -147,9 +143,9 @@ function SHH() {
           {selectedZone &&
             zones
               .find((zone) => zone.zoneID === selectedZone)
-              ?.rooms.map((room) => (
-                <option key={room.roomID} value={room.roomID}>
-                  {room.roomName}
+              ?.roomIds.map((id) => (
+                <option key={id} value={id}>
+                  {id}
                 </option>
               ))}
         </select>
