@@ -31,7 +31,7 @@ public class TemperatureController {
             @RequestParam(name = "date", required = false) String date,
             @RequestParam(name = "time", required = false) String time) {
 
-        String csvFilePath = "C:\\Users\\adamo\\Soen-343-Team-RAYGAK\\back-end\\src\\main\\resources\\temperature_data.csv";
+        String csvFilePath = ".src/main/resources/temperature_data.csv";
         
         // Load the temperature data
         int temperature = loadTemperatureData(csvFilePath, date, time);

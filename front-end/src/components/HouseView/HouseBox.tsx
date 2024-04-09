@@ -329,11 +329,11 @@ function HouseBox() {
     return <div>Loading...</div>;
   } else {
     return (
-      <svg width="2000" height="2000">
-        {renderRooms(house.rooms)}
-        {renderDoors(house.rooms)}
-        {renderWindows(house.rooms)}
-        {renderLights(house.rooms)}
+      <svg className="houseBox" width="2000" height="2000">
+        {renderRooms(house)}
+        {renderDoors(house)}
+        {renderWindows(house)}
+        {renderLights(house)}
       </svg>
     );
   }
