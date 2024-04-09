@@ -1,15 +1,12 @@
 package com.raygak.server.controllers;
 
 import java.io.IOException;
-import java.util.Base64;
-import java.util.List;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,29 +27,26 @@ public class PhotoController {
     private PhotoService photoService;
 
     @GetMapping("/user/{username}")
-    public String getPhotoByUsername(@PathVariable String username, Model model) {
+    public ResponseEntity<byte[]> getPhotoByUsername(@PathVariable String username) {
         Optional<Photo> photo = photoService.getPhotoByUsername(username);
         if (!photo.isPresent())
             return null;
         Photo actualPhoto = photo.get();
-        model.addAttribute("image", Base64.getEncoder().encodeToString(actualPhoto.getImage().getData()));
-        return "photos";
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(actualPhoto.getImage().getData());
     }
 
     @GetMapping("/{id}")
-    public String getPhotoById(@PathVariable ObjectId id, Model model) {
+    public ResponseEntity<byte[]> getPhotoById(@PathVariable ObjectId id) {
         Optional<Photo> photo = photoService.getPhotoById(id);
         if (!photo.isPresent())
             return null;
         Photo actualPhoto = photo.get();
-        model.addAttribute("image", Base64.getEncoder().encodeToString(actualPhoto.getImage().getData()));
-        return "photos";
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(actualPhoto.getImage().getData());
     }
 
     @PostMapping
-    public String addPhoto(@RequestParam("username") String username, @RequestParam("image") MultipartFile image,
-            Model model) throws IOException {
+    public String addPhoto(@RequestParam("username") String username, @RequestParam("image") MultipartFile image) throws IOException {
         photoService.addPhoto(username, image);
-        return "photos";
+        return "ok";
     }
 }
