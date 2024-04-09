@@ -12,6 +12,8 @@ import java.util.ArrayList;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoomWrapper {
+public class ZoneWrapper {
+    private String ZoneName;
+    private String ZoneType;
     private ArrayList<String> roomIds = new ArrayList<>();
 }
