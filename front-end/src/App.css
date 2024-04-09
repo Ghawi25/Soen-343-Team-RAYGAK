@@ -1,5 +1,5 @@
 html {
-  overflow: hidden;
+  overflow: auto;
   box-sizing: border-box;
   font-size: 1.3rem;
   background-color: rgb(199, 242, 252);

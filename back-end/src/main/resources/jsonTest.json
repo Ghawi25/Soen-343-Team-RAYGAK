@@ -4,31 +4,27 @@
   "rooms": [
     {
       "_id": "id1",
-      "name": "RoomA",
+      "name": "Room 1",
       "width": 2,
       "height": 2,
       "adjacentTo": {
-        "north": "RoomB",
-        "south": "",
+        "north": "",
+        "south": "Room 2",
         "east": "",
         "west": ""
       },
       "windows": {
         "north": [],
-        "south": [
-          "WindowE",
-          "WindowF"
-        ],
-        "east": [
-          "WindowA"
-        ],
+        "south": [],
+        "east": [],
         "west": [
-          "WindowC"
+          "Window 1",
+          "Window 2"
         ]
       },
       "doors": {
-        "north": "DoorA",
-        "south": "",
+        "north": "",
+        "south": "Door 1",
         "east": "",
         "west": ""
       },
@@ -36,53 +32,28 @@
     },
     {
       "_id": "id2",
-      "name": "RoomB",
+      "name": "Room 2",
       "width": 2,
       "height": 2,
       "adjacentTo": {
-        "north": "",
-        "south": "RoomA",
-        "east": "",
-        "west": "RoomC"
-      },
-      "windows": {
-        "north": [],
-        "south": [],
-        "east": [
-          "WindowD",
-          "WindowG"
-        ],
-        "west": []
-      },
-      "doors": {
-        "north": "",
-        "south": "DoorA",
-        "east": "",
-        "west": "DoorB"
-      },
-      "lightInRoom": true
-    },
-    {
-      "_id": "id3",
-      "name": "RoomC",
-      "width": 2,
-      "height": 2,
-      "adjacentTo": {
-        "north": "",
+        "north": "Room 1",
         "south": "",
-        "east": "RoomB",
+        "east": "",
         "west": ""
       },
       "windows": {
         "north": [],
         "south": [],
         "east": [],
-        "west": []
+        "west": [
+          "Window 3",
+          "Window 4"
+        ]
       },
       "doors": {
-        "north": "",
-        "south": "",
-        "east": "DoorB",
+        "north": "Door 1",
+        "south": "Door 2",
+        "east": "",
         "west": ""
       },
       "lightInRoom": true

@@ -136,7 +136,7 @@ public final class HouseView {
             Demo demo = new Demo();
             House newHouse = demo.initialize();
             home = new HouseView();
-            home.setHouse(newHouse);
+            // home.setHouse(newHouse);
         }
         return home;
     }
