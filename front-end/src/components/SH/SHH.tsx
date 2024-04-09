@@ -92,18 +92,16 @@ function SHH() {
 
   const createZone = async (e: React.FormEvent) => {
     e.preventDefault();
-    const rooms = newRoomNames
-      .split(",")
-      .map((name) => ({ roomName: name.trim() }));
+    const rooms = newRoomNames.split(",");
 
-    const newZone: Zone = {
+    const newZone = {
       zoneName: newZoneName,
       zoneType: newZoneType,
-      rooms: rooms,
+      roomIds: rooms,
     };
 
     // Send POST request to create a new zone
-    await fetch("your_api_endpoint/zones", {
+    await fetch("http://localhost:8080/api/SHH/zones", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
