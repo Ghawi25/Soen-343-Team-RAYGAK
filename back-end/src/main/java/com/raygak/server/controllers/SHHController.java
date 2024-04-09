@@ -121,4 +121,25 @@ public class SHHController {
         }
         return new ResponseEntity<>(houseRef.getShh().isOn(), HttpStatus.OK);
     }
+
+    @DeleteMapping(path = "/rooms/{zoneId}")
+    public ResponseEntity deleteRoomById(@PathVariable("zoneId") String zoneId,
+                                         @RequestParam("id") String roomId) {
+        HouseView house = HouseView.getHome();
+        House houseRef = house.getHouse();
+        try {
+            ArrayList<Zone> zones = houseRef.getZones();
+            for (Zone zone: zones) {
+                if (zone.getZoneID().equals(zoneId)) {
+                    zone.removeRoom(roomId);
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Error: The zone with the provided ID does not exist.");
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

@@ -53,9 +53,12 @@ function SHH() {
 
   const deleteRoom = async () => {
     // Send DELETE request to delete room
-    await fetch(`your_api_endpoint/rooms/${selectedRoom}`, {
-      method: "DELETE",
-    });
+    await fetch(
+      `http://localhost:8080/api/SHH/rooms/${selectedZone}?id=${selectedRoom}`,
+      {
+        method: "DELETE",
+      }
+    );
     fetchZones(); // Refresh zones after deletion
   };
 
@@ -70,13 +73,15 @@ function SHH() {
   const updateRoomTemperature = async (e: React.FormEvent) => {
     e.preventDefault();
     // Send PUT request to update room temperature
-    await fetch(`your_api_endpoint/rooms/${selectedRoom}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ temperature: roomTemperature }),
-    });
+    await fetch(
+      `http://localhost:8080/api/SHH/rooms/${selectedRoom}?temp=${roomTemperature}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   };
 
   const toggleHeatingSystem = async () => {
