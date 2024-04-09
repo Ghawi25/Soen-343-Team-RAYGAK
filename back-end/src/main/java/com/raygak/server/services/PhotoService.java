@@ -1,6 +1,7 @@
 package com.raygak.server.services;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import org.bson.BsonBinarySubType;
@@ -18,6 +19,10 @@ public class PhotoService {
     
     @Autowired
     private PhotoRepository photoRepository;
+
+    public List<Photo> getAllPhotos() {
+        return photoRepository.findAll();
+    }
 
     public Optional<Photo> getPhotoByUsername(String username) {
         return photoRepository.findByUsername(username);
