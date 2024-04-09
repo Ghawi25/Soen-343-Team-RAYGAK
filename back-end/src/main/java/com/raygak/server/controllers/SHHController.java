@@ -48,8 +48,8 @@ public class SHHController {
                 HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/zone")
-    public ResponseEntity deleteZoneById(@RequestParam("id") String zoneId) {
+    @DeleteMapping(path = "/zones/{zoneId}")
+    public ResponseEntity deleteZoneById(@PathVariable("zoneId") String zoneId) {
         HouseView house = HouseView.getHome();
         House houseRef = house.getHouse();
         try {
@@ -63,7 +63,7 @@ public class SHHController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping(path = "/room/{roomId}")
+    @PutMapping(path = "/rooms/{roomId}")
     public ResponseEntity<HttpStatus> updateRoomTemp(@PathVariable(value = "roomId") String roomId, @RequestParam("temp") Double temperature) {
         HouseView house = HouseView.getHome();
         House houseRef = house.getHouse();
