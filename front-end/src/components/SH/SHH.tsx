@@ -81,12 +81,11 @@ function SHH() {
 
   const toggleHeatingSystem = async () => {
     setIsHeatingOn(!isHeatingOn);
-    await fetch("your_api_endpoint/heatingSystem", {
+    await fetch(`http://localhost:8080/api/SHH/heatingSystem/${isHeatingOn}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ on: !isHeatingOn }),
     });
   };
 
