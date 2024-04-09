@@ -21,7 +21,7 @@ public class HouseController {
     @GetMapping
     public ResponseEntity<ArrayList<Room>> getHouse() {
         HouseView houseView = HouseView.getHome();
-        return new ResponseEntity<ArrayList<Room>>(houseView.house.getRooms(), HttpStatus.OK);
+        return new ResponseEntity<ArrayList<Room>>(houseView.viewHouse.getRooms(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/temperature")
