@@ -109,4 +109,16 @@ public class SHHController {
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping(path = "/heatingSystem/{isHeatingOn}")
+    public ResponseEntity<Boolean> toggleHeatingSys(@PathVariable(value = "isHeatingOn") Boolean isHeatingOn) {
+        HouseView house = HouseView.getHome();
+        House houseRef = house.getHouse();
+        if (isHeatingOn) {
+            houseRef.turnOnSHH();
+        } else {
+            houseRef.turnOffSHH();
+        }
+        return new ResponseEntity<>(houseRef.getShh().isOn(), HttpStatus.OK);
+    }
 }
