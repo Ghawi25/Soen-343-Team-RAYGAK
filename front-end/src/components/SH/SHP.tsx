@@ -2,30 +2,25 @@
 
 import React, { useState } from "react";
 
-// Interfaces for motion detector and temperature monitoring
-interface MotionDetector {
-  detectorID?: string;
-  detectorLocation: string;
-}
-
 function SHP() {
   const [awayMode, setAwayMode] = useState<boolean>(false);
   const [selectedDetector, setSelectedDetector] = useState<string>("");
-  const [newDetectorLocation, setSelectedNewDetectorLocation] = useState<string>("");
+  const [newDetectorLocation, setSelectedNewDetectorLocation] =
+    useState<string>("");
   const [notificationTimer, setNotificationTimer] = useState<number>(0);
 
   const toggleAwayMode = async () => {
     setAwayMode(!awayMode);
-    await fetch("your_api_endpoint/awayMode", {
+    const isAway = !awayMode;
+    await fetch(`http://localhost:8080/api/SHP/awayMode/${isAway}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ on: !awayMode }),
     });
     // Trigger doors and windows to close if away mode is activated
-    if (!awayMode) {
-      await fetch("your_api_endpoint/closeDoorsWindows", {
+    if (isAway) {
+      await fetch("http://localhost:8080/api/SHP/closeDoorsWindows", {
         method: "POST",
       });
     }
@@ -34,39 +29,44 @@ function SHP() {
   const updateNotificationTimer = async (e: React.FormEvent) => {
     e.preventDefault();
     //Send PUT request to update notification timer
-      await fetch('your_api_endpoint/notificationTimer', {
-        method: 'PUT', 
+    await fetch(
+      `http://localhost:8080/api/SHP/notificationTimer/${notificationTimer}`,
+      {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ timer : notificationTimer}), 
-      });
-    }
+      }
+    );
+  };
 
-    //fuction to add a new motion detector to a location
-    const addDetector = async (e: React.FormEvent) => {
-      e.preventDefault();
+  //fuction to add a new motion detector to a location
+  const addDetector = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-      const newDetector: MotionDetector = {
-        detectorLocation : newDetectorLocation
-      } 
-
-      await fetch('your_api_endpoint/motionDetectors', {
-        method: 'POST', 
+    await fetch(
+      `http://localhost:8080/api/SHP/motionDetectors/${newDetectorLocation}`,
+      {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({newDetector}), 
-      });
-      setSelectedNewDetectorLocation('');
-    };
+      }
+    );
+    setSelectedNewDetectorLocation("");
+  };
 
-    const deleteDetector = async () => {
-      await fetch(`your_api_endpoint/motionDetectors/${selectedDetector}`, {
-          method: 'DELETE', 
-        });
-        setSelectedDetector('');
-    };
+  const deleteDetector = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    await fetch(
+      `http://localhost:8080/api/SHP/motionDetectors/${selectedDetector}`,
+      {
+        method: "DELETE",
+      }
+    );
+    setSelectedDetector("");
+  };
 
   return (
     <div id="SHP">
@@ -79,41 +79,45 @@ function SHP() {
 
       <section>
         <h3>Motion Detectors:</h3>
-          <form onSubmit={addDetector}>
-            <label>Detector location you wish to add:</label>
-              <input
-              type="text"
-              value = {newDetectorLocation}
-              onChange={(e) => setSelectedNewDetectorLocation(e.target.value)}/>
-              <p></p>
-              <button type="submit">Add Detector</button> 
-          </form>
-          
+        <form onSubmit={addDetector}>
+          <label>Detector location you wish to add:</label>
+          <input
+            type="text"
+            value={newDetectorLocation}
+            onChange={(e) => setSelectedNewDetectorLocation(e.target.value)}
+          />
+          <p></p>
+          <button type="submit">Add Detector</button>
+        </form>
+
         <br></br>
-        
-          <form>
-            <label>Detector location you wish to delete:</label>
-              <input
-              type="text"
-              value = {selectedDetector}
-              onChange={(e) => setSelectedDetector(e.target.value)}/>
-              <p></p>
-              <button onClick={deleteDetector}>Delete Detector</button>
-          </form>
+
+        <form>
+          <label>Detector location you wish to delete:</label>
+          <input
+            type="text"
+            value={selectedDetector}
+            onChange={(e) => setSelectedDetector(e.target.value)}
+          />
+          <p></p>
+          <button onClick={deleteDetector}>Delete Detector</button>
+        </form>
       </section>
 
       <section>
         <h3>Alert Timer:</h3>
         <div>
           <form onSubmit={updateNotificationTimer}>
-            <label htmlFor="notificationTimer">Notification Timer (minutes):</label>
-              <input
-                id="notificationTimer"
-                type="number"
-                value={notificationTimer}
-                onChange={(e) => setNotificationTimer(Number(e.target.value))}
-                min="0"
-              />
+            <label htmlFor="notificationTimer">
+              Notification Timer (minutes):
+            </label>
+            <input
+              id="notificationTimer"
+              type="number"
+              value={notificationTimer}
+              onChange={(e) => setNotificationTimer(Number(e.target.value))}
+              min="0"
+            />
             <button type="submit">Update Timer</button>
           </form>
         </div>
