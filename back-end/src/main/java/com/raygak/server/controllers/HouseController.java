@@ -2,9 +2,7 @@ package com.raygak.server.controllers;
 
 import com.raygak.server.models.LogsPOJO;
 import com.raygak.server.models.RoomPOJO;
-import com.raygak.server.smarthome.House;
-import com.raygak.server.smarthome.HouseView;
-import com.raygak.server.smarthome.Room;
+import com.raygak.server.smarthome.*;
 import com.raygak.server.smarthome.heating.Zone;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +36,16 @@ public class HouseController {
                 logsPOJO.addMsg("Room: " + room.getRoomID());
             }
         }
+        logsPOJO.addMsg(houseRef.getShp().isInAwayMode() ? "House - is in AwayMode" : "House - is not in AwayMode");
+        for (Window window: houseRef.getWindows()){
+            logsPOJO.addMsg("Window " + window.getWindowID() + " is " + (window.isOpen() ? "open" : "close"));
+        }
+        for (Door door: houseRef.getDoors()){
+            logsPOJO.addMsg(door.getName() + " is " + (door.isOpen() ? "open" : "close"));
+        }
+        logsPOJO.addMsg("Room 1 motion detector installed? : " + houseRef.getRooms().get(0).isMotionDetectorInstalled());
+        logsPOJO.addMsg("Room 2 motion detector installed? : " + houseRef.getRooms().get(1).isMotionDetectorInstalled());
+        logsPOJO.addMsg("Time to contact authorities : " + houseRef.getShp().getTimeForAlert());
 
         return new ResponseEntity<LogsPOJO>(logsPOJO,
                 HttpStatus.OK);
