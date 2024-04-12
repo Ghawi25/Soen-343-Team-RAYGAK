@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { userAuth } from "../../contexts/AuthProvider";
+import { CreateUserModal } from "../Modals/CreateUserModal";
 
 function SHS() {
   const auth = userAuth(); // Add this if you want to access user info once logged in
@@ -15,18 +16,26 @@ function SHS() {
     auth.loginAction(data);
   };
 
+  const handleLogout = () => {
+    auth.logOut();
+  }
+
   if (auth.user) {
     // Add what the user should see in the shs tab once logged in
     return (
-    <div>
-      Logged in as {auth.user.username}
-      {/* List of users */}
       <div>
-        <button>Create User</button>
-        <button>Edit User</button>
-        <button>Delete User</button>
+        Logged in as {auth.user.username}
+        <br />
+        {/* Only adults can do these */}
+        {auth.user.userType === "adult" && (
+          <div>
+            <CreateUserModal />
+            <button>Edit User</button>
+            <button>Delete User</button>
+          </div>
+        )}
+        <button onClick={handleLogout}>Logout</button>
       </div>
-    </div>
     );
   } else {
     return (
