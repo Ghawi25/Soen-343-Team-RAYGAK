@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import "./Modal.css"
+import "../../App.css"
 import axios from 'axios';
 
 export const CreateUserModal = () => {
