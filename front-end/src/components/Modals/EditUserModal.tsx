@@ -7,7 +7,7 @@ export const EditUserModal = () => {
     const [formData, setFormData] = useState({});
     const [image, setImage] = useState(null);
     const [users, setUsers] = useState([]);
-    const [user, setUser] = useState({});
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         axios.get(`http://localhost:8080/api/users`)
@@ -18,7 +18,7 @@ export const EditUserModal = () => {
             .catch(err => {
                 console.log(err);
             })
-    }, [formData])
+    }, [showModal])
 
     const handleChange = (e: { target: { name: string; value: string; }; }) => {
         setFormData(({ ...formData, [e.target.name]: e.target.value }));
@@ -30,7 +30,7 @@ export const EditUserModal = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(user.id);
+        console.log(formData);
         axios.put(`http://localhost:8080/api/users/${user.id}`, formData)
             .then(res => {
                 console.log(res);
@@ -60,8 +60,8 @@ export const EditUserModal = () => {
 
     const toggleShowModal = () => {
         setUser({});
-        setFormData({})
-;        setShowModal(!showModal);
+        setFormData({});
+        setShowModal(!showModal)
     }
 
     const showUserOptions = (users: []) => {
@@ -84,13 +84,14 @@ export const EditUserModal = () => {
                     <div className="modal-content">
                         <h2>Edit User</h2>
                         <select name="user" id="user" onChange={e => {
-                            setUser(users[e.target.value]); 
+                            setUser(users[e.target.value]);
                             setFormData({
                                 username: user.username,
                                 password: user.password,
                                 userType: user.userType
                             });
                             console.log(formData);
+                            console.log(user);
                         }}>
                             <option value="" disabled selected></option>
                             {showUserOptions(users)}
