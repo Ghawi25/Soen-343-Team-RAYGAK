@@ -2,6 +2,7 @@ import { useState } from "react";
 import { userAuth } from "../../contexts/AuthProvider";
 import { CreateUserModal } from "../Modals/CreateUserModal";
 import { EditUserModal } from "../Modals/EditUserModal";
+import { DeleteUserModal } from "../Modals/DeleteUserModal";
 
 function SHS() {
   const auth = userAuth(); // Add this if you want to access user info once logged in
@@ -30,10 +31,11 @@ function SHS() {
         {/* Only adults can do these */}
         {auth.user.userType === "adult" && (
           <div>
-            <CreateUserModal /> <br />
             <EditUserModal /> <br />
+            <DeleteUserModal /> <br />
           </div>
         )}
+        <CreateUserModal /> <br />
         <button onClick={handleLogout}>Logout</button>
       </div>
     );
@@ -64,6 +66,7 @@ function SHS() {
           </div>
           <div>
             <button type="submit">Sign In</button>
+            <CreateUserModal />
           </div>
         </form>
       </>
