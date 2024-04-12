@@ -11,4 +11,5 @@ import com.raygak.server.models.Photo;
 @Repository
 public interface PhotoRepository extends MongoRepository<Photo, ObjectId>{
         Optional<Photo> findByUsername(String username);
+        void deleteByUsername(String username);
 }

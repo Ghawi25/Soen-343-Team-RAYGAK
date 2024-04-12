@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.raygak.server.models.Photo;
+import com.raygak.server.models.User;
 import com.raygak.server.repos.PhotoRepository;
 
 @Service
@@ -38,5 +39,20 @@ public class PhotoService {
         photo.setImage(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
         photoRepository.insert(photo);
         return photo;
+    }
+
+    public Optional<Photo> updatePhotoByUsername(String query, String username, MultipartFile file) throws IOException {
+        Optional<Photo> optionalPhoto = photoRepository.findByUsername(query);
+        if(optionalPhoto.isEmpty()) {
+            return Optional.empty();
+        }
+        Photo photo = optionalPhoto.get();
+        photo.setUsername(username);
+        photo.setImage(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+        return Optional.of(photoRepository.save(photo));
+    }
+
+    public void deletePhotoByUsername(String username) {
+        photoRepository.deleteByUsername(username);
     }
 }

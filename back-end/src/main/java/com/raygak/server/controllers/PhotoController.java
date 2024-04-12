@@ -1,16 +1,21 @@
 package com.raygak.server.controllers;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,5 +53,16 @@ public class PhotoController {
     public String addPhoto(@RequestParam("username") String username, @RequestParam("image") MultipartFile image) throws IOException {
         photoService.addPhoto(username, image);
         return "ok";
+    }
+
+    @PutMapping("/{query}")
+    public ResponseEntity<Optional<Photo>> updateUserByUsername(@PathVariable String query, @RequestParam("username") String username, @RequestParam("image") MultipartFile image)  throws IOException {
+        return new ResponseEntity<Optional<Photo>>(photoService.updatePhotoByUsername(query, username, image), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{username}")
+    public ResponseEntity<String> deleteUserByUsername(@PathVariable String username) {
+        photoService.deletePhotoByUsername(username);
+        return new ResponseEntity<String>("Deleted photo", HttpStatus.OK);
     }
 }
