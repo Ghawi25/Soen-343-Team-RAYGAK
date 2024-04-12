@@ -41,8 +41,8 @@ public class PhotoService {
         return photo;
     }
 
-    public Optional<Photo> updatePhotoByUsername(String username, MultipartFile file) throws IOException {
-        Optional<Photo> optionalPhoto = photoRepository.findByUsername(username);
+    public Optional<Photo> updatePhotoByUsername(String query, String username, MultipartFile file) throws IOException {
+        Optional<Photo> optionalPhoto = photoRepository.findByUsername(query);
         if(optionalPhoto.isEmpty()) {
             return Optional.empty();
         }
@@ -50,4 +50,9 @@ public class PhotoService {
         photo.setUsername(username);
         photo.setImage(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
         return Optional.of(photoRepository.save(photo));
-    }}
+    }
+
+    public void deletePhotoByUsername(String username) {
+        photoRepository.deleteByUsername(username);
+    }
+}

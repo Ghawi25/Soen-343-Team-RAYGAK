@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,8 +55,14 @@ public class PhotoController {
         return "ok";
     }
 
-    @PutMapping("/{username}")
-    public ResponseEntity<Optional<Photo>> updateUserById(@PathVariable String username, @RequestParam("image") MultipartFile image)  throws IOException {
-        return new ResponseEntity<Optional<Photo>>(photoService.updatePhotoByUsername(username, image), HttpStatus.OK);
+    @PutMapping("/{query}")
+    public ResponseEntity<Optional<Photo>> updateUserByUsername(@PathVariable String query, @RequestParam("username") String username, @RequestParam("image") MultipartFile image)  throws IOException {
+        return new ResponseEntity<Optional<Photo>>(photoService.updatePhotoByUsername(query, username, image), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{username}")
+    public ResponseEntity<String> deleteUserByUsername(@PathVariable String username) {
+        photoService.deletePhotoByUsername(username);
+        return new ResponseEntity<String>("Deleted photo", HttpStatus.OK);
     }
 }
