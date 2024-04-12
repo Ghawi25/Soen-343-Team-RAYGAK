@@ -17,7 +17,17 @@ function SHS() {
 
   if (auth.user) {
     // Add what the user should see in the shs tab once logged in
-    return <div>Logged in as {auth.user.username}</div>;
+    return (
+    <div>
+      Logged in as {auth.user.username}
+      {/* List of users */}
+      <div>
+        <button>Create User</button>
+        <button>Edit User</button>
+        <button>Delete User</button>
+      </div>
+    </div>
+    );
   } else {
     return (
       <>
