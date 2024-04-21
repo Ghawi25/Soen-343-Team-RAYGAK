@@ -2,6 +2,15 @@
 
 By Team RAYGAK.
 
+## Team Members
+
+- Yash Patel (NotTh3ta), 40175454
+- Ralph Elhage (CloudedByLight), 40131981
+- Khanh Huy Nguyen (huy2272),  (40125396)
+- Giancarlo Biasiucci (GiancarloB210), 40180066
+- Alexander El Ghaoui (Ghawi25), 40200062
+- Adam Oughourlian (adamoug), 40246313
+
 ## Repository Layout
 
 The current repository includes 3 folders:
